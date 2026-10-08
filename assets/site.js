@@ -28,10 +28,10 @@
   // Je pod hlavičkou tmavé pozadí? (sekce v jedli, fotky, formulář, patička) → tmavá varianta karty
   const DARK_PHOTO = '.final, .phero, .seg, .splitc, .bento__t--photo, .svc__ph, .kit__media, .combo__media, .signs__media, .svj__media, .mats__stage, .story__stage';
   const lum = (c) => { const m = c.match(/[\d.]+/g); if (!m) return null; const [r, g, b, a = 1] = m.map(Number); return a < 0.5 ? null : (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; };
-  let probing = 0;
+  let probing = 0, pending = null;
   const probe = () => {
     probing = 0;
-    if (!top.classList.contains('is-scrolled')) { top.classList.remove('is-dark'); return; }
+    if (!top.classList.contains('is-scrolled')) { top.classList.remove('is-dark'); pending = null; return; }
     const r = top.getBoundingClientRect();
     const xs = [r.left + 30, r.left + r.width / 2, r.right - 30];
     let dark = 0, n = 0;
@@ -43,11 +43,20 @@
         if (L !== null) { n++; if (L < 0.45) dark++; break; }
       }
     });
-    top.classList.toggle('is-dark', n > 0 && dark / n >= 0.5);
+    const want = n > 0 && dark / n >= 0.5;
+    if (want === top.classList.contains('is-dark')) { pending = null; return; }
+    if (pending === want) { top.classList.toggle('is-dark', want); pending = null; } else { pending = want; probing = requestAnimationFrame(probe); }
   };
+  // šířka plné hlavičky v px, aby se přechod do karty animoval plynule od skutečné šířky
+  const setFull = () => document.documentElement.style.setProperty('--top-full', `${document.documentElement.clientWidth - (innerWidth <= 860 ? 16 : 24)}px`);
+  setFull();
+  addEventListener('resize', setFull);
+  let scrolled = false;
   const onScroll = () => {
     const y = window.scrollY;
-    top.classList.toggle('is-scrolled', y > 8);
+    // hystereze: karta od 48 px, zpět až pod 12 px – žádné cukání kolem hranice
+    if (!scrolled && y > 48) scrolled = true; else if (scrolled && y < 12) scrolled = false;
+    top.classList.toggle('is-scrolled', scrolled);
     if (!probing) probing = requestAnimationFrame(probe);
     if (dock) dock.classList.toggle('is-on', y > (hero ? hero.offsetHeight * .7 : 400) && !formVisible);
   };

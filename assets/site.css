@@ -1256,9 +1256,12 @@ a.ccard:hover { transform: translateY(-3px); }
 }
 
 /* ================= Hlavička: plovoucí karta po odscrollování, přizpůsobí se pozadí ================= */
-.top { left: 0; right: 0; margin-inline: auto; width: calc(100% - 24px); max-width: 2400px; border: 1px solid transparent;
-  transition: max-width .55s var(--ease), height .35s var(--ease), top .35s var(--ease), border-radius .35s, background-color .3s, border-color .3s, box-shadow .3s, color .3s; }
-.top .top__in { transition: padding .35s var(--ease); }
+.top { left: 0; right: 0; margin-inline: auto; width: calc(100% - 24px); max-width: var(--top-full, calc(100% - 24px)); border: 1px solid transparent; will-change: max-width;
+  transition: max-width .6s cubic-bezier(.22, .8, .24, 1), height .45s cubic-bezier(.22, .8, .24, 1), top .45s cubic-bezier(.22, .8, .24, 1), border-radius .45s, background-color .35s ease, border-color .35s ease, box-shadow .45s ease, color .35s ease; }
+.top .top__in { transition: padding .6s cubic-bezier(.22, .8, .24, 1); }
+.top__logo svg { transition: width .45s cubic-bezier(.22, .8, .24, 1), height .45s cubic-bezier(.22, .8, .24, 1); }
+.top__cta, .top__tel, .top__burger { transition: min-height .45s ease, width .45s ease, height .45s ease, background-color .3s ease, color .3s ease; }
+.top__burger i { transition: background-color .3s ease, transform .25s var(--ease), top .25s var(--ease); }
 .top.is-scrolled { max-width: 1180px; height: 64px; border-radius: 22px; background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
   border-color: rgba(15, 58, 46, .09); box-shadow: 0 20px 44px -24px rgba(15, 58, 46, .5); }
 .top.is-scrolled .top__in { padding-inline: 22px 9px; }
@@ -1274,7 +1277,7 @@ a.ccard:hover { transform: translateY(-3px); }
 .top.is-open { max-width: 1180px; color: var(--pine); background: #fff; border-color: rgba(15, 58, 46, .09); }
 .top.is-open .top__logo { color: var(--pine); --logo-pv: var(--sun-deep); }
 @media (max-width: 860px) {
-  .top { width: calc(100% - 16px); }
+  .top { width: calc(100% - 16px); max-width: var(--top-full, calc(100% - 16px)); }
   .top.is-scrolled { max-width: none; height: 60px; border-radius: 18px; }
   .top.is-scrolled .top__in { padding-inline: 14px 7px; }
   .top.is-scrolled .top__logo svg { height: 26px; width: 122px; }
