@@ -82,6 +82,8 @@
       burger.setAttribute('aria-expanded', open);
       menu.hidden = !open;
       top.classList.toggle('is-open', open);
+      document.documentElement.classList.toggle('menu-open', open);
+      burger.querySelector('.sr').textContent = open ? 'Zavřít menu' : 'Menu';
     };
     burger.addEventListener('click', () => setMenu(menu.hidden));
     menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
