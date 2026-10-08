@@ -259,7 +259,9 @@ def card(p, big=False):
             f'<span class="bcard__img">{picture(p["obrazek"], "", "(max-width: 760px) 100vw, 50vw" if big else "(max-width: 760px) 100vw, 33vw")}'
             f'<span class="bcard__over"><span class="bcard__top"><span class="bcard__kat">{KATEGORIE[kat]}</span><span class="bcard__min">{p["minuty"]}&nbsp;min</span></span>'
             f'{badge}<span class="bcard__h">{p["h1"]}</span></span></span>'
-            f'<span class="bcard__body"><span class="bcard__p">{p["perex"]}</span><span class="bcard__more">Číst článek</span></span></a>')
+            f'<span class="bcard__body"><span class="bcard__mh"><span class="bcard__mk">{KATEGORIE[kat]} · {p["minuty"]}&nbsp;min</span>'
+            f'<span class="bcard__mt">{p["h1"]}</span>{f"""<span class="bcard__mb">{p["stitek"]}</span>""" if p.get("stitek") else ""}</span>'
+            f'<span class="bcard__p">{p["perex"]}</span><span class="bcard__more">Číst článek</span></span></a>')
 
 
 def blog_index():
@@ -302,6 +304,33 @@ def toc_and_ids(body):
     return body, toc
 
 
+def table_cards(body):
+    """Tabulky se 3+ sloupci dostanou data-label u buněk; na mobilu se z řádků stanou karty (CSS .tbl--cards)."""
+    def one(m):
+        t = m.group(1)
+        head = re.search(r"<thead>(.*?)</thead>", t, re.S)
+        labels = [plain(x) for x in re.findall(r"<th[^>]*>(.*?)</th>", head.group(1), re.S)] if head else []
+        if len(labels) < 3:
+            return m.group(0)
+
+        def row(rm):
+            col = 0
+
+            def cell(cm):
+                nonlocal col
+                tag, attrs = cm.group(1), cm.group(2)
+                span = int((re.search(r'colspan="(\d+)"', attrs) or [0, 1])[1])
+                covered = labels[col:col + span]
+                col += span
+                if span >= 3 or not covered:
+                    return f'<{tag}{attrs} class="tbl__wide">'
+                return f'<{tag}{attrs} data-label="{htmlmod.escape(" / ".join(covered))}">'
+            return "<tr>" + re.sub(r"<(td|th)([^>]*)>", cell, rm.group(1)) + "</tr>"
+        t = re.sub(r"(<tbody>.*?</tbody>)", lambda bm: re.sub(r"<tr>(.*?)</tr>", row, bm.group(1), flags=re.S), t, flags=re.S)
+        return f'<div class="tbl tbl--cards">{t}</div>'
+    return re.sub(r'<div class="tbl">(.*?)</div>', one, body, flags=re.S)
+
+
 def article_page(p):
     body = p["body"]
     body = re.sub(r"\{\{cta:([\w-]+)\}\}", lambda m: cta_card(m.group(1)), body)
@@ -309,6 +338,7 @@ def article_page(p):
     # odkaz na článek, který ještě není publikovaný (soubor s _), zůstane jen jako text
     body = re.sub(r'<a href="/blog/([\w-]+)/">(.*?)</a>', lambda m: m.group(0) if f"clanek-{m.group(1)}" in POSTS else m.group(2), body, flags=re.S)
     body = body.replace("{{kalkulacka}}", '<div class="post__calc">{{> calc-box}}</div>')
+    body = table_cards(body)
     body, toc = toc_and_ids(body)
     kat = p["kategorie"]
     side_kind = {"strechy": "strecha", "fotovoltaika": "fve", "dotace": "dotace", "strecha-fve": "oboji"}[kat]
@@ -339,7 +369,7 @@ def article_page(p):
       <div class="post__author"><img src="assets/old/pavel-koci-ceo.jpg" alt="Pavel Kočí" width="64" height="64" loading="lazy"><div><p><b>Pavel Kočí</b>, PROOZE, Slaný</p><p>Střechy a fotovoltaika od jedné party. Máte otázku k článku? Zavolejte na <a href="tel:+420773898698">773&nbsp;898&nbsp;698</a>.</p></div></div>
     </div>
     <aside class="post__side">
-      <nav class="toc" aria-label="Obsah článku"><p class="toc__h">Obsah článku</p><ol data-toc>{toc}</ol></nav>
+      <nav class="toc" aria-label="Obsah článku"><details open data-toc-box><summary class="toc__h">Obsah článku</summary><ol data-toc>{toc}</ol></details></nav>
       <div class="side-cta"><p class="side-cta__h">{h}</p><p>{para}</p><a class="btn btn--sun btn--block" href="#formular" data-pick="{pick}" data-cta="blog-side">{b}</a><a class="side-cta__tel" href="tel:+420773898698"><svg><use href="#i-phone"/></svg>773&nbsp;898&nbsp;698</a></div>
     </aside>
   </div>

@@ -116,6 +116,9 @@
     };
     addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(read); } }, { passive: true });
     read();
+    const tocBox = post.querySelector('[data-toc-box]');
+    if (tocBox && window.matchMedia('(max-width: 960px)').matches) tocBox.open = false;
+    if (tocBox) tocBox.addEventListener('click', (e) => { if (e.target.closest('a') && window.matchMedia('(max-width: 960px)').matches) tocBox.open = false; });
     const links = [...post.querySelectorAll('[data-toc] a')];
     if (links.length && 'IntersectionObserver' in window) {
       const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));

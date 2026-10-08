@@ -1359,6 +1359,7 @@ html.menu-open .dock { transform: translateY(110%) !important; }
 .post__progress { position: fixed; left: 0; right: 0; top: 0; z-index: 60; height: 4px; pointer-events: none; }
 .post__progress i { display: block; height: 100%; width: 100%; background: var(--sun-deep); transform: scaleX(var(--read, 0)); transform-origin: 0 50%; }
 .post__grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: clamp(32px, 5vw, 80px); align-items: start; padding-block: clamp(32px, 4vw, 56px) var(--sec); max-width: 1180px; }
+.post__main, .post__side { min-width: 0; }
 .post__side { position: sticky; top: calc(var(--top-h) + 32px); display: grid; gap: 16px; }
 .toc { padding: 20px 22px; border-radius: var(--r-card); background: var(--mist); }
 .toc__h { font: 800 15px/1 var(--display); margin-bottom: 12px; }
@@ -1380,7 +1381,7 @@ html.menu-open .dock { transform: translateY(110%) !important; }
 .post__calc { margin: 32px 0; }
 .post__calc .sav { grid-template-columns: 1fr; }
 @media (max-width: 1080px) {
-  .post__grid { grid-template-columns: 1fr; }
+  .post__grid { grid-template-columns: minmax(0, 1fr); }
   .post__side { position: static; order: -1; }
   .post__side .side-cta { display: none; }
   .toc { padding: 16px 18px; }
@@ -1597,4 +1598,43 @@ html.menu-open .dock { transform: translateY(110%) !important; }
   .lhero .lm-hq text { font-size: 24px; }
   .lmap__stats span { padding: 10px 12px; font-size: 12.5px; }
   .lmap__stats b { font-size: 18px; }
+}
+
+/* ---------------------------------------------------------------- Poradna na mobilu */
+.toc details > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.toc details > summary::-webkit-details-marker { display: none; }
+.toc details:not([open]) > summary { margin-bottom: 0; }
+.bcard__mh { display: none; }
+@media (max-width: 960px) {
+  .toc details > summary::after { content: '+'; font: 700 22px/1 var(--text); color: var(--sun-deep); transition: transform .2s var(--ease); }
+  .toc details[open] > summary::after { transform: rotate(45deg); }
+}
+@media (max-width: 600px) {
+  /* filtry v jednom posuvném řádku */
+  .bchips { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--gut)); padding-inline: var(--gut); scrollbar-width: none; }
+  .bchips::-webkit-scrollbar { display: none; }
+  .bchip { flex: none; }
+  /* karty článků jako kompaktní řádky: fotka + nadpis */
+  .bgrid { gap: 10px; }
+  .bgrid .bcard { grid-template-rows: none; grid-template-columns: 108px minmax(0, 1fr); min-height: 112px; }
+  .bgrid .bcard:hover { transform: none; }
+  .bgrid .bcard__img { aspect-ratio: auto; height: 100%; }
+  .bgrid .bcard__img::after, .bgrid .bcard__over, .bgrid .bcard__p, .bgrid .bcard__more { display: none; }
+  .bgrid .bcard__body { padding: 12px 14px; gap: 0; align-content: center; }
+  .bgrid .bcard__mh { display: grid; gap: 5px; justify-items: start; }
+  .bcard__mk { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .bcard__mt { font: 800 17px/1.18 var(--display); letter-spacing: -.01em; color: var(--pine); text-wrap: pretty; }
+  .bcard__mb { padding: 3px 8px; border-radius: 8px; background: var(--sun-soft); font: 800 13px/1.2 var(--display); color: var(--pine); }
+  /* tabulky se 3+ sloupci: každý řádek jako karta */
+  .prose .tbl--cards { overflow: visible; border: 0; border-radius: 0; }
+  .prose .tbl--cards table, .prose .tbl--cards tbody, .prose .tbl--cards tr, .prose .tbl--cards td { display: block; width: 100%; }
+  .prose .tbl--cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .prose .tbl--cards tr { border: 1px solid var(--line); border-radius: 16px; padding: 2px 16px 6px; background: var(--paper); }
+  .prose .tbl--cards tr + tr { margin-top: 10px; }
+  .prose .tbl--cards tr:nth-child(even) td { background: none; }
+  .prose .tbl--cards td { display: grid; grid-template-columns: minmax(0, 44%) minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15.5px; }
+  .prose .tbl--cards td::before { content: attr(data-label); font-size: 13.5px; font-weight: 600; color: var(--muted); }
+  .prose .tbl--cards td:first-child { display: block; border-top: 0; padding: 12px 0 8px; font: 800 18px/1.2 var(--display); }
+  .prose .tbl--cards td:first-child::before, .prose .tbl--cards td.tbl__wide::before { content: none; }
+  .prose .tbl--cards td.tbl__wide { display: block; color: var(--muted); }
 }
