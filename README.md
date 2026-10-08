@@ -34,7 +34,7 @@ node tools/shot.mjs <url> <out.png> [w] [h] [full]
 ## Nasazení na Vercel
 
 1. Vercel → Add New Project → import repa `martindragusinec-glitch/prooze`. Framework: **Other**. Build i výstup se načtou z `vercel.json` (`python3 tools/build.py` → `dist/`).
-2. Settings → Domains → `prooze.cz` + `www.prooze.cz`, DNS u WEDOSu podle Vercelu. Po připojení **Redeploy** (canonical, OG a sitemap se přepíšou na prooze.cz).
+2. Domény (8. 10. 2026): hlavní `www.prooze.cz`, `prooze.cz` přesměrovává na www. DNS u WEDOSu: A `@` → 216.198.79.1, CNAME `www` → 54ac666fbf12ced4.vercel-dns-017.com, MX + SPF Seznamu beze změny. Canonical, OG a sitemap bere build z `src/site.json` (`domain`).
 3. Staré adresy `/cs/...` se přesměrují 301 (`vercel.json`).
 4. Měření: `gtm_id` v `src/site.json` → build přidá cookie lištu (Consent Mode v2) a GTM. Konverze = dataLayer `form_sent` (`form: poptavka | zavolat`), dále `cta_click`, `contact_click`, `begin_form`, `form_step`, `view_form`; stránka `/dekujeme/` (noindex).
 

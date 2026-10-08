@@ -23,12 +23,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 SITE = json.loads((SRC / "site.json").read_text())
-# Doména pro canonical, OG a sitemap: SITE_URL > produkční doména projektu na Vercelu > site.json.
-# VERCEL_PROJECT_PRODUCTION_URL je nejkratší vlastní doména projektu, bez ní adresa *.vercel.app.
+# Doména pro canonical, OG a sitemap: SITE_URL > site.json (produkční doména).
+# Náhledová nasazení Vercelu (VERCEL_ENV=preview) dostanou vlastní adresu, ať náhledy nesdílí canonical s produkcí.
 if os.environ.get("SITE_URL"):
     SITE["domain"] = os.environ["SITE_URL"].rstrip("/")
-elif os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"):
-    SITE["domain"] = "https://" + os.environ["VERCEL_PROJECT_PRODUCTION_URL"].rstrip("/")
+elif os.environ.get("VERCEL_ENV") == "preview" and os.environ.get("VERCEL_URL"):
+    SITE["domain"] = "https://" + os.environ["VERCEL_URL"].rstrip("/")
 PAGES = ["index", "strechy", "fotovoltaika", "fotovoltaika-rodinne-domy", "fotovoltaika-firmy", "dotace", "o-nas", "kontakt", "ochrana-osobnich-udaju", "dekujeme", "404"]
 SLUG = {"uvod": "index"}
 ASSETS = ["site.css", "site.js", "motion.js", "lp-consent.js", "fonts", "brand", "brands", "img/web", "img/swatch", "img/og.png", "img/og.jpg", "img/og-prooze-2026.jpg", "video/frames",
