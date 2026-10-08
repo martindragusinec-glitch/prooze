@@ -90,6 +90,45 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); burger.focus(); } });
   }
 
+
+  /* Poradna: filtr témat, ukazatel čtení, aktivní položka v obsahu */
+  const chipsBox = document.querySelector('[data-bchips]');
+  if (chipsBox) {
+    const cards = [...document.querySelectorAll('.blog .bcard')];
+    const pickKat = (kat) => {
+      chipsBox.querySelectorAll('.bchip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.kat === kat)));
+      cards.forEach((c) => { c.hidden = !!kat && c.dataset.kat !== kat; });
+    };
+    chipsBox.addEventListener('click', (e) => { const c = e.target.closest('.bchip'); if (c) pickKat(c.dataset.kat); });
+    const h = location.hash.replace('#kat-', '');
+    if (h && chipsBox.querySelector(`[data-kat="${h}"]`)) pickKat(h);
+  }
+  const post = document.querySelector('[data-post]');
+  if (post) {
+    const bar = post.querySelector('[data-progress]');
+    const prose = post.querySelector('.prose');
+    let ticking = false;
+    const read = () => {
+      ticking = false;
+      const r = prose.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (innerHeight * 0.35 - r.top) / r.height));
+      bar.style.setProperty('--read', p.toFixed(3));
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(read); } }, { passive: true });
+    read();
+    const links = [...post.querySelectorAll('[data-toc] a')];
+    if (links.length && 'IntersectionObserver' in window) {
+      const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (e.isIntersecting) { links.forEach((a) => a.classList.remove('is-on')); const a = byId.get(e.target.id); if (a) a.classList.add('is-on'); }
+      }), { rootMargin: '-20% 0px -70% 0px' });
+      prose.querySelectorAll('h2[id]').forEach((h2) => io.observe(h2));
+    }
+    // poměrová měřící událost: dočtení článku
+    let sent = false;
+    addEventListener('scroll', () => { if (!sent && bar.style.getPropertyValue('--read') >= 0.9) { sent = true; dl('blog_read', { clanek: location.pathname }); } }, { passive: true });
+  }
+
   /* CTA měření */
   document.addEventListener('click', (e) => {
     const a = e.target.closest('[data-cta], [data-pick]');
@@ -222,6 +261,10 @@
     const i = f.indexOf(current);
     if (i > 0) show(f[i - 1]);
   });
+
+  /* Místní stránky: obec stavby předvyplněná podle města */
+  const obec = document.querySelector('[data-obec]');
+  if (obec && obec.dataset.obec && quiz.elements.psc && !quiz.elements.psc.value) quiz.elements.psc.value = obec.dataset.obec;
 
   /* Předvyplnění poptávky (hero, CTA, kalkulačka, konfigurátor) a skok na 2. krok */
   const prefill = (sluzba, extra = {}) => {

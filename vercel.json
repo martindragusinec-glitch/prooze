@@ -6,6 +6,11 @@
   "trailingSlash": true,
   "redirects": [
     {
+      "source": "/poradna(/?)",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
       "source": "/cs/fotovoltaika-pro-domacnosti(.*)",
       "destination": "/fotovoltaika/rodinne-domy/",
       "permanent": true

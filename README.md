@@ -63,13 +63,29 @@ OG obrázek: `assets/img/og-prooze-2026.jpg` (1200×630). Po změně ověřit v 
 - **Vrstvu po vrstvě** (`src/partials/skladba.html`, úvod + /strechy/): stavba střechy jako 80 snímků `assets/video/frames/000–079.webp` (960 px, 5 MB, z 15s videa: krov → fólie a latě → tašky → panely) kreslených do canvasu podle scrollu (`assets/motion.js`, initStory); načítají se postupně (každý 8., 4., 2., zbytek). Spolehlivější než převíjení videa (Safari, slabší PC). Zdrojové snímky stejného domu `assets/video/src/f0–f3*.png` (GPT Image 2.5, úpravy z jednoho výchozího snímku) a přechody FLUX 3 Video se start/end snímkem; spojení a kódování přes ffmpeg s klíčovým snímkem každé 3 snímky (plynulé převíjení). Plakát `stavba-start.jpg`, bez animací se ukáže `stavba-hotovo.jpg`.
 - **Servis a monitoring** (`src/partials/servis.html`): ukázka aplikace je ilustrační (není to konkrétní aplikace výrobce).
 
+## Poradna (blog)
+
+- Články: `src/blog/<slug>.html` (hlavička = HTML komentář: title, description, h1, perex, kategorie, obrazek, datum, poradi, stitek). Soubor s `_` na začátku se nepublikuje (rozpracovaný).
+- Zadání pro psaní: `research/blog-brief.md`, klíčová slova a plán 15 článků: `research/klicova-slova.md` + `.csv` (našeptávače Seznamu a Googlu).
+- Konverzní prvky v textu: `{{cta:strecha|fve|oboji|dotace|firma|zavolat}}`, `{{kalkulacka}}`. Sekce „Z poradny“ na stránkách: `{{blog:latest}}` / `{{blog:latest:kategorie}}`.
+- Kontrola: `python3 tools/build.py && python3 tools/blog_qa.py` (délky title/description, CTA, FAQ, zdroje, mrtvé odkazy, předložky bez nbsp).
+- OG obrázky článků (bez AI, z fotky + nadpisu): `node tools/og_blog.mjs` → `assets/img/og/blog-<slug>.jpg`.
+
+## Místní stránky (/strechy/<město>/)
+
+- Data: `src/mesta.json` – 8 míst (Slaný, Kladno, Louny, Rakovník, Mělník, Kralupy n. V., Beroun, Praha-západ): tvary názvu, vzdálenost a čas ze sídla po silnici (OSRM), trasa pro mapu, roční výroba z 1 kWp (PVGIS 5.2, jih, sklon 35°, ztráty 14 %), okolní obce (OpenStreetMap), městské památkové zóny (seznam MPZ ČR na Wikipedii).
+- Generuje `tools/build.py` (`mesto_page`): hero s mapou trasy ze Slaného, služby, „Co je dobré vědět“ (výroba FVE, distributor, památková zóna, dojezd), okolní obce, místní FAQ (FAQPage + Service/areaServed schema), formulář s předvyplněnou obcí.
+- Mapa všech míst je i na `/kontakt/#kde-jezdime`, odkazy v patičce. Nové místo = přidat záznam do `mesta.json` (trasu a PVGIS stáhnout stejně jako u ostatních).
+- Výběr měst podle hledanosti (Seznam): „střechy kladno“, „pokrývači mělník/kladno/beroun“, „klempíři praha západ“ apod.
+
 ## DOPLNIT / OVĚŘIT před spuštěním
 
 Sliby a fakta, která jsem napsal a musí potvrdit PROOZE:
 
 - [ ] „Pevná cena před podpisem“, „vícepráce jen s vaším souhlasem“, „termín písemně ve smlouvě“
 - [ ] „Panely kotvíme podle pokynů výrobce krytiny, záruka střechy zůstane platná“, „panely montují pokrývači“
-- [ ] Oblast působnosti (FAQ: „po celých Středních Čechách a do Prahy“ je odhad)
+- [ ] Oblast působnosti (FAQ: „po celých Středních Čechách a do Prahy“ je odhad). Místní stránky tvrdí, že jezdíme do 8 míst včetně Loun (Ústecký kraj) a Berouna (53 km) – potvrdit s klientem, případně místa ubrat v `src/mesta.json`
+- [ ] Články Poradny: ceny trhu citují ceníky konkurence (odkazy ve Zdrojích, např. u „Kolik stojí fotovoltaika“) – klient je může chtít nahradit vlastními čísly
 - [ ] Záruka na práci (střechy), délka výměny krytiny
 - [ ] Zda děláte zateplení střech (vazba na NZÚ 3 500 Kč/m² úvěr a NZÚ Light 2 000 Kč/m²)
 - [ ] Výrobci panelů/střídačů (Longi, Trina, Aiko, GoodWe, SolarEdge, Solax převzato ze starého webu)
