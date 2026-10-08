@@ -85,7 +85,7 @@ Sliby a fakta, která jsem napsal a musí potvrdit PROOZE:
 - [ ] „Pevná cena před podpisem“, „vícepráce jen s vaším souhlasem“, „termín písemně ve smlouvě“
 - [ ] „Panely kotvíme podle pokynů výrobce krytiny, záruka střechy zůstane platná“, „panely montují pokrývači“
 - [ ] Oblast působnosti (FAQ: „po celých Středních Čechách a do Prahy“ je odhad). Místní stránky tvrdí, že jezdíme do 8 míst včetně Loun (Ústecký kraj) a Berouna (53 km) – potvrdit s klientem, případně místa ubrat v `src/mesta.json`
-- [ ] Články Poradny: ceny trhu citují ceníky konkurence (odkazy ve Zdrojích, např. u „Kolik stojí fotovoltaika“) – klient je může chtít nahradit vlastními čísly
+- [x] Články Poradny necitují konkurenci (pokyn klienta 8. 10. 2026): ceny jsou „podle veřejných ceníků firem v oboru“, původní zdroje v `research/zdroje-ceniky-firem.md`
 - [ ] Záruka na práci (střechy), délka výměny krytiny
 - [ ] Zda děláte zateplení střech (vazba na NZÚ 3 500 Kč/m² úvěr a NZÚ Light 2 000 Kč/m²)
 - [ ] Výrobci panelů/střídačů (Longi, Trina, Aiko, GoodWe, SolarEdge, Solax převzato ze starého webu)

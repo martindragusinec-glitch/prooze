@@ -51,6 +51,7 @@ Další povolené prvky: `<div class="note"><b>Pozor:</b> …</div>`, `<ol>`, `<
 - Dotace 2026: běžné RD = bezúročný úvěr NZÚ (25 000 Kč/kWp + 15 000 Kč/kWh baterie, strop 400 000 Kč, baterie ≥ výkon, min. 3 kWp, třífázově, dům zkolaudovaný před 1. 1. 2023); NZÚ Light = přímá dotace pro seniory a nízkopříjmové (FVE s ohřevem vody 120 000 Kč, zateplení střechy 2 000 Kč/m²); samotná výměna krytiny dotaci nemá, zateplení střechy ano. Uveď „k říjnu 2026, podmínky ověřte“.
 - O PROOZE nepiš nic, co není na webu: žádné počty realizací, roky v oboru (jen „podnikáme od roku 2011“), recenze, certifikace. Nepiš „jsme nejlepší/nejlevnější“.
 - Žádné vymyšlené statistiky, citace ani zákazníky.
+- **Necitovat konkurenci** (pokrývačské firmy, dodavatelé a montážníci FVE, energetické firmy prodávající FVE, poptávkové portály s řemeslníky) – ani jménem v textu, ani odkazem ve Zdrojích. Ceny z jejich ceníků piš jako „podle veřejných ceníků firem v oboru“ a do Zdrojů dej obecný řádek bez odkazu. Původní URL patří do `research/zdroje-ceniky-firem.md`. Výrobci (Tondach/Wienerberger, Bramac/BMI, KM Beta, Satjam, Prefa, IKO, výrobci panelů a střídačů), úřady, zákony a média citovat lze.
 
 ## Tón a jazyk
 - Česky, vykáme, srozumitelně pro laika, konkrétně. Krátké věty. Odborný pojem hned vysvětli.
