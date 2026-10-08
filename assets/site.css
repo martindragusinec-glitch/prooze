@@ -1628,7 +1628,7 @@ html.menu-open .dock { transform: translateY(110%) !important; }
   /* tabulky se 3+ sloupci: každý řádek jako karta */
   .prose .tbl--cards { overflow: visible; border: 0; border-radius: 0; }
   .prose .tbl--cards table, .prose .tbl--cards tbody, .prose .tbl--cards tr, .prose .tbl--cards td { display: block; width: 100%; }
-  .prose .tbl--cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .prose .tbl--cards thead { display: none; }
   .prose .tbl--cards tr { border: 1px solid var(--line); border-radius: 16px; padding: 2px 16px 6px; background: var(--paper); }
   .prose .tbl--cards tr + tr { margin-top: 10px; }
   .prose .tbl--cards tr:nth-child(even) td { background: none; }

@@ -38,6 +38,16 @@ PRELOAD = ('<link rel="preload" as="image" type="image/webp" imagesrcset="{{root
            '{{root}}assets/img/web/hero-back-1920.webp 1920w, {{root}}assets/img/web/hero-back-2880.webp 2880w" imagesizes="100vw" fetchpriority="high">\n')
 
 
+_HASH = {}
+
+
+def asset_hash(rel):
+    if rel not in _HASH:
+        import hashlib
+        _HASH[rel] = hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
+    return _HASH[rel]
+
+
 def partial(name):
     return (SRC / "partials" / f"{name}.html").read_text()
 
@@ -175,6 +185,8 @@ def render(page, mode):
     html = html.replace("{{title}}", meta["title"]).replace("{{description}}", meta["description"])
     html = html.replace("{{nav}}", nav)
     html = html.replace("{{tone}}", meta.get("tone", "light")).replace("{{root}}", root)
+    # otisk obsahu u stylů a skriptů: po změně si prohlížeč (i z mezipaměti) stáhne novou verzi
+    html = re.sub(r'(assets/(?:site\.css|site\.js|motion\.js))"', lambda m: f'{m.group(1)}?v={asset_hash(m.group(1))}"', html)
     # cesty k assetům ve stránkách (assets/…) → s prefixem
     html = re.sub(r'(src|href|srcset|imagesrcset|poster|data-src)="assets/', lambda m: f'{m.group(1)}="{root}assets/', html)
     html = re.sub(r'(, )assets/', lambda m: f"{m.group(1)}{root}assets/", html)
