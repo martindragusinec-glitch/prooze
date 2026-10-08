@@ -94,14 +94,21 @@
   const steps = [...quiz.querySelectorAll('[data-step]')];
   const byName = Object.fromEntries(steps.map((s) => [s.dataset.step, s]));
   const count = quiz.querySelector('[data-count]');
-  const prog = quiz.querySelector('[data-prog]');
+  const segs = quiz.querySelector('[data-segs]');
+  const hint = quiz.querySelector('[data-hint]');
+  const timeEl = quiz.querySelector('[data-time]');
+  const summary = quiz.querySelector('[data-summary]');
   const back = quiz.querySelector('[data-back]');
   const choice = quiz.querySelector('[data-choice]');
   const err = quiz.querySelector('[data-err]');
   const labels = {
-    strecha: 'Střecha', fve: 'Fotovoltaika', oboji: 'Střecha + FVE',
-    'rodinny-dum': 'Rodinný dům', 'bytovy-dum': 'Bytový dům', firma: 'Firma', obec: 'Obec, jiné',
+    sluzba: { strecha: 'Střecha', fve: 'Fotovoltaika', oboji: 'Střecha + FVE' },
+    objekt: { 'rodinny-dum': 'Rodinný dům', 'bytovy-dum': 'Bytový dům', firma: 'Firma nebo hala', obec: 'Obec, jiné' },
+    strecha: { oprava: 'Zatéká', uprava: 'Výměna krytiny', rekonstrukce: 'Celá rekonstrukce', nova: 'Nová střecha' },
+    spotreba: { 'do-2000': 'Do 2 000 Kč', '2000-4000': '2 000–4 000 Kč', '4000-7000': '4 000–7 000 Kč', 'nad-7000': 'Víc nebo nevím' },
   };
+  const stepName = { sluzba: 'Služba', objekt: 'Stavba', strecha: 'Střecha', spotreba: 'Elektřina' };
+  const label = (n) => (labels[n] && labels[n][quiz.elements[n] && quiz.elements[n].value]) || '';
   const flow = () => {
     const s = quiz.elements.sluzba.value;
     if (s === 'fve') return ['sluzba', 'objekt', 'spotreba', 'kontakt'];
@@ -124,12 +131,24 @@
     const i = f.indexOf(name);
     const done = name === 'hotovo';
     count.textContent = done ? 'Hotovo' : `Krok ${i + 1} ${[2, 3, 4].includes(f.length) ? 'ze' : 'z'} ${f.length}`;
-    prog.style.width = done ? '100%' : `${((i + 1) / f.length) * 100}%`;
+    quiz.classList.toggle('is-done', done);
+    // segmenty průběhu
+    segs.innerHTML = f.map((n, k) => `<li class="${done || k < i ? 'is-done' : k === i ? 'is-on' : ''}"></li>`).join('');
+    const left = done ? 0 : f.length - i - 1;
+    timeEl.textContent = done ? 'hotovo' : left === 0 ? 'poslední krok' : `zbývá asi ${Math.max(10, left * 8)} s`;
     back.hidden = i <= 0 || done;
-    const picked = ['sluzba', 'objekt'].map((n) => labels[quiz.elements[n].value]).filter(Boolean);
-    choice.textContent = done ? '' : (picked.length && i > 0 ? `Vaše volba: ${picked.join(', ')}` : 'Zabere to půl minuty a nic neplatíte.');
+    hint.hidden = i > 0 || done;
+    // štítky s odpověďmi z předchozích kroků, kliknutím se k nim vrátíte
+    const prev = done ? [] : f.slice(0, Math.max(0, i)).filter((n) => isChoice(n) && answered(n));
+    choice.innerHTML = prev.map((n) => `<button type="button" class="quiz__ans" data-goto="${n}"><span>${stepName[n]}</span>${label(n)}<svg aria-hidden="true"><use href="#i-edit"/></svg></button>`).join('');
+    if (done && summary) {
+      summary.innerHTML = f.filter((n) => isChoice(n) && answered(n)).map((n) => `<li><span>${stepName[n]}</span><b>${label(n)}</b></li>`).join('');
+    }
     syncNext();
     if (focus) {
+      // když začátek formuláře zajel pod hlavičku (hlavně mobil), srovnat ho do výřezu
+      const r = quiz.getBoundingClientRect();
+      if (r.top < 60 || r.top > innerHeight * 0.55) quiz.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
       const el = byName[name];
       const target = done ? el : el.querySelector('input:checked, input');
       if (target) target.focus({ preventScroll: true });
@@ -162,6 +181,10 @@
     if (e.key === 'Enter' && e.target.type === 'radio') { e.preventDefault(); if (answered(current)) next(); }
   });
   if (nextBtn) nextBtn.addEventListener('click', () => { if (answered(current)) next(); });
+  choice.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-goto]');
+    if (b) show(b.dataset.goto);
+  });
   back.addEventListener('click', () => {
     const f = flow();
     const i = f.indexOf(current);
