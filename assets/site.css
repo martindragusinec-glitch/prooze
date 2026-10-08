@@ -1254,3 +1254,31 @@ a.ccard:hover { transform: translateY(-3px); }
   .story--static .story__steps li { padding-left: 16px; border-left: 3px solid var(--sun-deep); }
   .story--static .story__sub { display: block; }
 }
+
+/* ================= Hlavička: plovoucí karta po odscrollování, přizpůsobí se pozadí ================= */
+.top { left: 0; right: 0; margin-inline: auto; width: calc(100% - 24px); max-width: 2400px; border: 1px solid transparent;
+  transition: max-width .55s var(--ease), height .35s var(--ease), top .35s var(--ease), border-radius .35s, background-color .3s, border-color .3s, box-shadow .3s, color .3s; }
+.top .top__in { transition: padding .35s var(--ease); }
+.top.is-scrolled { max-width: 1180px; height: 64px; border-radius: 22px; background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
+  border-color: rgba(15, 58, 46, .09); box-shadow: 0 20px 44px -24px rgba(15, 58, 46, .5); }
+.top.is-scrolled .top__in { padding-inline: 22px 9px; }
+.top.is-scrolled .top__logo svg { height: 30px; width: 142px; }
+.top.is-scrolled .top__cta { min-height: 44px; }
+.top.is-scrolled .top__nav { gap: 22px; }
+.top.is-scrolled.is-dark { background: rgba(9, 38, 30, .8); border-color: rgba(255, 255, 255, .14); color: #fff; box-shadow: 0 20px 44px -24px rgba(0, 0, 0, .7); }
+.top.is-scrolled.is-dark .top__logo { color: #fff; --logo-pv: var(--sun); }
+.top.is-scrolled.is-dark .top__cta { background: var(--sun); color: var(--pine); }
+.top.is-scrolled.is-dark .top__cta:hover { background: var(--sun-deep); }
+.top.is-scrolled.is-dark .top__burger { background: #fff; }
+.top.is-scrolled.is-dark .top__burger i { background: var(--pine); }
+.top.is-open { max-width: 1180px; color: var(--pine); background: #fff; border-color: rgba(15, 58, 46, .09); }
+.top.is-open .top__logo { color: var(--pine); --logo-pv: var(--sun-deep); }
+@media (max-width: 860px) {
+  .top { width: calc(100% - 16px); }
+  .top.is-scrolled { max-width: none; height: 60px; border-radius: 18px; }
+  .top.is-scrolled .top__in { padding-inline: 14px 7px; }
+  .top.is-scrolled .top__logo svg { height: 26px; width: 122px; }
+  .top.is-scrolled .top__tel, .top.is-scrolled .top__burger { width: 44px; height: 44px; }
+  .top.is-scrolled .top__burger i:first-of-type { top: 17px; } .top.is-scrolled .top__burger i:last-of-type { top: 25px; }
+  .top.is-open { height: auto; }
+}
