@@ -30,8 +30,15 @@
     top.classList.toggle('is-scrolled', y > 8);
     if (dock) dock.classList.toggle('is-on', y > (hero ? hero.offsetHeight * .7 : 400) && !formVisible);
   };
-  if (form && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => { formVisible = e.isIntersecting; onScroll(); }, { threshold: .15 }).observe(form);
+  // mobilní lišta se schová nad formulářem a během videa „Vrstvu po vrstvě“
+  const hideDockOver = new Set();
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) hideDockOver.add(e.target); else hideDockOver.delete(e.target); });
+      formVisible = hideDockOver.size > 0;
+      onScroll();
+    }, { threshold: .15 });
+    [form, document.querySelector('[data-story]')].filter(Boolean).forEach((el) => io.observe(el));
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();

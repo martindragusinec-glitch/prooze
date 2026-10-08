@@ -31,7 +31,7 @@ elif os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"):
     SITE["domain"] = "https://" + os.environ["VERCEL_PROJECT_PRODUCTION_URL"].rstrip("/")
 PAGES = ["index", "strechy", "fotovoltaika", "fotovoltaika-rodinne-domy", "fotovoltaika-firmy", "dotace", "o-nas", "kontakt", "ochrana-osobnich-udaju", "dekujeme", "404"]
 SLUG = {"uvod": "index"}
-ASSETS = ["site.css", "site.js", "motion.js", "lp-consent.js", "fonts", "brand", "brands", "img/web", "img/swatch", "img/og.png", "img/og.jpg",
+ASSETS = ["site.css", "site.js", "motion.js", "lp-consent.js", "fonts", "brand", "brands", "img/web", "img/swatch", "img/og.png", "img/og.jpg", "video/stavba.mp4", "video/stavba-start.jpg", "video/stavba-hotovo.jpg",
           "old/partner-aiko.png", "old/partner-goodwe.png", "old/partner-longi.svg", "old/partner-solaredge.svg", "old/partner-solax.png",
           "old/partner-trina.svg", "old/pavel-koci-ceo.jpg"]
 PRELOAD = ('<link rel="preload" as="image" type="image/webp" imagesrcset="{{root}}assets/img/web/hero-back-1280.webp 1280w, '
@@ -142,7 +142,7 @@ def render(page, mode):
     html = html.replace("{{nav}}", nav)
     html = html.replace("{{tone}}", meta.get("tone", "light")).replace("{{root}}", root)
     # cesty k assetům ve stránkách (assets/…) → s prefixem
-    html = re.sub(r'(src|href|srcset|imagesrcset)="assets/', lambda m: f'{m.group(1)}="{root}assets/', html)
+    html = re.sub(r'(src|href|srcset|imagesrcset|poster|data-src)="assets/', lambda m: f'{m.group(1)}="{root}assets/', html)
     html = re.sub(r'(, )assets/', lambda m: f"{m.group(1)}{root}assets/", html)
     if mode == "preview":
         # náhled nemá serverovou funkci: mapa jako zástupný blok, formulář v ukázkovém režimu

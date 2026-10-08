@@ -25,7 +25,15 @@ http.createServer((req, res) => {
     if (err) {
       return fs.readFile(path.join(root, '404.html'), (e2, nf) => { res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' }); res.end(e2 ? '404' : nf); });
     }
-    res.writeHead(200, { 'Content-Type': types[path.extname(f).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+    const type = types[path.extname(f).toLowerCase()] || 'application/octet-stream';
+    // Range requesty: bez nich prohlížeč neumí převíjet video (scrubování scrollem)
+    const range = /bytes=(\d*)-(\d*)/.exec(req.headers.range || '');
+    if (range) {
+      const start = range[1] ? +range[1] : 0, end = range[2] ? Math.min(+range[2], data.length - 1) : data.length - 1;
+      res.writeHead(206, { 'Content-Type': type, 'Content-Range': `bytes ${start}-${end}/${data.length}`, 'Accept-Ranges': 'bytes', 'Content-Length': end - start + 1, 'Cache-Control': 'no-store' });
+      return res.end(data.subarray(start, end + 1));
+    }
+    res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Cache-Control': 'no-store' });
     res.end(data);
   });
 }).listen(port, () => console.log('PROOZE: http://localhost:' + port));
