@@ -684,8 +684,7 @@ button, input { font: inherit; color: inherit; }
 .flow__i h3 { font: 800 24px/1.1 var(--display); letter-spacing: -.012em; }
 .flow__i p { color: var(--muted); font-size: 16.5px; }
 .flow__i:nth-child(1) p { color: var(--pine); }
-.flow__i:not(:last-child)::after { content: ''; position: absolute; z-index: 1; right: -15px; top: 46px; width: 14px; height: 14px; border-top: 2.5px solid var(--pine); border-right: 2.5px solid var(--pine); transform: rotate(45deg); }
-@media (max-width: 1080px) { .flow { grid-template-columns: 1fr 1fr; } .flow__i::after { display: none; } }
+@media (max-width: 1080px) { .flow { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .flow { grid-template-columns: 1fr; } }
 
 /* Dotace: srovnání */
@@ -702,16 +701,16 @@ button, input { font: inherit; color: inherit; }
 @media (max-width: 860px) { .cmp { grid-template-columns: 1fr; } .cmp__card dl div { grid-template-columns: 1fr; gap: 2px; } }
 
 /* O nás */
-.story__in { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 100px); align-items: start; }
-.story__lead .h2 { position: sticky; top: calc(var(--top-h) + 40px); }
-.story__txt { display: grid; gap: 18px; font-size: clamp(18px, 1.3vw, 20px); }
-.story__txt p { color: var(--muted); }
-.story__txt p:first-child { color: var(--pine); font-size: 1.15em; }
+.about__in { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 100px); align-items: start; }
+.about__lead .h2 { position: sticky; top: calc(var(--top-h) + 40px); }
+.about__txt { display: grid; gap: 18px; font-size: clamp(18px, 1.3vw, 20px); }
+.about__txt p { color: var(--muted); }
+.about__txt p:first-child { color: var(--pine); font-size: 1.15em; }
 .person { display: inline-flex; align-items: center; gap: 16px; text-decoration: none; margin-top: 10px; padding: 12px 22px 12px 12px; border-radius: 18px; background: var(--mist); justify-self: start; }
 .person img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
 .person span { display: grid; font-size: 15px; color: var(--muted); }
 .person strong { font: 800 22px/1.2 var(--display); color: var(--pine); }
-@media (max-width: 860px) { .story__in { grid-template-columns: 1fr; } .story__lead .h2 { position: static; } }
+@media (max-width: 860px) { .about__in { grid-template-columns: 1fr; } .about__lead .h2 { position: static; } }
 .facts { background: var(--pine); color: #fff; padding-block: clamp(48px, 6vw, 88px); }
 .facts__in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 .facts__in > div { border-top: 2px solid var(--sun); padding-top: 18px; }
