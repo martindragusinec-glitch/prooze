@@ -31,10 +31,25 @@ node tools/shot.mjs <url> <out.png> [w] [h] [full]
 - Hero: fotka v zaobleném rámu, obří nápis „STŘECHY A FVE“ zajíždí za střechu (výřez popředí), při načtení vyjede zpoza hřebene.
 - Copy: pozicování „Pokrývači, kteří umí i fotovoltaiku“ místo „pořádně, rychle, levně“.
 
+## Nasazení na Vercel
+
+1. Vercel → Add New Project → import repa `martindragusinec-glitch/prooze`. Framework: **Other**. Build i výstup se načtou z `vercel.json` (`python3 tools/build.py` → `dist/`), nic dalšího nenastavovat.
+2. Settings → Environment Variables (Production):
+   - `RESEND_API_KEY` – klíč z resend.com (v Resendu ověřit doménu prooze.cz, jinak e-maily neodejdou)
+   - `POPTAVKY_FROM` – např. `Web PROOZE <web@prooze.cz>`
+   - `POPTAVKY_TO` – kam chodí poptávky, výchozí `info@prooze.cz` (víc adres oddělte čárkou)
+   - volitelně `POPTAVKY_WEBHOOK` – Make/CRM, dostane poptávku jako JSON
+   - volitelně `SITE_URL` – vynutí doménu pro canonical/OG/sitemap; jinak se bere produkční doména projektu (po připojení prooze.cz automaticky ta)
+3. Settings → Domains → přidat `prooze.cz` a `www.prooze.cz` a nastavit DNS podle Vercelu. **Po připojení domény spustit Redeploy**, aby se canonical, OG obrázek a sitemap přepsaly na prooze.cz.
+4. Staré adresy `/cs/...` se přesměrují 301 na nové stránky (`vercel.json`).
+5. Měření: do `src/site.json` doplnit `gtm_id` → build sám přidá cookie lištu (Consent Mode v2) a GTM. Konverze = dataLayer `form_sent` (`form: poptavka | zavolat`), dále `cta_click`, `contact_click`, `begin_form`, `form_step`, `view_form`, a stránka `/dekujeme/` (noindex).
+
+OG obrázek: `assets/img/og.jpg` (1200×630, 100 kB), zdroj `brand/bannery/og-1200x630`. Ověření po nasazení: https://developers.facebook.com/tools/debug/ (Scrape Again).
+
 ## Interaktivní prvky
 
 - **Kalkulačka úspory** (`src/partials/calc.html`, `#kalkulacka`): měsíční platba → doporučená FVE (kWp + baterie stejné kapacity), roční úspora, bezúročný úvěr NZÚ. Předpoklady: 6 Kč/kWh, 1 kWp ≈ 1 000 kWh/rok, úspora až 70 %, panel 450 Wp, úvěr 25 000 Kč/kWp + 15 000 Kč/kWh, strop 400 000 Kč. CTA předvyplní poptávku (služba FVE, pásmo spotřeby, poznámka).
-- **Konfigurátor** (`src/partials/konfig.html`, stránka `/konfigurator/` + úvod): tvar střechy, krytina, barva, panely 8/14/22, baterie, wallbox, zateplení → 3D model domu (`assets/konfig3d.js`, Three.js r170 vendorovaný v `assets/vendor/three/`, načítá se líně, otáčení myší/prstem, textury krytin generované v kódu). Bez WebGL zůstane SVG ilustrace. Počet panelů určuje skutečné místo na střeše (valbová pojme méně). CTA vloží konfiguraci do poznámky poptávky.
+- **Konfigurátor (odložený, mimo build)** (`src/partials/konfig.html`, stránka v `src/_odlozene/`, stránka `/konfigurator/` + úvod): tvar střechy, krytina, barva, panely 8/14/22, baterie, wallbox, zateplení → 3D model domu (`assets/konfig3d.js`, Three.js r170 vendorovaný v `assets/vendor/three/`, načítá se líně, otáčení myší/prstem, textury krytin generované v kódu). Bez WebGL zůstane SVG ilustrace. Počet panelů určuje skutečné místo na střeše (valbová pojme méně). CTA vloží konfiguraci do poznámky poptávky.
 - **Servis a monitoring** (`src/partials/servis.html`): ukázka aplikace je ilustrační (není to konkrétní aplikace výrobce).
 
 ## DOPLNIT / OVĚŘIT před spuštěním

@@ -15,6 +15,7 @@ Nastavení webu (doména, GTM, endpoint formuláře, kontakty) je v src/site.jso
 import datetime
 import html as htmlmod
 import json
+import os
 import re
 import shutil
 from pathlib import Path
@@ -22,9 +23,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 SITE = json.loads((SRC / "site.json").read_text())
+# Doména pro canonical, OG a sitemap: SITE_URL > produkční doména projektu na Vercelu > site.json.
+# VERCEL_PROJECT_PRODUCTION_URL je nejkratší vlastní doména projektu, bez ní adresa *.vercel.app.
+if os.environ.get("SITE_URL"):
+    SITE["domain"] = os.environ["SITE_URL"].rstrip("/")
+elif os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"):
+    SITE["domain"] = "https://" + os.environ["VERCEL_PROJECT_PRODUCTION_URL"].rstrip("/")
 PAGES = ["index", "strechy", "fotovoltaika", "fotovoltaika-rodinne-domy", "fotovoltaika-firmy", "dotace", "o-nas", "kontakt", "ochrana-osobnich-udaju", "dekujeme", "404"]
 SLUG = {"uvod": "index"}
-ASSETS = ["site.css", "site.js", "lp-consent.js", "fonts", "brand", "brands", "img/web", "img/swatch", "img/og.png",
+ASSETS = ["site.css", "site.js", "lp-consent.js", "fonts", "brand", "brands", "img/web", "img/swatch", "img/og.png", "img/og.jpg",
           "old/partner-aiko.png", "old/partner-goodwe.png", "old/partner-longi.svg", "old/partner-solaredge.svg", "old/partner-solax.png",
           "old/partner-trina.svg", "old/pavel-koci-ceo.jpg"]
 PRELOAD = ('<link rel="preload" as="image" type="image/webp" imagesrcset="{{root}}assets/img/web/hero-back-1280.webp 1280w, '
