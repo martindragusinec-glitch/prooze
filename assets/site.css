@@ -1107,49 +1107,47 @@ a.ccard:hover { transform: translateY(-3px); }
 @keyframes mq { to { transform: translateX(-100%); } }
 @media (max-width: 760px) { .trust__in { grid-template-columns: 1fr; gap: 14px; padding-right: 0; } .trust__track li { width: 120px; height: 56px; } }
 
-/* ================= Vrstvu po vrstvě: video řízené scrollem ================= */
-.story { position: relative; height: 520vh; }
-.story__pin { position: sticky; top: 0; height: 100svh; padding: 12px; }
-.story__frame { position: relative; height: 100%; border-radius: 28px; overflow: hidden; isolation: isolate; background: #DCE3E6; }
-.story__video, .story__end { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
-.story__end { display: none; }
-.story__shade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(0deg, rgba(6, 30, 23, .55) 0%, rgba(6, 30, 23, 0) 34%); }
-.story-wrap { padding-top: var(--sec); }
-.story__head { display: grid; gap: 14px; justify-items: center; text-align: center; margin-bottom: clamp(20px, 3vw, 36px); }
-.story__card { position: absolute; z-index: 2; left: clamp(16px, 4.2vw, 64px); bottom: clamp(16px, 4vw, 56px); width: min(440px, calc(100% - 32px)); padding: 22px 24px 24px; border-radius: 22px; background: rgba(255, 255, 255, .95); backdrop-filter: blur(8px); box-shadow: 0 24px 60px -30px rgba(6, 30, 23, .6); }
-.story__bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px; }
-.story__bar li { height: 4px; border-radius: 4px; background: var(--mist); overflow: hidden; }
-.story__bar i { display: block; height: 100%; background: var(--pine); transform: scaleX(0); transform-origin: 0 50%; }
-.story__steps { display: grid; }
-.story__steps li { grid-area: 1 / 1; display: grid; gap: 6px; align-content: start; opacity: 0; transform: translateY(10px); transition: opacity .35s ease, transform .45s var(--ease); pointer-events: none; }
-.story__steps li.is-on { opacity: 1; transform: none; pointer-events: auto; }
-.story__n { font-size: 13px; font-weight: 700; color: var(--muted); }
-.story__steps h3 { font: 800 clamp(24px, 2vw, 30px)/1.1 var(--display); letter-spacing: -.015em; }
-.story__steps p { color: var(--muted); font-size: 16px; }
-.story__kwh { position: absolute; z-index: 2; right: clamp(16px, 4.2vw, 64px); bottom: clamp(16px, 4vw, 56px); display: grid; gap: 2px; padding: 16px 20px; border-radius: 20px; background: var(--pine); color: #fff; opacity: 0; box-shadow: 0 18px 40px -20px rgba(6, 30, 23, .7); }
-.story__kwh b { font: 800 clamp(28px, 2.6vw, 40px)/1 var(--display); color: var(--sun); letter-spacing: -.02em; }
-.story__kwh span { font-size: 15px; color: rgba(255, 255, 255, .85); }
-@media (max-width: 860px) {
-  .story { height: 460vh; }
-  .story__pin { padding: 8px; }
-  .story__frame { border-radius: 22px; }
-  .story__video, .story__end { object-position: 46% 50%; }
-  .story__head { justify-items: start; text-align: left; }
-  .story__card { left: 10px; right: 10px; bottom: 10px; width: auto; padding: 16px 18px 18px; }
-  .story__steps p { font-size: 15px; }
-  .story__kwh { top: auto; bottom: 200px; right: 10px; padding: 10px 14px; }
-  .story__kwh b { font-size: 24px; }
+/* ================= Vrstvu po vrstvě: sekvence snímků řízená scrollem ================= */
+.story { position: relative; height: 420vh; background: var(--mist); }
+.story__pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; padding-top: calc(var(--top-h) + 12px); }
+.story__in { display: grid; grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); gap: clamp(28px, 4vw, 72px); align-items: center; }
+.story__h { font: 800 clamp(44px, 5.2vw, 80px)/.95 var(--display); letter-spacing: -.035em; }
+.story__sub { margin-top: 14px; color: var(--muted); font-size: clamp(17px, 1.3vw, 20px); max-width: 36ch; }
+.story__steps { margin-top: clamp(22px, 3vh, 36px); display: grid; }
+.story__steps li { display: grid; grid-template-rows: auto 0fr; padding: 10px 0 10px 22px; border-left: 3px solid var(--line); opacity: .45; transition: grid-template-rows .45s var(--ease), border-color .3s, opacity .3s; }
+.story__steps h3 { font: 800 clamp(19px, 1.6vw, 24px)/1.15 var(--display); letter-spacing: -.012em; display: flex; align-items: center; gap: 10px; }
+.story__steps p { overflow: hidden; color: var(--muted); font-size: 16.5px; max-width: 42ch; }
+.story__steps li.is-on { grid-template-rows: auto 1fr; border-color: var(--pine); opacity: 1; }
+.story__steps li.is-on p { padding-top: 6px; }
+.story__steps li.is-done { opacity: .75; border-color: var(--sun-deep); }
+.story__steps li.is-done h3::after { content: ''; width: 18px; height: 18px; border-radius: 6px; background: var(--sun) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='%230F3A2E' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat; }
+.story__stage { position: relative; aspect-ratio: 960 / 544; max-height: calc(100svh - var(--top-h) - 60px); border-radius: var(--r-photo); overflow: hidden; background: #DCE3E6; box-shadow: 0 30px 70px -36px rgba(15, 58, 46, .55); }
+.story__poster, .story__canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.story__canvas { opacity: 0; transition: opacity .3s; }
+.story.is-ready .story__canvas { opacity: 1; }
+.story__kwh { position: absolute; right: 16px; top: 16px; display: grid; gap: 2px; padding: 12px 16px; border-radius: 16px; background: var(--pine); color: #fff; opacity: 0; box-shadow: 0 18px 40px -20px rgba(15, 58, 46, .6); }
+.story__kwh b { font: 800 clamp(22px, 2vw, 30px)/1 var(--display); color: var(--sun); letter-spacing: -.02em; }
+.story__kwh span { font-size: 14px; color: rgba(255, 255, 255, .85); }
+.story__dots { display: none; }
+@media (max-width: 960px) {
+  .story { height: 380vh; }
+  .story__pin { align-items: center; padding-top: calc(var(--top-h) + 16px); padding-bottom: 16px; }
+  .story__in { grid-template-columns: 1fr; gap: 14px; align-content: center; align-items: start; }
+  .story__steps p { font-size: 17px; }
+  .story__stage { order: -1; max-height: 46svh; }
+  .story__h { font-size: clamp(32px, 9vw, 46px); }
+  .story__sub { display: none; }
+  .story__steps { margin-top: 10px; }
+  .story__steps li { display: none; border: 0; padding: 0; }
+  .story__steps li.is-on { display: grid; opacity: 1; }
+  .story__dots { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; gap: 6px; justify-content: center; }
+  .story__dots li { width: 22px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .55); transition: background-color .3s; }
+  .story__dots li.is-on { background: #fff; }
+  .story__kwh { right: 10px; top: 10px; padding: 8px 12px; }
 }
-/* bez animací: statický obrázek hotové střechy a všechny kroky pod sebou */
+/* bez animací: hotová střecha a všechny kroky */
 .story--static { height: auto; }
-.story--static .story__pin { position: static; height: auto; }
-.story--static .story__frame { height: auto; display: grid; background: var(--mist); }
-.story--static .story__video { display: none; }
-.story--static .story__end { display: block; position: relative; aspect-ratio: 16 / 9; height: auto; }
-.story--static .story__shade { bottom: auto; height: min(56vw, 760px); }
-.story--static .story__card { position: static; width: auto; margin: 16px; }
-.story--static .story__bar { display: none; }
-.story--static .story__steps { gap: 18px; }
-.story--static .story__steps li { grid-area: auto; opacity: 1; transform: none; }
-.story--static .story__kwh { opacity: 1; bottom: auto; top: calc(min(56vw, 760px) - 110px); }
+.story--static .story__pin { position: static; height: auto; padding-block: var(--sec); }
+.story--static .story__canvas { display: none; }
+.story--static .story__steps li { display: grid; grid-template-rows: auto 1fr; opacity: 1; }
 .mats__fact { font-size: 14.5px; font-weight: 600; color: var(--pine) !important; padding: 10px 12px; border-radius: 12px; background: var(--sun-soft); }

@@ -1,27 +1,24 @@
-<!-- VRSTVU PO VRSTVĚ: video stavby střechy řízené scrollem -->
-<section class="story-wrap" aria-labelledby="story-h">
-<header class="wrap story__head">
-  <h2 id="story-h" class="h2">Vrstvu po vrstvě</h2>
-  <p class="head__sub">Jak stavíme střechu, na které elektrárna vydrží desítky let. Posouvejte stránkou a&nbsp;sledujte stavbu.</p>
-</header>
-<div class="story" id="skladba" data-story>
+<!-- VRSTVU PO VRSTVĚ: stavba střechy jako sekvence snímků, převíjí se scrollem -->
+<section class="story" id="skladba" aria-labelledby="story-h" data-story data-frames="80">
   <div class="story__pin">
-    <div class="story__frame">
-      <video class="story__video" data-story-video muted playsinline preload="none" poster="assets/video/stavba-start.jpg" aria-hidden="true" data-src="assets/video/stavba.mp4"></video>
-      <img class="story__end" src="assets/video/stavba-hotovo.jpg" alt="" aria-hidden="true" loading="lazy">
-      <div class="story__shade" aria-hidden="true"></div>
-      <div class="story__card">
-        <ol class="story__bar" aria-hidden="true"><li><i></i></li><li><i></i></li><li><i></i></li><li><i></i></li><li><i></i></li></ol>
+    <div class="wrap story__in">
+      <div class="story__side">
+        <h2 id="story-h" class="story__h">Vrstvu po vrstvě</h2>
+        <p class="story__sub">Jak stavíme střechu, na které elektrárna vydrží desítky let.</p>
         <ol class="story__steps">
-          <li data-s="0"><span class="story__n">1/5</span><h3>Krov</h3><p>Nejdřív nosná konstrukce. Zkontrolujeme krokve a&nbsp;prohnuté nebo napadené vyměníme. Ponesou tašky, sníh i&nbsp;panely.</p></li>
-          <li data-s="1"><span class="story__n">2/5</span><h3>Fólie a&nbsp;latě</h3><p>Pojistná fólie zachytí vodu, kterou vítr zažene pod tašky. Kontralatě vytvoří větranou mezeru a&nbsp;latě pevný rošt.</p></li>
-          <li data-s="2"><span class="story__n">3/5</span><h3>Krytina</h3><p>Tašky klademe od okapu k&nbsp;hřebeni podle pokynů výrobce, včetně hřebenáčů a&nbsp;větracích prvků.</p></li>
-          <li data-s="3"><span class="story__n">4/5</span><h3>Háky a&nbsp;panely</h3><p>Střešní háky kotvíme do krokví a&nbsp;vedeme je pod taškami, bez vrtání skrz krytinu. Na ně přijdou lišty a&nbsp;panely.</p></li>
-          <li data-s="4"><span class="story__n">5/5</span><h3>Elektřina</h3><p>Hotovo. Střecha drží vodu venku a&nbsp;15 panelů o&nbsp;výkonu 6,75&nbsp;kWp vyrobí zhruba 6&nbsp;700&nbsp;kWh za rok.</p></li>
+          <li data-s="0"><h3>Krov</h3><p>Nejdřív nosná konstrukce. Zkontrolujeme krokve a&nbsp;prohnuté nebo napadené vyměníme. Ponesou tašky, sníh i&nbsp;panely.</p></li>
+          <li data-s="1"><h3>Fólie a&nbsp;latě</h3><p>Pojistná fólie zachytí vodu, kterou vítr zažene pod tašky. Kontralatě vytvoří větranou mezeru a&nbsp;latě pevný rošt.</p></li>
+          <li data-s="2"><h3>Krytina</h3><p>Tašky klademe od okapu k&nbsp;hřebeni podle pokynů výrobce, včetně hřebenáčů a&nbsp;větracích prvků.</p></li>
+          <li data-s="3"><h3>Háky a&nbsp;panely</h3><p>Střešní háky kotvíme do krokví a&nbsp;vedeme je pod taškami, bez vrtání skrz krytinu. Na ně přijdou lišty a&nbsp;panely.</p></li>
+          <li data-s="4"><h3>Elektřina</h3><p>Hotovo. Střecha drží vodu venku a&nbsp;15 panelů o&nbsp;výkonu 6,75&nbsp;kWp vyrobí zhruba 6&nbsp;700&nbsp;kWh za rok.</p></li>
         </ol>
       </div>
-      <p class="story__kwh" data-story-kwh><b>6,75&nbsp;kWp</b><span>≈ 6&nbsp;700&nbsp;kWh za rok</span></p>
+      <div class="story__stage">
+        <img class="story__poster" src="assets/video/frames/000.webp" alt="Stavba střechy rodinného domu od krovu přes fólii, latě a tašky až po solární panely" width="960" height="544" data-story-poster>
+        <canvas class="story__canvas" width="960" height="544" aria-hidden="true" data-story-canvas></canvas>
+        <p class="story__kwh" data-story-kwh><b>6,75&nbsp;kWp</b><span>≈ 6&nbsp;700&nbsp;kWh za rok</span></p>
+        <ol class="story__dots" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li></ol>
+      </div>
     </div>
   </div>
-</div>
 </section>

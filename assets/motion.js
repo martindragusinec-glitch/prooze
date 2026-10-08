@@ -10,59 +10,77 @@
   const ease = (t) => 1 - Math.pow(1 - t, 3);
   const seg = (p, start, dur) => ease(clamp((p - start) / dur));
 
-  /* ---------- Vrstvu po vrstvě: video stavby řízené scrollem ----------
-     p 0–1 přes výšku sekce → čas videa (15 s = 3 přechody po 5 s), kroky textu podle p. */
-  const KEYS = [[0, 0], [0.1, 0], [0.4, 5], [0.7, 10], [0.95, 15], [1, 15]];
-  const STEP_AT = [0, 0.12, 0.4, 0.7, 0.93];
-  const timeAt = (p) => {
-    for (let i = 1; i < KEYS.length; i++) {
-      const [p0, t0] = KEYS[i - 1], [p1, t1] = KEYS[i];
-      if (p <= p1) return t0 + (t1 - t0) * (p1 > p0 ? (p - p0) / (p1 - p0) : 0);
-    }
-    return KEYS[KEYS.length - 1][1];
-  };
+  /* ---------- Vrstvu po vrstvě: sekvence snímků stavby, převíjí se scrollem ----------
+     Snímky assets/video/frames/000–079.webp se kreslí do canvasu; načítají se postupně
+     (nejdřív každý 8., pak 4., 2. a zbytek), kreslí se vždy nejbližší načtený. */
+  const frameAt = (p, n) => clamp((p - 0.08) / 0.84) * (n - 1);
+  const stepAt = (p, f) => (p < 0.1 ? 0 : f <= 26 ? 1 : f <= 53 ? 2 : p < 0.94 ? 3 : 4);
 
   function initStory(story) {
-    const video = story.querySelector('[data-story-video]');
+    const N = +story.dataset.frames || 80;
+    const canvas = story.querySelector('[data-story-canvas]');
+    const poster = story.querySelector('[data-story-poster]');
+    const ctx = canvas.getContext('2d');
+    const base = poster.getAttribute('src').replace(/000\.webp$/, '');
+    const imgs = new Array(N);
     const steps = [...story.querySelectorAll('.story__steps li')];
-    const bars = [...story.querySelectorAll('.story__bar i')];
+    const dots = [...story.querySelectorAll('.story__dots li')];
     const kwh = story.querySelector('[data-story-kwh]');
-    let loaded = false, target = 0, shown = -1, raf = 0, lastStep = -1;
-    const load = () => {
-      if (loaded) return;
-      loaded = true;
-      video.src = video.dataset.src;
-      video.load();
-      // Safari povolí přesné převíjení až po prvním přehrání
-      video.play().then(() => video.pause()).catch(() => {});
+    let target = 0, shown = 0, drawn = -1, raf = 0, lastStep = -1, started = false;
+
+    const nearest = (i) => {
+      for (let d = 0; d < N; d++) {
+        const a = imgs[i - d], b = imgs[i + d];
+        if (a && a.complete && a.naturalWidth) return a;
+        if (b && b.complete && b.naturalWidth) return b;
+      }
+      return null;
     };
-    const seek = () => {
+    const draw = () => {
       raf = 0;
-      if (!video.duration) return;
-      const d = target - shown;
-      if (Math.abs(d) < 0.012) return;
-      shown = Math.abs(d) < 0.05 ? target : shown + d * 0.35;
-      if (!video.seeking) video.currentTime = Math.min(video.duration - 0.04, Math.max(0, shown));
-      raf = requestAnimationFrame(seek);
+      shown += (target - shown) * 0.28;
+      if (Math.abs(target - shown) < 0.05) shown = target;
+      const i = Math.round(shown);
+      const img = nearest(i);
+      if (img && +img.dataset.i !== drawn) {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        drawn = +img.dataset.i;
+        story.classList.add('is-ready');
+      }
+      if (shown !== target) raf = requestAnimationFrame(draw);
     };
-    video.addEventListener('loadedmetadata', () => { story.classList.add('is-ready'); shown = -1; if (!raf) raf = requestAnimationFrame(seek); });
+    const kick = () => { if (!raf) raf = requestAnimationFrame(draw); };
+    const load = () => {
+      if (started) return;
+      started = true;
+      const order = [];
+      [8, 4, 2, 1].forEach((st) => { for (let i = 0; i < N; i += st) if (!order.includes(i)) order.push(i); });
+      if (!order.includes(N - 1)) order.splice(1, 0, N - 1);
+      let k = 0;
+      const next = () => {
+        if (k >= order.length) return;
+        const i = order[k++];
+        const img = new Image();
+        img.decoding = 'async';
+        img.dataset.i = i;
+        img.onload = img.onerror = () => { kick(); next(); };
+        img.src = `${base}${String(i).padStart(3, '0')}.webp`;
+        imgs[i] = img;
+      };
+      for (let c = 0; c < 4; c++) next(); // 4 souběžná stahování
+    };
     const render = (p) => {
-      target = timeAt(p);
-      if (!raf) raf = requestAnimationFrame(seek);
-      let step = 0;
-      STEP_AT.forEach((v, i) => { if (p >= v) step = i; });
-      bars.forEach((b, i) => {
-        const a = STEP_AT[i], z = STEP_AT[i + 1] ?? 1.0001;
-        b.style.transform = `scaleX(${clamp((p - a) / (z - a)).toFixed(3)})`;
-      });
+      target = frameAt(p, N);
+      kick();
+      const step = stepAt(p, target);
       if (step !== lastStep) {
         lastStep = step;
-        story.dataset.step = step;
-        steps.forEach((li, i) => li.classList.toggle('is-on', i === step));
+        steps.forEach((li, i) => { li.classList.toggle('is-on', i === step); li.classList.toggle('is-done', i < step); });
+        dots.forEach((li, i) => li.classList.toggle('is-on', i <= step));
       }
-      const e = seg(p, 0.93, 0.05);
+      const e = seg(p, 0.92, 0.05);
       kwh.style.opacity = e.toFixed(3);
-      kwh.style.transform = `translateY(${((1 - e) * 16).toFixed(1)}px)`;
+      kwh.style.transform = `translateY(${((1 - e) * 12).toFixed(1)}px)`;
     };
     return {
       el: story,
@@ -72,7 +90,12 @@
         const span = r.height - innerHeight;
         render(clamp(span > 0 ? -r.top / span : 1));
       },
-      done() { story.classList.add('story--static'); steps.forEach((li) => li.classList.add('is-on')); },
+      done() {
+        story.classList.add('story--static');
+        poster.src = `${base}${String(N - 1).padStart(3, '0')}.webp`;
+        steps.forEach((li) => li.classList.add('is-on'));
+        kwh.style.opacity = 1;
+      },
     };
   }
 
