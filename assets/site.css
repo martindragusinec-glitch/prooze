@@ -1151,3 +1151,22 @@ a.ccard:hover { transform: translateY(-3px); }
 .story--static .story__canvas { display: none; }
 .story--static .story__steps li { display: grid; grid-template-rows: auto 1fr; opacity: 1; }
 .mats__fact { font-size: 14.5px; font-weight: 600; color: var(--pine) !important; padding: 10px 12px; border-radius: 12px; background: var(--sun-soft); }
+
+/* Ukázka aplikace: oživení při příchodu do výřezu (.is-live) a natočení podle scrollu (--ap) */
+.app::before { transform: rotate(calc(-10deg + var(--ap, .6) * 10deg)); transition: transform .2s linear; }
+.app__screen { transform: translateY(calc((.5 - var(--ap, .5)) * 70px)) rotate(calc((.5 - var(--ap, .5)) * -5deg)); }
+.app__bars rect { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .8s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * 60ms), height .6s ease, y .6s ease; }
+.app__bars rect.f { fill: rgba(255, 200, 58, .16); stroke: rgba(255, 200, 58, .5); stroke-width: 1; stroke-dasharray: 3 2; }
+.app__now line { stroke: rgba(255, 255, 255, .7); stroke-width: 1; stroke-dasharray: 2 3; }
+.app__now rect { fill: #fff; }
+.app__now text { fill: var(--pine); font: 700 8px var(--text); }
+.app__now { transition: opacity .5s ease 1s; }
+.app__ring { transition: stroke-dashoffset 1.6s cubic-bezier(.2, .8, .2, 1) .3s; }
+.app__ok::before { transition: box-shadow .3s; }
+.motion .app__screen:not(.is-live) .app__bars rect { transform: scaleY(0); }
+.motion .app__screen:not(.is-live) .app__now { opacity: 0; }
+.motion .app__screen:not(.is-live) .app__ring { stroke-dashoffset: 100; }
+.motion .app__screen.is-live .app__ok::before { animation: okPulse 2.4s ease-out infinite; }
+.app__tick { animation: tick .6s ease; }
+@keyframes okPulse { 0% { box-shadow: 0 0 0 0 rgba(31, 164, 99, .7); } 70%, 100% { box-shadow: 0 0 0 8px rgba(31, 164, 99, 0); } }
+@keyframes tick { 0% { color: var(--sun); } 100% { color: inherit; } }

@@ -130,6 +130,55 @@
   }
   if (hero && !reduce) scenes.push(initHero(hero));
 
+
+  /* ---------- Ukázka aplikace: čísla naběhnou, sloupce vyrostou, pak „živá“ data ---------- */
+  const app = document.querySelector('[data-app]');
+  if (app && !reduce) {
+    const fmt = (n, dec) => n.toLocaleString('cs-CZ', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    const nums = [...app.querySelectorAll('[data-to]')];
+    nums.forEach((el) => { el.textContent = fmt(0, +el.dataset.dec); });
+    const main = app.querySelector('[data-app-main]');
+    const sold = app.querySelector('[data-app-sold]');
+    const bat = app.querySelector('[data-app-bat]');
+    const ring = app.querySelector('[data-app-ring]');
+    const nowBar = app.querySelectorAll('.app__bars rect.m')[8];
+    let timer = 0, live = false, prod = 32.4, sell = 8.1, b = 86;
+    const tick = (el, v, dec) => { el.textContent = fmt(v, dec); el.classList.remove('app__tick'); void el.offsetWidth; el.classList.add('app__tick'); };
+    const step = () => {
+      prod += 0.1; tick(main, prod, 1);
+      if (Math.random() < 0.5) { sell += 0.1; tick(sold, sell, 1); }
+      if (b < 95 && Math.random() < 0.4) { b += 1; tick(bat, b, 0); ring.setAttribute('stroke-dashoffset', 100 - b); }
+      if (nowBar) { const h = Math.min(78, +nowBar.getAttribute('height') + 0.6); nowBar.setAttribute('height', h.toFixed(1)); nowBar.setAttribute('y', (96 - h).toFixed(1)); }
+    };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        if (!live) {
+          live = true;
+          app.classList.add('is-live');
+          nums.forEach((el) => {
+            const to = +el.dataset.to, dec = +el.dataset.dec, t0 = performance.now(), dur = 1400;
+            const run = (t) => { const k = ease(clamp((t - t0) / dur)); el.textContent = fmt(to * k, dec); if (k < 1) requestAnimationFrame(run); };
+            requestAnimationFrame(run);
+          });
+        }
+        if (!timer) timer = setInterval(step, 3200);
+      } else if (timer) { clearInterval(timer); timer = 0; }
+    }, { threshold: 0.35 }).observe(app);
+    // natočení podle scrollu
+    const fig = app.closest('.app');
+    let lastAp = -1;
+    scenes.push({
+      el: fig,
+      update() {
+        const r = fig.getBoundingClientRect();
+        const q = clamp((innerHeight - r.top) / (innerHeight + r.height));
+        if (Math.abs(q - lastAp) < 0.003) return;
+        lastAp = q;
+        fig.style.setProperty('--ap', q.toFixed(3));
+      },
+    });
+  }
+
   if (scenes.length) {
     const active = new Set();
     const io = new IntersectionObserver((es) => es.forEach((e) => {

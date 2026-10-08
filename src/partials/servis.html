@@ -2,24 +2,20 @@
 <section class="sec servis" id="servis" aria-labelledby="servis-h">
   <div class="wrap servis__in">
     <figure class="app" aria-label="Ukázka přehledu výroby v aplikaci">
-      <div class="app__screen">
-        <div class="app__top"><span>Dnes</span><span class="app__ok">Vše v pořádku</span></div>
-        <p class="app__big">32,4&nbsp;<small>kWh</small></p>
+      <div class="app__screen" data-app>
+        <div class="app__top"><span>Dnes</span><span class="app__ok">Vše v&nbsp;pořádku</span></div>
+        <p class="app__big"><span data-to="32.4" data-dec="1" data-app-main>32,4</span>&nbsp;<small>kWh</small></p>
         <p class="app__lbl">vyrobeno od rána</p>
-        <svg class="app__chart" viewBox="0 0 280 110" role="img" aria-label="Výroba během dne, vrchol kolem poledne">
+        <svg class="app__chart" viewBox="0 0 280 110" role="img" aria-label="Výroba během dne: od rána roste, vrchol kolem poledne, po čtrnácté hodině předpověď">
           <g class="app__grid"><line x1="0" y1="96" x2="280" y2="96"/><line x1="0" y1="60" x2="280" y2="60"/><line x1="0" y1="24" x2="280" y2="24"/></g>
-          <g class="app__bars">
-            <rect x="6" y="92" width="12" height="4" rx="2"/><rect x="24" y="84" width="12" height="12" rx="2"/><rect x="42" y="70" width="12" height="26" rx="2"/><rect x="60" y="54" width="12" height="42" rx="2"/>
-            <rect x="78" y="40" width="12" height="56" rx="2"/><rect x="96" y="30" width="12" height="66" rx="2"/><rect x="114" y="24" width="12" height="72" rx="2"/><rect x="132" y="22" width="12" height="74" rx="2"/>
-            <rect x="150" y="26" width="12" height="70" rx="2"/><rect x="168" y="34" width="12" height="62" rx="2"/><rect x="186" y="46" width="12" height="50" rx="2"/><rect x="204" y="60" width="12" height="36" rx="2"/>
-            <rect x="222" y="74" width="12" height="22" rx="2"/><rect x="240" y="86" width="12" height="10" rx="2"/><rect x="258" y="93" width="12" height="3" rx="2"/>
-          </g>
+          <g class="app__bars"><rect class="m" style="--i:0" x="6" y="92" width="12" height="4" rx="2"/><rect class="m" style="--i:1" x="24" y="84" width="12" height="12" rx="2"/><rect class="m" style="--i:2" x="42" y="70" width="12" height="26" rx="2"/><rect class="m" style="--i:3" x="60" y="54" width="12" height="42" rx="2"/><rect class="m" style="--i:4" x="78" y="40" width="12" height="56" rx="2"/><rect class="m" style="--i:5" x="96" y="30" width="12" height="66" rx="2"/><rect class="m" style="--i:6" x="114" y="24" width="12" height="72" rx="2"/><rect class="m" style="--i:7" x="132" y="22" width="12" height="74" rx="2"/><rect class="m" style="--i:8" x="150" y="26" width="12" height="70" rx="2"/><rect class="f" style="--i:9" x="168" y="34" width="12" height="62" rx="2"/><rect class="f" style="--i:10" x="186" y="46" width="12" height="50" rx="2"/><rect class="f" style="--i:11" x="204" y="60" width="12" height="36" rx="2"/><rect class="f" style="--i:12" x="222" y="74" width="12" height="22" rx="2"/><rect class="f" style="--i:13" x="240" y="86" width="12" height="10" rx="2"/><rect class="f" style="--i:14" x="258" y="93" width="12" height="3" rx="2"/></g>
+          <g class="app__now"><line x1="165" y1="12" x2="165" y2="96"/><rect x="151" y="0" width="28" height="12" rx="6"/><text x="165" y="9" text-anchor="middle">teď</text></g>
           <g class="app__axis"><text x="12" y="109">6 h</text><text x="138" y="109" text-anchor="middle">12 h</text><text x="264" y="109" text-anchor="end">20 h</text></g>
         </svg>
         <div class="app__tiles">
-          <div class="app__tile"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" class="app__ring-bg"/><circle cx="22" cy="22" r="18" class="app__ring" pathLength="100" stroke-dasharray="86 100" transform="rotate(-90 22 22)"/></svg><div><b>86&nbsp;%</b><span>baterie</span></div></div>
-          <div class="app__tile"><div><b>14,2&nbsp;kWh</b><span>spotřeba domu</span></div></div>
-          <div class="app__tile"><div><b>8,1&nbsp;kWh</b><span>prodáno do sítě</span></div></div>
+          <div class="app__tile"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" class="app__ring-bg"/><circle cx="22" cy="22" r="18" class="app__ring" pathLength="100" stroke-dasharray="100 100" stroke-dashoffset="14" transform="rotate(-90 22 22)" data-app-ring/></svg><div><b><span data-to="86" data-dec="0" data-app-bat>86</span>&nbsp;%</b><span>baterie</span></div></div>
+          <div class="app__tile"><div><b><span data-to="14.2" data-dec="1">14,2</span>&nbsp;kWh</b><span>spotřeba domu</span></div></div>
+          <div class="app__tile"><div><b><span data-to="8.1" data-dec="1" data-app-sold>8,1</span>&nbsp;kWh</b><span>prodáno do sítě</span></div></div>
         </div>
       </div>
     </figure>
