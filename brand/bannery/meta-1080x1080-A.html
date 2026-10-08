@@ -1,0 +1,84 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8">
+<title>PROOZE – meta-1080x1080-A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@700;800&family=Funnel+Sans:wght@400;500;600;700&display=block" rel="stylesheet">
+<style>
+:root{--sun:#FFC83A;--pine:#0F3A2E;--pine-2:#174C3D;--muted:#4F6A61;--paper:#FFFDF7}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1080px;overflow:hidden}
+body{font-family:'Funnel Sans',sans-serif;color:#fff;-webkit-font-smoothing:antialiased;
+  background:linear-gradient(to right,#85A7D0,#90ACD1 45%,#A9BCD7);}
+.cv{position:relative;width:1080px;height:1080px;overflow:hidden;isolation:isolate}
+.sky{position:absolute;inset:0 0 auto 0;height:236px;z-index:0;
+  background:linear-gradient(#7F9FCB,rgba(127,159,203,0) 100%)}
+.scene{position:absolute;left:-505px;top:116px;width:2000px;height:1125px}
+.scene img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.back{z-index:0;-webkit-mask-image:linear-gradient(transparent,#000 90px);mask-image:linear-gradient(transparent,#000 90px);}
+.giant{position:absolute;left:0;top:0;z-index:2;overflow:visible}
+.giant text{font-family:'Funnel Display';font-weight:800;fill:#FFFDF7;letter-spacing:-.03em}
+.front{z-index:3}
+.shade{position:absolute;inset:0;z-index:4;background:radial-gradient(ellipse 80% 55% at 0% 100%, rgba(6,30,23,.6), rgba(6,30,23,0) 70%), linear-gradient(to top, rgba(6,30,23,.95) 0%, rgba(6,30,23,.86) 22%, rgba(6,30,23,.5) 36%, rgba(6,30,23,0) 50%)}
+.logo{position:absolute;z-index:6;left:64px;top:64px;width:230px;height:auto}
+.bot,.top,.lb{position:absolute;z-index:6;display:flex;flex-direction:column;align-items:flex-start;gap:30px}
+.top{gap:40px;color:var(--pine)}
+.h{font-family:'Funnel Display';font-weight:800;line-height:.98;letter-spacing:-.028em;text-wrap:balance}
+.blk{display:grid;gap:18px}
+.sub{color:rgba(255,255,255,.88);font-weight:500;line-height:1.25}
+.top .sub{color:var(--pine);opacity:.82}
+.eyebrow{font-family:'Funnel Display';font-weight:800;color:var(--sun);letter-spacing:-.02em;line-height:1}
+.tag{justify-self:start;font-weight:700;background:var(--pine);color:#fff;padding:12px 22px;border-radius:12px;line-height:1.1}
+.proof{list-style:none;display:flex;flex-wrap:wrap;gap:10px 28px;font-weight:600;color:rgba(255,255,255,.92)}
+.proof li{display:flex;align-items:center;gap:10px}
+.proof svg{width:1.05em;height:1.05em;color:var(--sun)}
+.cta{display:inline-flex;align-items:center;gap:14px;height:84px;padding:0 34px;border-radius:16px;background:var(--sun);color:var(--pine);
+  font:700 38px/1 'Funnel Sans';white-space:nowrap}
+.cta svg{width:36px;height:36px}
+.top .cta,.cta--ink{background:var(--pine);color:#fff}.cta--ink svg{color:var(--sun)}
+.card__cta{margin-top:18px}.card .cta{height:76px;font-size:34px;padding:0 30px}
+.top .cta svg{color:var(--sun)}
+.cta--s{height:58px;padding:0 24px;border-radius:12px;font-size:24px;gap:10px}.cta--s svg{width:24px;height:24px}
+.card{background:var(--sun);color:var(--pine);border-radius:24px;padding:30px 38px 34px;display:grid;gap:6px}
+.card__l{font-size:var(--l);font-weight:600;line-height:1.2}
+.card__l b{font-weight:800}
+.card__n{font-family:'Funnel Display';font-weight:800;font-size:var(--n);line-height:.92;letter-spacing:-.035em;white-space:nowrap;margin:2px 0 8px}
+.row{display:flex;align-items:center;gap:28px}
+.micro{color:rgba(255,255,255,.82);line-height:1.2;font-weight:500}
+.top .micro{color:var(--pine);opacity:.8}
+.og{flex-direction:row;justify-content:space-between;align-items:flex-end}
+.og__r,.lb__r{display:flex;flex-direction:column;align-items:flex-end;gap:22px}
+.og .cta{height:70px;font-size:30px;padding:0 28px;border-radius:14px}.og .cta svg{width:28px;height:28px}
+.tel{font-weight:600;font-size:22px;color:rgba(255,255,255,.88);letter-spacing:.01em}
+.lb{gap:26px}.lb__r{flex-direction:row;align-items:center;gap:22px}.lb .tel{font-size:24px}
+</style></head><body>
+<div class="cv">
+  <div class="sky"></div>
+  <div class="scene"><img class="back" src="../../assets/img/web/hero-back-2880.webp" alt=""></div>
+  <svg class="giant" width="1080" height="1080" viewBox="0 0 1080 1080"><text id="g" text-anchor="middle"><tspan x="540">STŘECHY</tspan><tspan x="540">A FVE</tspan></text></svg>
+  <div class="scene" style="z-index:3"><img class="front" src="../../assets/img/web/hero-front-2880.webp" alt=""></div>
+  <div class="shade"></div>
+  <img class="logo" data-qa="logo" src="../../assets/brand/logo.svg" alt="PROOZE">
+  <div class="bot" style="left:64px;right:64px;bottom:64px"><div class="blk" data-qa="copy">
+      <h1 class="h" style="font-size:76px">Pokrývači, kteří<br>umí i fotovoltaiku.</h1>
+      <p class="sub" style="font-size:34px">Jedno lešení, jedna smlouva, jedna záruka.</p>
+    </div><span class="cta " data-qa="cta">Chci nabídku<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+</div>
+<script>
+// Obří nápis: šířka podle formátu, účaří posledního řádku = hřeben + cover × výška verzálky
+window.__fit = async () => {
+  await document.fonts.ready;
+  await Promise.all([...document.images].map(i => i.decode().catch(() => {})));
+  const t = document.getElementById('g'), sp = [...t.querySelectorAll('tspan')];
+  let fs = 200; t.setAttribute('font-size', fs);
+  const maxW = Math.max(...sp.map(s => s.getComputedTextLength()));
+  fs = fs * 880 / maxW; t.setAttribute('font-size', fs.toFixed(1));
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.font = '800 ' + fs + 'px "Funnel Display"';
+  const capH = ctx.measureText('H').actualBoundingBoxAscent, accH = ctx.measureText('Ř').actualBoundingBoxAscent;
+  const last = 479.4 + 0.05 * capH, step = 0.84 * fs;
+  sp.forEach((s, i) => s.setAttribute('y', (last - (sp.length - 1 - i) * step).toFixed(1)));
+  const top = last - (sp.length - 1) * step - accH;
+  return { fs: +fs.toFixed(1), capH: +capH.toFixed(1), ridge: 479.4, baseline: +last.toFixed(1), giantTop: +top.toFixed(1),
+    giantBox: (() => { const r = t.getBBox(); return [r.x + 0, top + 0, r.x + r.width + 0, last + 0]; })() };
+};
+</script>
+</body></html>

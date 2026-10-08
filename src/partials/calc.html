@@ -1,0 +1,49 @@
+<!-- KALKULAČKA ÚSPORY -->
+<section class="sec sav-sec" id="kalkulacka" aria-labelledby="calc-h">
+  <div class="wrap">
+    <header class="head">
+      <h2 id="calc-h" class="h2">Kolik s&nbsp;elektrárnou ušetříte</h2>
+      <p class="head__sub">Stačí jedno číslo z&nbsp;vyúčtování. Spočítáme velikost elektrárny, roční úsporu i&nbsp;bezúročný úvěr.</p>
+    </header>
+    <div class="sav" data-sav>
+      <div class="sav__in">
+        <p class="sav__q" id="sav-q">Kolik teď platíte za elektřinu měsíčně?</p>
+        <div class="sav__chips" role="group" aria-labelledby="sav-q">
+          <button type="button" data-bill="1500" aria-pressed="false">1&nbsp;500&nbsp;Kč</button>
+          <button type="button" data-bill="2500" aria-pressed="false">2&nbsp;500&nbsp;Kč</button>
+          <button type="button" data-bill="3500" aria-pressed="true">3&nbsp;500&nbsp;Kč</button>
+          <button type="button" data-bill="5000" aria-pressed="false">5&nbsp;000&nbsp;Kč</button>
+          <button type="button" data-bill="7000" aria-pressed="false">7&nbsp;000&nbsp;Kč</button>
+        </div>
+        <div class="sav__fine">
+          <label for="sav-bill">Nebo nastavte přesně</label>
+          <output data-o="bill" for="sav-bill">3&nbsp;500&nbsp;Kč</output>
+        </div>
+        <input id="sav-bill" class="sav__range" type="range" min="1000" max="10000" step="100" value="3500" data-bill-range>
+        <div class="sav__bars">
+          <div class="sav__bar"><span>Za elektřinu teď</span><b data-o="now">42&nbsp;000&nbsp;Kč za rok</b><i><em data-bar="now"></em></i></div>
+          <div class="sav__bar sav__bar--after"><span>S&nbsp;elektrárnou a&nbsp;baterií</span><b data-o="after">12&nbsp;600&nbsp;Kč za rok</b><i><em data-bar="after"></em></i></div>
+        </div>
+        <p class="sav__hint" data-o="hint" hidden></p>
+        <p class="sav__note">Orientační výpočet: elektřina za 6&nbsp;Kč/kWh, z&nbsp;1&nbsp;kWp ročně asi 1&nbsp;000&nbsp;kWh, úspora na elektřině ze sítě až 70&nbsp;%. Přesná čísla pro váš dům dostanete v&nbsp;nabídce.</p>
+      </div>
+      <div class="sav__out" aria-live="polite">
+        <div class="sav__row sav__row--sys">
+          <span>Doporučená elektrárna</span>
+          <strong data-o="sys">7&nbsp;kWp + baterie 7&nbsp;kWh</strong>
+          <small data-o="panels">přibližně 16 panelů, 36&nbsp;m² střechy</small>
+        </div>
+        <div class="sav__row">
+          <span>Ušetříte až</span>
+          <strong data-o="save">29&nbsp;400&nbsp;Kč ročně</strong>
+        </div>
+        <div class="sav__row">
+          <span>Bezúročný úvěr NZÚ až</span>
+          <strong data-o="loan">280&nbsp;000&nbsp;Kč</strong>
+        </div>
+        <a class="btn btn--sun btn--block" href="#formular" data-sav-cta data-cta="kalkulacka">Chci přesný výpočet zdarma</a>
+        <p class="sav__small">Úvěr: 25&nbsp;000&nbsp;Kč na kWp a&nbsp;15&nbsp;000&nbsp;Kč na kWh baterie, nejvýš 400&nbsp;000&nbsp;Kč.</p>
+      </div>
+    </div>
+  </div>
+</section>

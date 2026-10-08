@@ -1,0 +1,16 @@
+{
+  "domain": "https://www.prooze.cz",
+  "gtm_id": "",
+  "form_endpoint": "/api/poptavka/",
+  "name": "PROOZE",
+  "legal_name": "Pavel Kočí",
+  "phone": "+420773898698",
+  "email": "info@prooze.cz",
+  "street": "Tomanova 1630",
+  "city": "Slaný",
+  "zip": "274 01",
+  "region": "Středočeský kraj",
+  "ico": "88327078",
+  "lat": 50.2324038,
+  "lng": 14.065845
+}

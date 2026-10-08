@@ -1,0 +1,20 @@
+# výstupy buildu (Vercel staví z tools/build.py)
+dist/
+preview/
+# lokální testovací poptávky
+dev-poptavky.jsonl
+# velké zdrojové originály (nejsou potřeba pro build; zálohovat mimo git)
+assets/img/gen/
+assets/img/hero-a.png
+assets/img/hero-a-cut.png
+assets/img/hero-b.png
+assets/photos/
+brand/brand-guide.pdf
+.DS_Store
+node_modules/
+.vercel
+# nepoužité obrázky ze starého webu (zůstávají jen loga partnerů a portrét)
+assets/old/fve-*.png
+assets/old/hero-*
+assets/old/karta-*
+assets/old/solarni-technologie-panely.png

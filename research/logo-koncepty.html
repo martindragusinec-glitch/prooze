@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500;600;700;800&family=Funnel+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sun:#FFC83A;--pine:#0F3A2E;--leaf:#22B868;--clay:#C8553D}
+body{margin:0;background:#fff;font-family:'Funnel Sans';color:var(--pine)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#ddd}
+.c{background:#fff;padding:44px 40px;display:flex;flex-direction:column;gap:22px;min-height:230px;justify-content:center}
+.c.dark{background:var(--pine);color:#fff}
+.c.sun{background:var(--sun)}
+.lab{font:13px/1.2 'Funnel Sans';opacity:.55}
+.lock{display:flex;align-items:center;gap:12px}
+.wm{font-family:'Funnel Display';font-weight:800;font-size:64px;letter-spacing:-.035em;line-height:1}
+svg.sym{height:58px;width:72px;flex:none}
+/* C: střecha nad „oo“ */
+.roofwm{position:relative;display:inline-block;font-family:'Funnel Display';font-weight:800;font-size:72px;letter-spacing:-.035em;line-height:1}
+.roofwm svg{position:absolute;left:var(--l,.83em);top:-.28em;width:var(--w,1.23em);height:.42em;overflow:visible}
+h2{font-family:'Funnel Display';font-weight:800;font-size:56px;letter-spacing:-.03em;line-height:1;margin:0}
+p{font-size:19px;line-height:1.5;margin:0;max-width:34ch}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="b" viewBox="0 0 72 58">
+      <polygon points="36,2 0,38 0,56 36,20" fill="currentColor"/>
+      <polygon points="38.5,4.5 48.5,14.5 48.5,32.5 38.5,22.5" fill="var(--pv)"/>
+      <polygon points="51.5,17.5 60,26 60,44 51.5,35.5" fill="var(--pv)"/>
+      <polygon points="63,29 72,38 72,56 63,47" fill="var(--pv)"/>
+    </symbol>
+    <symbol id="roof" viewBox="0 0 100 34">
+      <path d="M4 32 L50 4 L96 32" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="roofpv" viewBox="0 0 100 34">
+      <path d="M4 32 L50 4" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+      <path d="M57 8.3 L66 13.8 M72 17.4 L81 22.9 M87 26.5 L96 32" fill="none" stroke="var(--pv)" stroke-width="9" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+<div class="grid">
+  <div class="c" style="--pv:var(--sun)"><span class="lab">B Hřeben: krytina + panely</span><div class="lock"><svg class="sym"><use href="#b"/></svg><span class="wm">prooze</span></div></div>
+  <div class="c dark" style="--pv:var(--sun)"><span class="lab">B na jedli</span><div class="lock"><svg class="sym"><use href="#b"/></svg><span class="wm">prooze</span></div></div>
+  <div class="c sun" style="--pv:#fff"><span class="lab">B na slunci</span><div class="lock"><svg class="sym"><use href="#b"/></svg><span class="wm">prooze</span></div></div>
+
+  <div class="c"><span class="lab">C Střecha nad „oo“</span><div><span class="roofwm" style="color:var(--pine)">pr<span style="position:relative">oo<svg style="left:-.02em;width:1.2em;color:var(--clay)"><use href="#roof"/></svg></span>ze</span></div></div>
+  <div class="c dark"><span class="lab">C2 střecha napůl panely (žlutá)</span><div><span class="roofwm">pr<span style="position:relative">oo<svg style="left:-.02em;width:1.2em;color:#fff;--pv:var(--sun)"><use href="#roofpv"/></svg></span>ze</span></div></div>
+  <div class="c sun"><span class="lab">C2 na slunci</span><div><span class="roofwm">pr<span style="position:relative">oo<svg style="left:-.02em;width:1.2em;color:var(--pine);--pv:#fff"><use href="#roofpv"/></svg></span>ze</span></div></div>
+
+  <div class="c"><span class="lab">C2 na bílé</span><div><span class="roofwm">pr<span style="position:relative">oo<svg style="left:-.02em;width:1.2em;color:var(--pine);--pv:var(--leaf)"><use href="#roofpv"/></svg></span>ze</span></div></div>
+  <div class="c"><span class="lab">Typo test</span><h2>Střecha i elektrárna. Od jedné party.</h2><p>Šikmé střechy všech typů, fotovoltaika pro domy, bytovky i firmy. Ozveme se do 24 hodin, žluťoučký kůň úpěl ďábelské ódy.</p></div>
+  <div class="c dark"><span class="lab">Typo test tmavá</span><h2 style="color:var(--sun)">Pořádně. Rychle. Levně.</h2><p>Řemeslo, které vydrží. Záruka až 25 let.</p></div>
+</div>
+</body></html>

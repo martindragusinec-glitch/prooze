@@ -1,0 +1,84 @@
+<!-- FORMULÁŘ -->
+<section class="lead" id="poptavka" aria-labelledby="lead-h">
+  <div class="lead__box">
+    <div class="lead__intro">
+      <h2 id="lead-h" class="h2">Zjistěte, kolik to bude stát</h2>
+      <p>Pár rychlých otázek a&nbsp;kontakt. Do 24&nbsp;hodin se ozveme, domluvíme prohlídku a&nbsp;pošleme nabídku. Zdarma a&nbsp;nezávazně.</p>
+      <ul class="lead__trust">
+        <li><svg><use href="#i-check"/></svg>Prohlídka a&nbsp;zaměření zdarma</li>
+        <li><svg><use href="#i-check"/></svg>Pevná cena před podpisem</li>
+        <li><svg><use href="#i-check"/></svg>Žádost o&nbsp;úvěr nebo dotaci NZÚ připravíme za vás</li>
+      </ul>
+      <a class="lead__call" href="tel:+420773898698">
+        <img src="assets/old/pavel-koci-ceo.jpg" alt="" width="56" height="56" loading="lazy">
+        <span>Raději telefonem?<strong>773 898 698</strong><small>Pavel Kočí</small></span>
+      </a>
+      <button class="lead__cb" type="button" data-callback-open>Nechte nám číslo, zavoláme vám</button>
+    </div>
+
+    <form class="quiz" id="formular" data-quiz data-endpoint="{{endpoint}}" novalidate>
+      <div class="quiz__bar"><span class="quiz__count" data-count>Krok 1 ze 4</span><span class="quiz__prog"><i data-prog></i></span></div>
+      <div class="quiz__stage">
+        <fieldset class="q" data-step="sluzba">
+          <legend>Co potřebujete?</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="sluzba" value="strecha"><span><svg><use href="#i-roof"/></svg>Střechu</span></label>
+            <label class="opt"><input type="radio" name="sluzba" value="fve"><span><svg><use href="#i-pv"/></svg>Fotovoltaiku</span></label>
+            <label class="opt"><input type="radio" name="sluzba" value="oboji"><span><svg><use href="#i-both"/></svg>Obojí najednou</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="q" data-step="objekt" hidden>
+          <legend>O jakou stavbu jde?</legend>
+          <div class="opts opts--2">
+            <label class="opt"><input type="radio" name="objekt" value="rodinny-dum"><span>Rodinný dům</span></label>
+            <label class="opt"><input type="radio" name="objekt" value="bytovy-dum"><span>Bytový dům / SVJ</span></label>
+            <label class="opt"><input type="radio" name="objekt" value="firma"><span>Firma nebo hala</span></label>
+            <label class="opt"><input type="radio" name="objekt" value="obec"><span>Obec, jiné</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="q" data-step="strecha" hidden>
+          <legend>Co je se střechou?</legend>
+          <div class="opts opts--2">
+            <label class="opt"><input type="radio" name="strecha" value="oprava"><span>Zatéká, potřebuje opravu</span></label>
+            <label class="opt"><input type="radio" name="strecha" value="uprava"><span>Chci vyměnit krytinu</span></label>
+            <label class="opt"><input type="radio" name="strecha" value="rekonstrukce"><span>Celá rekonstrukce i&nbsp;s&nbsp;krovem</span></label>
+            <label class="opt"><input type="radio" name="strecha" value="nova"><span>Stavím, potřebuji novou</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="q" data-step="spotreba" hidden>
+          <legend>Kolik teď platíte za elektřinu měsíčně?</legend>
+          <div class="opts opts--2">
+            <label class="opt"><input type="radio" name="spotreba" value="do-2000"><span>Do 2&nbsp;000&nbsp;Kč</span></label>
+            <label class="opt"><input type="radio" name="spotreba" value="2000-4000"><span>2&nbsp;000–4&nbsp;000&nbsp;Kč</span></label>
+            <label class="opt"><input type="radio" name="spotreba" value="4000-7000"><span>4&nbsp;000–7&nbsp;000&nbsp;Kč</span></label>
+            <label class="opt"><input type="radio" name="spotreba" value="nad-7000"><span>Víc nebo nevím</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="q q--contact" data-step="kontakt" hidden>
+          <legend>Komu máme zavolat?</legend>
+          <div class="fields">
+            <label class="hp" aria-hidden="true">Web <input name="web" tabindex="-1" autocomplete="off"></label>
+            <label class="f"><span>Jméno</span><input name="jmeno" autocomplete="name" required aria-describedby="jmeno-e"><small class="f__e" id="jmeno-e" hidden>Napište, jak vám máme říkat.</small></label>
+            <label class="f"><span>Telefon</span><input name="telefon" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="tel-e"><small class="f__e" id="tel-e" hidden>Telefon zadejte jako 9 číslic, třeba 777 123 456.</small></label>
+            <label class="f"><span>E-mail <em>nepovinné</em></span><input name="email" type="email" autocomplete="email" aria-describedby="email-e"><small class="f__e" id="email-e" hidden>Zkontrolujte e-mail, třeba jan@seznam.cz.</small></label>
+            <label class="f"><span>Obec nebo PSČ stavby</span><input name="psc" autocomplete="address-level2" maxlength="60" required aria-describedby="psc-e"><small class="f__e" id="psc-e" hidden>Napište obec nebo PSČ, ať víme, kam pojedeme.</small></label>
+            <label class="f f--wide"><span>Poznámka <em>nepovinné</em></span><input name="poznamka" placeholder="Např. zatéká u komína, chceme i baterii…"></label>
+          </div>
+          <p class="quiz__err" data-err role="alert" hidden></p>
+          <button class="btn btn--sun btn--block" type="submit">Chci nabídku zdarma</button>
+          <p class="quiz__legal">Odesláním souhlasíte se <a href="{{link:ochrana-osobnich-udaju}}">zpracováním osobních údajů</a> za účelem vyřízení poptávky.</p>
+        </fieldset>
+        <div class="q q--done" data-step="hotovo" hidden tabindex="-1">
+          <svg class="done__ic"><use href="#i-check"/></svg>
+          <h3>Hotovo, poptávka je u&nbsp;nás.</h3>
+          <p>Do 24&nbsp;hodin vám zavoláme z&nbsp;čísla <a href="tel:+420773898698">773&nbsp;898&nbsp;698</a>, ať ho poznáte. Mezitím nám můžete poslat fotky střechy nebo vyúčtování za elektřinu na <a href="mailto:info@prooze.cz">info@prooze.cz</a>, nabídku pak připravíme rychleji.</p><p class="done__fix">Spletli jste se v&nbsp;čísle? Zavolejte na 773&nbsp;898&nbsp;698.</p>
+        </div>
+      </div>
+      <div class="quiz__foot">
+        <button class="quiz__back" type="button" data-back hidden>Zpět</button>
+        <p class="quiz__choice" data-choice></p>
+        <button class="btn btn--ink quiz__next" type="button" data-next hidden>Pokračovat</button>
+      </div>
+    </form>
+  </div>
+</section>

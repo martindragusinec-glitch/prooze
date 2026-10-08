@@ -1,0 +1,98 @@
+<!-- KONFIGURÁTOR -->
+<section class="sec konf-sec" id="konfigurator" aria-labelledby="konf-h">
+  <div class="wrap">
+    <header class="head">
+      <h2 id="konf-h" class="h2">Poskládejte si střechu s&nbsp;elektrárnou</h2>
+      <p class="head__sub">Vyberte tvar, krytinu, barvu a&nbsp;panely. Uvidíte, jak bude dům vypadat, a&nbsp;konfiguraci nám rovnou pošlete.</p>
+    </header>
+    <div class="konf" data-konf>
+      <div class="konf__stage">
+        <svg class="konf__svg" viewBox="0 0 800 520" role="img" aria-labelledby="konf-alt">
+          <title id="konf-alt" data-k-alt>Ilustrace domu se sedlovou střechou</title>
+          <defs>
+            <linearGradient id="k-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="k-sky1"/><stop offset="1" class="k-sky2"/></linearGradient>
+            <pattern id="k-p-palena" width="28" height="18" patternUnits="userSpaceOnUse"><path d="M0 18 Q7 4 14 18 Q21 4 28 18" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="2.4"/><path d="M2.5 14.5 Q7 7.5 11.5 14.5 M16.5 14.5 Q21 7.5 25.5 14.5" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.6"/></pattern>
+            <pattern id="k-p-betonova" width="32" height="16" patternUnits="userSpaceOnUse"><path d="M0 16 Q8 10 16 16 Q24 10 32 16" fill="none" stroke="rgba(0,0,0,.38)" stroke-width="2.2"/><path d="M3 13.5 Q8 10.5 13 13.5 M19 13.5 Q24 10.5 29 13.5" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.4"/></pattern>
+            <pattern id="k-p-plech" width="22" height="40" patternUnits="userSpaceOnUse"><path d="M1 0 V40" stroke="rgba(0,0,0,.34)" stroke-width="2.2"/><path d="M3.5 0 V40" stroke="rgba(255,255,255,.12)" stroke-width="1"/><path d="M0 39 H22" stroke="rgba(0,0,0,.16)" stroke-width="1.5"/></pattern>
+            <pattern id="k-p-hlinik" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M13 0 L26 13 L13 26 L0 13 Z" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.6"/><path d="M13 26 L26 13" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/></pattern>
+            <pattern id="k-p-sindel" width="24" height="16" patternUnits="userSpaceOnUse"><path d="M0 16 V8 H12 V16 M12 8 V0 H24 V8" fill="none" stroke="rgba(0,0,0,.42)" stroke-width="1.8"/><path d="M2 9.5 H10 M14 1.5 H22" stroke="rgba(255,255,255,.16)" stroke-width="1.4"/><path d="M0 7.5 H24" stroke="rgba(0,0,0,.2)" stroke-width="1"/></pattern>
+            <clipPath id="k-clip"><polygon data-k-shape points="160,140 640,140 672,302 128,302"/></clipPath>
+          </defs>
+          <rect width="800" height="520" fill="url(#k-sky)"/>
+          <circle cx="680" cy="78" r="38" class="k-sun"/>
+          <path d="M0 430 Q140 395 300 420 T620 412 T800 420 V520 H0Z" class="k-hill"/>
+          <rect x="430" y="92" width="34" height="70" class="k-chimney"/>
+          <rect x="424" y="86" width="46" height="10" class="k-chimney-cap"/>
+          <g data-k-roof>
+            <polygon data-k-shape points="160,140 640,140 672,302 128,302" class="k-roof-base"/>
+            <polygon data-k-shape points="160,140 640,140 672,302 128,302" fill="url(#k-p-palena)" data-k-pattern/>
+            <polygon data-k-shape points="160,140 640,140 672,302 128,302" class="k-roof-shade"/>
+          </g>
+          <g data-k-panels clip-path="url(#k-clip)"></g>
+          <path d="M128 302 H672" class="k-gutter"/>
+          <path d="M132 310 H668" class="k-insul" data-k-insul/>
+          <rect x="160" y="304" width="480" height="168" class="k-wall"/>
+          <g class="k-win"><rect x="200" y="340" width="70" height="62" rx="3"/><rect x="530" y="340" width="70" height="62" rx="3"/><rect x="300" y="340" width="70" height="62" rx="3"/></g>
+          <g class="k-frame"><path d="M235 340 V402 M200 371 H270 M565 340 V402 M530 371 H600 M335 340 V402 M300 371 H370"/></g>
+          <rect x="420" y="352" width="58" height="120" rx="3" class="k-door"/>
+          <circle cx="468" cy="414" r="3" class="k-knob"/>
+          <g data-k-battery class="k-battery"><rect x="604" y="410" width="26" height="54" rx="4"/><rect x="611" y="420" width="12" height="4" rx="2" class="k-led"/></g>
+          <g data-k-wallbox class="k-wallbox"><rect x="170" y="408" width="22" height="30" rx="4"/><path d="M181 438 C181 470 120 452 112 476" class="k-cable"/><rect x="40" y="446" width="104" height="32" rx="12" class="k-car"/><rect x="62" y="430" width="62" height="24" rx="9" class="k-car"/><circle cx="66" cy="480" r="9" class="k-wheel"/><circle cx="120" cy="480" r="9" class="k-wheel"/></g>
+          <rect x="0" y="470" width="800" height="50" class="k-lawn"/>
+          <g class="k-tree"><rect x="722" y="388" width="12" height="86" rx="4" class="k-trunk"/><circle cx="728" cy="360" r="44"/><circle cx="700" cy="388" r="28"/><circle cx="758" cy="390" r="30"/></g>
+          <g class="k-bush"><circle cx="190" cy="468" r="18"/><circle cx="214" cy="472" r="14"/><circle cx="610" cy="470" r="16"/><circle cx="640" cy="472" r="13"/></g>
+        </svg>
+        <p class="konf__badge" data-k-badge>Pálená taška, antracit</p>
+        <p class="konf__hint" aria-hidden="true">Táhnutím dům otočíte</p>
+      </div>
+
+      <form class="konf__panel" data-k-form>
+        <fieldset class="kf">
+          <legend>Tvar střechy</legend>
+          <div class="kf__row">
+            <label class="kchip"><input type="radio" name="k-tvar" value="sedlova" checked><span><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M8 4 H32 L38 20 H2 Z"/></svg>Sedlová</span></label>
+            <label class="kchip"><input type="radio" name="k-tvar" value="valbova"><span><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M14 4 H26 L38 20 H2 Z"/></svg>Valbová</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="kf">
+          <legend>Krytina</legend>
+          <div class="kf__row kf__row--mat">
+            <label class="kmat"><input type="radio" name="k-krytina" value="palena" checked><span><img src="assets/img/swatch/palena.webp" alt="" width="44" height="44">Pálená</span></label>
+            <label class="kmat"><input type="radio" name="k-krytina" value="betonova"><span><img src="assets/img/swatch/betonova.webp" alt="" width="44" height="44">Betonová</span></label>
+            <label class="kmat"><input type="radio" name="k-krytina" value="plech"><span><img src="assets/img/swatch/plech.webp" alt="" width="44" height="44">Plech</span></label>
+            <label class="kmat"><input type="radio" name="k-krytina" value="hlinik"><span><img src="assets/img/swatch/hlinik.webp" alt="" width="44" height="44">Hliník</span></label>
+            <label class="kmat"><input type="radio" name="k-krytina" value="sindel"><span><img src="assets/img/swatch/sindel.webp" alt="" width="44" height="44">Šindel</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="kf">
+          <legend>Barva</legend>
+          <div class="kf__row" data-k-colors></div>
+        </fieldset>
+        <fieldset class="kf">
+          <legend>Fotovoltaika</legend>
+          <div class="kf__row kf__row--pv">
+            <label class="kchip"><input type="radio" name="k-fve" value="0"><span>Bez panelů</span></label>
+            <label class="kchip"><input type="radio" name="k-fve" value="8"><span>Menší<small>8 panelů, 3,6&nbsp;kWp</small></span></label>
+            <label class="kchip"><input type="radio" name="k-fve" value="14" checked><span>Střední<small>14 panelů, 6,3&nbsp;kWp</small></span></label>
+            <label class="kchip"><input type="radio" name="k-fve" value="22"><span>Větší<small>22 panelů, 9,9&nbsp;kWp</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="kf">
+          <legend>Doplňky</legend>
+          <div class="kf__row">
+            <label class="ktog"><input type="checkbox" name="k-baterie" checked><span>Baterie</span></label>
+            <label class="ktog"><input type="checkbox" name="k-wallbox"><span>Wallbox pro auto</span></label>
+            <label class="ktog"><input type="checkbox" name="k-zatepleni"><span>Zateplení střechy</span></label>
+          </div>
+        </fieldset>
+        <div class="konf__sum">
+          <p class="konf__sumh">Vaše střecha</p>
+          <p class="konf__sumt" data-k-sum>Sedlová střecha, pálená taška Tondach v&nbsp;antracitu, fotovoltaika 6,3&nbsp;kWp a&nbsp;baterie.</p>
+          <p class="konf__loan" data-k-loan>Na fotovoltaiku s&nbsp;baterií můžete dostat bezúročný úvěr až <b>252&nbsp;000&nbsp;Kč</b>.</p>
+          <a class="btn btn--sun btn--block" href="#formular" data-k-cta data-cta="konfigurator">Chci nabídku na tuhle střechu</a>
+          <p class="konf__small">Cenu spočítáme po prohlídce a&nbsp;zaměření, zdarma.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

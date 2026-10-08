@@ -1,0 +1,58 @@
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div class="foot__brand">
+      <svg class="foot__logo"><use href="#logo"/></svg>
+      <p>Šikmé střechy a&nbsp;fotovoltaika pro rodinné domy, bytové domy i&nbsp;firmy.</p>
+    </div>
+    <div class="foot__col">
+      <h2>Kontakt</h2>
+      <p><a href="tel:+420773898698">+420 773 898 698</a><br><a href="mailto:info@prooze.cz">info@prooze.cz</a></p>
+    </div>
+    <div class="foot__col">
+      <h2>Sídlo</h2>
+      <p>Pavel Kočí – PROOZE<br>Tomanova 1630, 274 01 Slaný<br>IČO 88327078</p>
+    </div>
+    <div class="foot__col">
+      <h2>Stránky</h2>
+      <p><a href="{{link:strechy}}">Střechy</a><br><a href="{{link:fotovoltaika-rodinne-domy}}">FVE pro rodinné domy</a><br><a href="{{link:fotovoltaika-firmy}}">FVE pro firmy a&nbsp;obce</a><br><a href="{{link:dotace}}">Dotace 2026</a><br><a href="{{link:o-nas}}">O nás</a><br><a href="{{link:kontakt}}">Kontakt</a></p>
+    </div>
+  </div>
+  <div class="wrap foot__giant" aria-hidden="true"><svg><use href="#logo"/></svg></div>
+  <div class="wrap foot__legal">
+    <p>© 2026 PROOZE</p>
+    <p><a href="{{link:ochrana-osobnich-udaju}}">Ochrana osobních údajů</a>{{consent_link}}</p>
+  </div>
+</footer>
+
+<dialog class="cb" id="zavolejte" aria-labelledby="cb-h" data-callback>
+  <form class="cb__form" data-endpoint="{{endpoint}}" novalidate>
+    <button class="cb__x" type="button" data-callback-close aria-label="Zavřít">×</button>
+    <h2 id="cb-h" class="cb__h">Zavoláme vám</h2>
+    <p class="cb__p">Nechte nám číslo a&nbsp;ozveme se do 24 hodin, kdy se vám to hodí.</p>
+    <label class="hp" aria-hidden="true">Web <input name="web" tabindex="-1" autocomplete="off"></label>
+    <label class="f"><span>Jméno</span><input name="jmeno" autocomplete="name" required></label>
+    <label class="f"><span>Telefon</span><input name="telefon" type="tel" inputmode="tel" autocomplete="tel" required></label>
+    <fieldset class="cb__when"><legend>Kdy se vám to hodí?</legend>
+      <label class="kchip"><input type="radio" name="kdy" value="dopoledne"><span>Dopoledne</span></label>
+      <label class="kchip"><input type="radio" name="kdy" value="odpoledne"><span>Odpoledne</span></label>
+      <label class="kchip"><input type="radio" name="kdy" value="kdykoli" checked><span>Kdykoli</span></label>
+    </fieldset>
+    <p class="quiz__err" data-err role="alert" hidden></p>
+    <button class="btn btn--sun btn--block" type="submit">Zavolejte mi</button>
+    <p class="quiz__legal">Číslo použijeme jen k&nbsp;tomuto hovoru. <a href="{{link:ochrana-osobnich-udaju}}">Ochrana osobních údajů</a></p>
+  </form>
+  <div class="cb__done" data-cb-done hidden>
+    <svg class="done__ic"><use href="#i-check"/></svg>
+    <h2 class="cb__h">Zavoláme vám.</h2>
+    <p class="cb__p">Ozveme se z&nbsp;čísla 773&nbsp;898&nbsp;698. Kdyby to spěchalo, volejte nám rovnou.</p>
+    <button class="btn btn--ink" type="button" data-callback-close>Zavřít</button>
+  </div>
+</dialog>
+<nav class="dock" data-dock aria-label="Rychlý kontakt">
+  <a class="btn btn--line" href="tel:+420773898698"><svg><use href="#i-phone"/></svg>Zavolat</a>
+  <a class="btn btn--ink" href="#formular" data-cta="dock">Chci nabídku</a>
+</nav>
+
+<script src="{{root}}assets/site.js" defer></script>
+</body>
+</html>
