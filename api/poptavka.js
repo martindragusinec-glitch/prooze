@@ -9,6 +9,8 @@
 //
 // Bez RESEND_API_KEY i bez webhooku vrací 503 a formulář nabídne zavolat. Data se nikam neukládají.
 
+import { leadEmail, confirmEmail } from './_lib/emaily.js';
+
 const LABELS = {
   sluzba: { strecha: 'Střecha', fve: 'Fotovoltaika', oboji: 'Střecha + FVE' },
   objekt: { 'rodinny-dum': 'Rodinný dům', 'bytovy-dum': 'Bytový dům / SVJ', firma: 'Firma nebo hala', obec: 'Obec, jiné' },
@@ -45,7 +47,7 @@ export default async function handler(req, res) {
   if (d.jmeno.length < 2) errors.push('jmeno');
   if (d.telefon.replace(/\D/g, '').length < 9) errors.push('telefon');
   if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) errors.push('email');
-  if (typ === 'poptavka' && d.psc && !/^\d{3}\s?\d{2}$/.test(d.psc)) errors.push('psc');
+  if (typ === 'poptavka' && d.psc.length < 2) errors.push('psc'); // obec nebo PSČ
   if (errors.length) return reply(400, { ok: false, error: 'invalid', fields: errors });
 
   const attr = Object.fromEntries(ATTR.map((k) => [k, val(k, 500)]).filter(([, v]) => v));
@@ -65,7 +67,7 @@ export default async function handler(req, res) {
       `Jméno: ${d.jmeno}`,
       `Telefon: ${d.telefon}`,
       `E-mail: ${d.email || '–'}`,
-      `PSČ stavby: ${d.psc || '–'}`,
+      `Obec / PSČ stavby: ${d.psc || '–'}`,
       '',
       `Poznámka: ${d.poznamka || '–'}`,
     ].filter((x) => x !== null);
@@ -78,15 +80,30 @@ export default async function handler(req, res) {
   const hook = process.env.POPTAVKY_WEBHOOK;
   if ((!key || !from) && !hook) return reply(503, { ok: false, error: 'not-configured' });
 
+  const host = req.headers['x-forwarded-host'] || req.headers.host || 'www.prooze.cz';
+  const base = (process.env.SITE_URL || `https://${host}`).replace(/\/$/, '');
+  const prijato = new Date().toLocaleString('cs-CZ', { timeZone: 'Europe/Prague', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const resend = (payload) => fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
   let sent = false;
   try {
     if (key && from) {
-      const r = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from, to, reply_to: d.email || undefined, subject, text }),
-      });
+      const r = await resend({ from, to, reply_to: d.email || undefined, subject, text, html: leadEmail({ d, L, attr, base, prijato }) });
       sent = r.ok;
+      if (!r.ok) console.error('Resend', r.status, await r.text().catch(() => ''));
+      // potvrzení zákazníkovi: chyba neblokuje poptávku
+      if (sent && d.email && process.env.POTVRZENI !== 'ne' && !/resend\.dev/.test(from)) {
+        await resend({
+          from, to: [d.email], reply_to: to[0],
+          subject: 'Poptávka přijata, ozveme se do 24 hodin | PROOZE',
+          text: `Děkujeme, poptávka je u nás. Do 24 hodin vám zavoláme z čísla 773 898 698 a domluvíme prohlídku zdarma.\n\nPROOZE, Tomanova 1630, Slaný, info@prooze.cz`,
+          html: confirmEmail({ d, L, base }),
+        }).catch(() => {});
+      }
     }
     if (hook) {
       const r = await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, ...attr, prijato: new Date().toISOString() }) });

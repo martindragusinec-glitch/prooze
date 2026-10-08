@@ -1,0 +1,23 @@
+PROOZE – logo
+
+Uspořádání
+  vodorovne  = symbol a nápis vedle sebe (hlavní logo: web, e-mail, hlavičky)
+  svisle     = symbol nad nápisem (čtvercové plochy, polepy, razítka, profilovky)
+  symbol     = jen „Hřeben“ (ikona aplikace, favicon, malé plochy)
+  napis      = jen „prooze“ (tam, kde je symbol už jinde)
+
+Barevné varianty
+  barevne    = jedle #0F3A2E + slunce #FFC83A – na bílé a světlé pozadí
+  inverzni   = bílá + slunce – na tmavé pozadí a fotky
+  na-zlute   = jedle + bílá – na žluté #FFC83A
+  cerne      = černá jednobarevná – tisk jednou barvou, gravír, razítko
+  bile       = bílá jednobarevná – výsek, polep, tmavé fotky
+
+Formáty
+  SVG  – vektor, pro web a grafiku (Figma, Illustrator, Canva)
+  PDF  – vektor pro tisk (100 mm šířka, libovolně zvětšitelné)
+  PNG  – průhledné pozadí, menší velikost pro web/Office, větší pro tisk a prezentace
+
+Ochranná zóna: kolem loga nechte volné místo aspoň na výšku jednoho žlutého modulu.
+Minimální velikost: logo vedle sebe 96 px (25 mm), symbol 24 px (6 mm).
+Logo neotáčejte, nedeformujte, neměňte barvy modulů ani písmo.

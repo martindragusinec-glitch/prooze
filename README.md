@@ -33,18 +33,28 @@ node tools/shot.mjs <url> <out.png> [w] [h] [full]
 
 ## Nasazení na Vercel
 
-1. Vercel → Add New Project → import repa `martindragusinec-glitch/prooze`. Framework: **Other**. Build i výstup se načtou z `vercel.json` (`python3 tools/build.py` → `dist/`), nic dalšího nenastavovat.
-2. Settings → Environment Variables (Production):
-   - `RESEND_API_KEY` – klíč z resend.com (v Resendu ověřit doménu prooze.cz, jinak e-maily neodejdou)
-   - `POPTAVKY_FROM` – např. `Web PROOZE <web@prooze.cz>`
-   - `POPTAVKY_TO` – kam chodí poptávky, výchozí `info@prooze.cz` (víc adres oddělte čárkou)
-   - volitelně `POPTAVKY_WEBHOOK` – Make/CRM, dostane poptávku jako JSON
-   - volitelně `SITE_URL` – vynutí doménu pro canonical/OG/sitemap; jinak se bere produkční doména projektu (po připojení prooze.cz automaticky ta)
-3. Settings → Domains → přidat `prooze.cz` a `www.prooze.cz` a nastavit DNS podle Vercelu. **Po připojení domény spustit Redeploy**, aby se canonical, OG obrázek a sitemap přepsaly na prooze.cz.
-4. Staré adresy `/cs/...` se přesměrují 301 na nové stránky (`vercel.json`).
-5. Měření: do `src/site.json` doplnit `gtm_id` → build sám přidá cookie lištu (Consent Mode v2) a GTM. Konverze = dataLayer `form_sent` (`form: poptavka | zavolat`), dále `cta_click`, `contact_click`, `begin_form`, `form_step`, `view_form`, a stránka `/dekujeme/` (noindex).
+1. Vercel → Add New Project → import repa `martindragusinec-glitch/prooze`. Framework: **Other**. Build i výstup se načtou z `vercel.json` (`python3 tools/build.py` → `dist/`).
+2. Settings → Domains → `prooze.cz` + `www.prooze.cz`, DNS u WEDOSu podle Vercelu. Po připojení **Redeploy** (canonical, OG a sitemap se přepíšou na prooze.cz).
+3. Staré adresy `/cs/...` se přesměrují 301 (`vercel.json`).
+4. Měření: `gtm_id` v `src/site.json` → build přidá cookie lištu (Consent Mode v2) a GTM. Konverze = dataLayer `form_sent` (`form: poptavka | zavolat`), dále `cta_click`, `contact_click`, `begin_form`, `form_step`, `view_form`; stránka `/dekujeme/` (noindex).
 
-OG obrázek: `assets/img/og.jpg` (1200×630, 100 kB), zdroj `brand/bannery/og-1200x630`. Ověření po nasazení: https://developers.facebook.com/tools/debug/ (Scrape Again).
+## E-maily z poptávek (Resend)
+
+Funkce `api/poptavka.js` pošle firmě HTML e-mail (tlačítko Zavolat, odpovědi, poznámka, odkud zákazník přišel) a zákazníkovi potvrzení, pokud vyplnil e-mail. Šablony: `api/_lib/emaily.js`. Pošta prooze.cz běží na Seznam Email Profi, DNS je u WEDOSu – Resend používá subdoménu `send.prooze.cz` a DKIM záznam, takže stávající pošta zůstane beze změny.
+
+1. resend.com → účet → Domains → Add domain `prooze.cz`, region **EU (Ireland)**.
+2. WEDOS → Domény → prooze.cz → DNS záznamy: přidat záznamy, které Resend ukáže (TXT `resend._domainkey`, MX a TXT pro `send`), pak „Aktualizovat zónu“. Kořenový SPF (`include:spf.seznam.cz`) a MX Seznamu nechat být.
+3. Resend → Verify → API Keys → Create (Sending access, doména prooze.cz).
+4. Vercel → Settings → Environment Variables (Production) a Redeploy:
+   - `RESEND_API_KEY` = klíč z kroku 3
+   - `POPTAVKY_FROM` = `Web PROOZE <poptavky@prooze.cz>`
+   - `POPTAVKY_TO` = `info@prooze.cz` (víc adres oddělit čárkou)
+   - volitelně `POPTAVKY_WEBHOOK` (Make/CRM), `POTVRZENI=ne` (vypne potvrzení zákazníkovi), `SITE_URL`
+5. Test před ověřením domény: `POPTAVKY_FROM=PROOZE <onboarding@resend.dev>` a `POPTAVKY_TO` = e-mail Resend účtu (Resend v testu doručí jen tam; potvrzení zákazníkovi se nepošle).
+
+Bez nastavení vrací formulář chybu „Odeslání se nepovedlo… zavolejte“, žádná poptávka se tiše neztratí. Lokálně (`tools/serve.cjs`) se poptávky zapisují do `dev-poptavky.jsonl`.
+
+OG obrázek: `assets/img/og-prooze-2026.jpg` (1200×630). Po změně ověřit v https://developers.facebook.com/tools/debug/ (Scrape Again).
 
 ## Interaktivní prvky
 
