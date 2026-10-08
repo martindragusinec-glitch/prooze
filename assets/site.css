@@ -701,7 +701,13 @@ button, input { font: inherit; color: inherit; }
   .top__in { height: var(--top-h); }
 }
 @media (min-width: 1181px) { .menu { display: none !important; } }
-@media (max-width: 640px) { .top__tel span { display: none; } .top__tel { width: 48px; height: 48px; justify-content: center; border-radius: 12px; background: rgba(255, 255, 255, .7); color: var(--pine); } }
+@media (max-width: 1180px) { .top__in { gap: 12px; } .top__logo { margin-right: auto; } .top__tel { margin-left: 0; } }
+@media (max-width: 640px) {
+  .top__in { gap: 8px; padding-inline: 12px 8px; }
+  .top__tel span { display: none; }
+  .top__tel { width: 48px; height: 48px; flex: none; justify-content: center; border-radius: 12px; background: var(--sun); color: var(--pine); }
+  .top__tel svg { width: 22px; height: 22px; }
+}
 
 /* Úvod: odkazy na podstránky */
 .more { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: clamp(32px, 4vw, 56px); }
@@ -1241,3 +1247,10 @@ a.ccard:hover { transform: translateY(-3px); }
 @keyframes okPulse { 0% { box-shadow: 0 0 0 0 rgba(31, 164, 99, .7); } 70%, 100% { box-shadow: 0 0 0 8px rgba(31, 164, 99, 0); } }
 @keyframes tick { 0% { color: var(--sun); } 100% { color: inherit; } }
 .quiz.is-done .quiz__time { display: none; }
+.story--static .story__dots { display: none; }
+@media (max-width: 960px) {
+  .story--static .story__pin { padding-block: var(--sec) 0; }
+  .story--static .story__steps { gap: 16px; margin-top: 18px; }
+  .story--static .story__steps li { padding-left: 16px; border-left: 3px solid var(--sun-deep); }
+  .story--static .story__sub { display: block; }
+}

@@ -120,7 +120,8 @@
   const hero = document.querySelector('.hero');
   if (story) {
     const sc = initStory(story);
-    if (reduce) sc.done();
+    // na mobilu bez převíjení scrollem: hotová střecha a všechny kroky pod sebou
+    if (reduce || matchMedia('(max-width: 960px)').matches) sc.done();
     else {
       scenes.push(sc);
       // video začne stahovat, až se k sekci blíží
