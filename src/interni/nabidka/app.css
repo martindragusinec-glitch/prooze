@@ -571,3 +571,26 @@ select {
 .it select { padding-right: 24px !important; padding-left: 9px !important; background-position: right 7px center !important; }
 .of__st--prijata { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important; }
 .stsel, .of__st { padding-left: 12px; }
+
+/* ---------------------------------------------------------------- úvodní strana a stránkování */
+.d-p1 { min-height: 281mm; display: flex; flex-direction: column; }
+.d-p1__end { margin-top: auto; padding: 9mm 16mm 0; }
+.d-cover { height: 122mm; }
+.d-prods { margin-top: 9mm; }
+.d-prod { padding: 5.2mm 5.6mm; }
+.d-strip { display: grid; grid-template-columns: 1.5fr 1fr 1fr; align-items: stretch; border-radius: 4mm; background: var(--pine); color: #fff; overflow: hidden; break-inside: avoid; }
+.d-strip > div { display: grid; align-content: center; gap: 1mm; padding: 4.6mm 6mm; }
+.d-strip > div + div { border-left: .6pt solid rgba(255, 255, 255, .16); }
+.d-strip span { font-size: 7.8pt; color: rgba(255, 255, 255, .72); }
+.d-strip b { font: 700 11pt/1.2 var(--display); }
+.d-strip__price b { font: 800 19pt/1 var(--display); letter-spacing: -.02em; color: var(--sun); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.doc--foto .d-p1:not(.is-long) + .d-budget, .doc--cista .d-p1:not(.is-long) + .d-budget { margin-top: 0; padding-top: 14mm; break-before: page; }
+.d-budget.is-break { break-before: page; }
+@media print {
+  .doc--foto .d-p1:not(.is-long) + .d-budget, .doc--cista .d-p1:not(.is-long) + .d-budget, .d-budget.is-break { padding-top: 0; margin-top: 0 !important; }
+}
+.d-p1.is-long { min-height: 0; }
+.d-p1.is-long .d-p1__end { display: none; }
+.doc .d-p1.is-long + .d-budget { break-before: auto; padding-top: 0; margin-top: 11mm; }
+.doc .d-p1.is-long + .d-budget.is-break { break-before: page; }
+.d-close { break-inside: avoid; }

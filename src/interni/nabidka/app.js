@@ -262,7 +262,7 @@
     if (tt.rate) totRows.push(['Základ DPH', kc(tt.zaklad)], [`DPH ${tt.rate} %`, kc(tt.dphKc)]);
     if (Math.abs(tt.zaokrKc) >= 0.005) totRows.push(['Zaokrouhlení', (tt.zaokrKc > 0 ? '+ ' : '− ') + kc(Math.abs(tt.zaokrKc))]);
     // rekapitulace po skupinách vlevo vedle součtů (od 3 skupin)
-    const recap = groups.length >= 3 ? `<div class="d-recap"><p class="d-recap__h">Rekapitulace</p>${groups.map((g) => `<p><span>${t(g.k)}</span><b>${kc(g.sum)}</b></p>`).join('')}</div>` : '';
+    const recap = groups.length >= 3 && s.layout !== 'kompakt' ? `<div class="d-recap"><p class="d-recap__h">Rekapitulace</p>${groups.map((g) => `<p><span>${t(g.k)}</span><b>${kc(g.sum)}</b></p>`).join('')}</div>` : '';
     const finalLabel = tt.rate ? 'Cena díla celkem s DPH' : s.dph === '0' ? 'Cena díla celkem bez DPH' : 'Cena díla celkem';
     const budget = groups.length ? `<section class="d-sec d-budget"><h2 class="d-h">Položkový rozpočet</h2>
       <table class="d-tbl"><colgroup><col><col style="width:15mm"><col style="width:11mm"><col style="width:25mm"><col style="width:28mm"></colgroup>
@@ -279,8 +279,15 @@
     const sign = `<section class="d-sign" data-goto="#s-podpis"><div><p class="d-sign__lead">Těšíme se na spolupráci.</p><p>${platnost} Rádi ji s&nbsp;vámi projdeme položku po položce.</p></div>
       <div class="d-sign__who"><img src="${A}brand/symbol.svg" alt=""><p><b>${t(s.podpis.jmeno)}</b>${s.podpis.role ? '<br>' + t(s.podpis.role) + ', PROOZE' : '<br>PROOZE'}<br>${t(s.podpis.telefon)} · ${t(s.podpis.email)}</p></div></section>`;
 
-    return `${head}${L !== 'foto' ? `<section class="d-title">${title}</section>${badgeRow}` : ''}${parties}
-      ${s.uvod.trim() ? `<div class="d-intro" data-goto='[data-k="uvod"]'>${s.uvod.split(/\n\s*\n|\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${t(x)}</p>`).join('')}</div>` : ''}${prodHtml}${budget}${end}${sign}`;
+    const intro = s.uvod.trim() ? `<div class="d-intro" data-goto='[data-k="uvod"]'>${s.uvod.split(/\n\s*\n|\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${t(x)}</p>`).join('')}</div>` : '';
+    const p1 = `${head}${L !== 'foto' ? `<section class="d-title">${title}</section>${badgeRow}` : ''}${parties}${intro}${prodHtml}`;
+    const close = `<div class="d-close">${end}${sign}</div>`; // závěr a podpis se nerozdělí
+    if (L === 'kompakt') return `${p1}${budget}${close}`;
+    // úvodní strana: obsah nahoře, souhrn cena + platnost dole; rozpočet vždy od nové strany
+    const plat = s.datum && num(s.platnost) ? czDate(addDays(s.datum, num(s.platnost))) : '';
+    const strip = tt.sum > 0 ? `<div class="d-strip" data-goto='[data-k="dph"]'><div class="d-strip__price"><span>${finalLabel}</span><b>${kc(tt.celkem)}</b></div>
+      ${plat ? `<div><span>Nabídka platí do</span><b>${plat}</b></div>` : ''}<div><span>Položkový rozpočet</span><b>na další straně</b></div></div>` : '';
+    return `<div class="d-p1">${p1}<div class="d-p1__end">${strip}</div></div>${budget}${close}`;
   }
 
   /* ---------- editor ---------- */
@@ -394,11 +401,32 @@
     const w = scroller.clientWidth - 48;
     const z = Math.min(1, w / 793.7); // A4 = 210 mm
     fit.style.zoom = z;
-    // přibližný počet stran (první strana bez horního okraje: 281 mm obsahu, další 267 mm)
+    // stránky jako v PDF: 1. strana 281 mm obsahu (bez horního okraje), další 268 mm + 14 mm horní okraj.
+    // Rozpočet u S fotkou/Čisté začíná vždy na 2. straně (v náhledu odsazení místo okraje);
+    // u Kompaktní se přesune na novou stranu, jen když by začínal v posledních 65 mm.
+    const px = (el) => (el.getBoundingClientRect().top - docEl.getBoundingClientRect().top) / z / 3.7795;
+    const bud = docEl.querySelector('.d-budget'), p1 = docEl.querySelector('.d-p1');
+    // úvodní strana se nevejde (dlouhý úvod, víc karet) → bez souhrnného pruhu a bez vynuceného zlomu
+    if (p1) {
+      p1.classList.remove('is-long');
+      const kids = [...p1.children].filter((x) => !x.classList.contains('d-p1__end'));
+      const contentEnd = Math.max(...kids.map((x) => px(x) + x.getBoundingClientRect().height / z / 3.7795));
+      const endH = p1.querySelector('.d-p1__end').getBoundingClientRect().height / z / 3.7795;
+      if (contentEnd + endH > 281) p1.classList.add('is-long');
+    }
+    const forced = !!bud && !!p1 && !p1.classList.contains('is-long');
+    if (bud && !forced) {
+      bud.classList.remove('is-break'); bud.style.marginTop = '';
+      const top = px(bud), bounds = [281]; while (bounds.at(-1) < top + 300) bounds.push(bounds.at(-1) + 268);
+      const next = bounds.find((b) => b > top);
+      if (next - top < 65) { bud.classList.add('is-break'); bud.style.marginTop = `${next - top + 14}mm`; }
+    }
     const mm = docEl.getBoundingClientRect().height / z / 3.7795;
-    const pages = mm <= 281 ? 1 : 1 + Math.ceil((mm - 281) / 267);
+    const bounds = [281]; let y = 281 + (forced ? 282 : 268);
+    while (y < mm - 2) { bounds.push(y); y += 268; }
+    const pages = mm <= 283 ? 1 : bounds.length + (mm > bounds.at(-1) ? 1 : 0) - (mm <= 281 ? 1 : 0);
     docEl.querySelectorAll('.pg').forEach((x) => x.remove());
-    for (let p = 1, y = 281; p < pages; p++, y += 267) docEl.insertAdjacentHTML('beforeend', `<i class="pg" style="top:${y}mm"><span>strana ${p + 1}</span></i>`);
+    bounds.forEach((b, i) => { if (b < mm - 2) docEl.insertAdjacentHTML('beforeend', `<i class="pg" style="top:${b}mm"><span>strana ${i + 2}</span></i>`); });
     $('[data-pages]').textContent = `Náhled A4 · cca ${pages} ${pages === 1 ? 'strana' : pages < 5 ? 'strany' : 'stran'}`;
   }
   addEventListener('resize', fitDoc);
