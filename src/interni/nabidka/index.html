@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
+<title>Nabídky | PROOZE</title>
+<link rel="icon" href="../../assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="ed" aria-label="Úprava nabídky">
+    <header class="ed__top">
+      <img class="ed__logo" src="../../assets/brand/logo.svg" alt="PROOZE" width="120" height="26">
+      <span class="ed__app">Nabídky</span>
+      <div class="ed__actions">
+        <button type="button" class="b b--ghost" data-act="new">Nová</button>
+        <button type="button" class="b b--ghost" data-act="list">Uložené</button>
+        <button type="button" class="b b--ghost" data-act="save">Uložit</button>
+        <button type="button" class="b b--sun" data-act="pdf">Stáhnout PDF</button>
+      </div>
+    </header>
+
+    <div class="ed__body">
+      <section class="grp">
+        <h2 class="grp__h">Vzhled</h2>
+        <div class="layouts" role="radiogroup" aria-label="Layout">
+          <label class="lay"><input type="radio" name="layout" value="foto"><span class="lay__box"><i class="lay__th lay__th--foto"></i><b>S fotkou</b><small>Velká fotka nahoře</small></span></label>
+          <label class="lay"><input type="radio" name="layout" value="cista"><span class="lay__box"><i class="lay__th lay__th--cista"></i><b>Čistá</b><small>Bez fotky, víc vzduchu</small></span></label>
+          <label class="lay"><input type="radio" name="layout" value="kompakt"><span class="lay__box"><i class="lay__th lay__th--kompakt"></i><b>Kompaktní</b><small>Menší zakázky na 1 stranu</small></span></label>
+        </div>
+        <div class="photos" data-photos></div>
+      </section>
+
+      <section class="grp">
+        <h2 class="grp__h">Nabídka</h2>
+        <div class="row3">
+          <label class="f"><span>Číslo nabídky</span><input data-k="cislo"></label>
+          <label class="f"><span>Datum</span><input type="date" data-k="datum"></label>
+          <label class="f"><span>Platnost (dní)</span><input type="number" min="1" data-k="platnost"></label>
+        </div>
+        <label class="f"><span>Název</span><input data-k="nazev" placeholder="Kompletní rekonstrukce střechy"></label>
+        <label class="f"><span>Podnadpis</span><input data-k="podtitul" placeholder="Falcovaný plech COMAX, černá RAL 9005, včetně střešních oken"></label>
+      </section>
+
+      <section class="grp">
+        <h2 class="grp__h">Zákazník a stavba</h2>
+        <div class="row2">
+          <label class="f"><span>Jméno nebo firma</span><input data-k="zak.jmeno" placeholder="Jan Novák"></label>
+          <label class="f"><span>Telefon</span><input data-k="zak.telefon" placeholder="777 123 456"></label>
+          <label class="f"><span>E-mail</span><input data-k="zak.email" placeholder="jan@seznam.cz"></label>
+          <label class="f"><span>Adresa zákazníka</span><input data-k="zak.adresa" placeholder="Ulice 12, 274 01 Slaný"></label>
+        </div>
+        <label class="f"><span>Místo stavby <em>když je jinde než adresa</em></span><input data-k="stavba" placeholder="Obec, ulice"></label>
+      </section>
+
+      <section class="grp">
+        <h2 class="grp__h">Štítky v hlavičce</h2>
+        <p class="hint">Termín, doba realizace, plocha, záruka… Ikona se vybere podle popisku, prázdný řádek se nezobrazí.</p>
+        <div class="facts" data-facts></div>
+        <label class="chk"><input type="checkbox" data-k="cenaNahore"> Přidat štítek s cenou díla</label>
+      </section>
+
+      <section class="grp">
+        <h2 class="grp__h">Úvodní text</h2>
+        <label class="f"><textarea rows="3" data-k="uvod" placeholder="Děkujeme za zájem…"></textarea></label>
+      </section>
+
+      <section class="grp">
+        <div class="grp__hrow"><h2 class="grp__h">Materiály</h2><button type="button" class="b b--line b--s" data-act="add-prod">Přidat</button></div>
+        <div class="prods" data-prods></div>
+      </section>
+
+      <section class="grp">
+        <div class="grp__hrow"><h2 class="grp__h">Rozpočet</h2>
+          <div class="grp__tools">
+            <select class="sel" data-act="tpl" aria-label="Načíst šablonu položek">
+              <option value="">Šablona položek…</option>
+              <option value="plech">Rekonstrukce – plech</option>
+              <option value="taska">Rekonstrukce – taška</option>
+              <option value="oprava">Oprava střechy</option>
+              <option value="fve">Fotovoltaika</option>
+            </select>
+          </div>
+        </div>
+        <div class="items" data-items></div>
+        <button type="button" class="b b--line b--block" data-act="add-item">Přidat položku</button>
+        <div class="row3 row3--opts">
+          <label class="f"><span>DPH</span>
+            <select data-k="dph">
+              <option value="12">12 % (bydlení)</option>
+              <option value="21">21 %</option>
+              <option value="0">Ceny bez DPH</option>
+              <option value="neplatce">Neplátce DPH</option>
+            </select></label>
+          <label class="f"><span>Sleva (%)</span><input type="number" min="0" max="100" step="0.5" data-k="sleva"></label>
+          <label class="chk chk--f"><input type="checkbox" data-k="mezisoucty"> Mezisoučty skupin</label>
+        </div>
+      </section>
+
+      <section class="grp">
+        <h2 class="grp__h">Závěr</h2>
+        <label class="f"><span>Co je v ceně <em>každý řádek = jeden bod</em></span><textarea rows="5" data-k="shrnuti"></textarea></label>
+        <label class="f"><span>Podmínky</span><textarea rows="4" data-k="podminky"></textarea></label>
+      </section>
+
+      <section class="grp">
+        <h2 class="grp__h">Podpis</h2>
+        <div class="row2">
+          <label class="f"><span>Jméno</span><input data-k="podpis.jmeno"></label>
+          <label class="f"><span>Role</span><input data-k="podpis.role"></label>
+          <label class="f"><span>Telefon</span><input data-k="podpis.telefon"></label>
+          <label class="f"><span>E-mail</span><input data-k="podpis.email"></label>
+        </div>
+      </section>
+
+      <p class="ed__note">Nabídky se ukládají jen v tomto prohlížeči. Na jiný počítač je přeneste přes Uložené → Exportovat. Nic se neodesílá na server.</p>
+    </div>
+  </aside>
+
+  <main class="pv" aria-label="Náhled nabídky">
+    <div class="pv__bar"><span data-pages>Náhled A4</span><span class="pv__sum" data-sum></span></div>
+    <div class="pv__scroll"><div class="pv__fit" data-fit><article class="doc" data-doc></article></div></div>
+  </main>
+</div>
+
+<dialog class="dlg" data-dlg>
+  <form method="dialog" class="dlg__in">
+    <header class="dlg__head"><h2>Uložené nabídky</h2><button class="b b--ghost b--s" value="close">Zavřít</button></header>
+    <ul class="saved" data-saved></ul>
+    <footer class="dlg__foot">
+      <button type="button" class="b b--line b--s" data-act="export">Exportovat vše (.json)</button>
+      <label class="b b--line b--s">Importovat<input type="file" accept="application/json,.json" data-act="import" hidden></label>
+    </footer>
+  </form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

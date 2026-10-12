@@ -78,6 +78,16 @@ OG obrázek: `assets/img/og-prooze-2026.jpg` (1200×630). Po změně ověřit v 
 - Mapa všech míst je i na `/kontakt/#kde-jezdime`, odkazy v patičce. Nové místo = přidat záznam do `mesta.json` (trasu a PVGIS stáhnout stejně jako u ostatních).
 - Výběr měst podle hledanosti (Seznam): „střechy kladno“, „pokrývači mělník/kladno/beroun“, „klempíři praha západ“ apod.
 
+## Generátor nabídek (interní)
+
+- Adresa: `/interni/nabidka/` (noindex, `Disallow: /interni/` v robots.txt, nikde neodkazováno). Zdroj: `src/interni/nabidka/` (index.html, app.js, app.css), build ho jen zkopíruje.
+- Vlevo formulář, vpravo živý náhled A4. Layouty: **S fotkou** (nadpis a štítky přímo na fotce), **Čistá**, **Kompaktní** (menší zakázky). Fotka z webu nebo vlastní.
+- Štítky v hlavičce (termín, doba realizace, plocha, záruka… ikona podle popisku) + volitelný štítek s cenou díla.
+- Materiály s logem výrobce (Tondach, Bramac, KM Beta, Comax, Prefa, Satjam) nebo vlastním obrázkem, vzorek barvy.
+- Rozpočet: položky ručně (skupina, popis, množství, jednotka, cena), šablony Rekonstrukce plech/taška, Oprava, FVE; skupiny podle kategorií, volitelné mezisoučty, sleva %, DPH 12 % / 21 % / bez DPH / neplátce.
+- PDF: tlačítko Stáhnout PDF → tisk prohlížeče → Uložit jako PDF (vektorové písmo, patička s IČO a číslováním stran přes `@page`, nejlépe v Chrome).
+- Ukládání jen v prohlížeči (localStorage), číslování 2026-001…, Uložené → Otevřít / Kopie / Smazat, Export a Import .json pro přenos mezi počítači. Nic se neodesílá na server.
+
 ## DOPLNIT / OVĚŘIT před spuštěním
 
 Sliby a fakta, která jsem napsal a musí potvrdit PROOZE:

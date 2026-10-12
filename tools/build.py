@@ -654,11 +654,13 @@ def main():
             if meta.get("noindex") != "true":
                 urls.append(SITE["domain"] + page_path(page))
         copy_assets(out)
+        # interní nástroje (generátor nabídek): statické soubory, mimo sitemap, noindex
+        shutil.copytree(SRC / "interni", out / "interni", dirs_exist_ok=True)
         shutil.copy2(SRC / "site.webmanifest", out / "site.webmanifest")
         if mode == "dist":
             (out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
                                              "".join(f"  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n")
-            (out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /dekujeme/\n\nSitemap: {SITE['domain']}/sitemap.xml\n")
+            (out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /dekujeme/\nDisallow: /interni/\n\nSitemap: {SITE['domain']}/sitemap.xml\n")
         print(mode, "ok", len(PAGES), "stránek")
 
 
