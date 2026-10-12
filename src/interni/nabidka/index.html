@@ -42,107 +42,85 @@
 <div class="app">
   <aside class="ed" aria-label="Úprava nabídky">
     <header class="ed__top">
-      <button type="button" class="b b--ghost b--back" data-act="board">← Přehled</button>
-      <div class="ed__actions">
-        <select class="sel sel--s" data-k="stav" aria-label="Stav nabídky"><option value="rozpracovana">Rozpracovaná</option><option value="odeslana">Odeslaná</option><option value="prijata">Přijatá</option><option value="odmitnuta">Odmítnutá</option></select>
-        <button type="button" class="b b--ghost" data-act="save-tpl">Jako šablonu</button>
-        <button type="button" class="b b--ghost" data-act="save">Uložit</button>
-        <button type="button" class="b b--sun" data-act="pdf">Stáhnout PDF</button>
-      </div>
+      <button type="button" class="b b--ghost b--back" data-act="board" title="Zpět na přehled" aria-label="Zpět na přehled">←</button>
+      <div class="ed__title"><b data-ed-no></b><span><span data-ed-name></span> <span class="ed__saved" data-saved-at aria-live="polite"></span></span></div>
+      <select class="stsel" data-k="stav" aria-label="Stav nabídky"><option value="rozpracovana">Rozpracovaná</option><option value="odeslana">Odeslaná</option><option value="prijata">Přijatá</option><option value="odmitnuta">Odmítnutá</option></select>
+      <button type="button" class="b b--line b--s" data-act="preview" aria-pressed="true">Náhled</button>
+      <button type="button" class="b b--sun" data-act="pdf">Stáhnout PDF</button>
     </header>
 
     <div class="ed__body">
-      <section class="grp">
-        <h2 class="grp__h">Vzhled</h2>
-        <div class="layouts" role="radiogroup" aria-label="Layout">
-          <label class="lay"><input type="radio" name="layout" value="foto"><span class="lay__box"><i class="lay__th lay__th--foto"></i><b>S fotkou</b><small>Velká fotka nahoře</small></span></label>
-          <label class="lay"><input type="radio" name="layout" value="cista"><span class="lay__box"><i class="lay__th lay__th--cista"></i><b>Čistá</b><small>Bez fotky, víc vzduchu</small></span></label>
-          <label class="lay"><input type="radio" name="layout" value="kompakt"><span class="lay__box"><i class="lay__th lay__th--kompakt"></i><b>Kompaktní</b><small>Menší zakázky na 1 stranu</small></span></label>
+      <details class="acc" id="s-zak" open>
+        <summary class="acc__h"><span class="acc__t">Zákazník a nabídka</span><span class="acc__s" data-acc="zak"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="zak" hidden></i></summary>
+        <div class="acc__b">
+        <div class="row2">
+          <label class="f"><span>Jméno nebo firma</span><input data-k="zak.jmeno" placeholder="Jan Novák" autocomplete="off"></label>
+          <label class="f"><span>Telefon</span><input data-k="zak.telefon" placeholder="777 123 456" autocomplete="off"></label>
+          <label class="f"><span>E-mail</span><input data-k="zak.email" placeholder="jan@seznam.cz" autocomplete="off"></label>
+          <label class="f"><span>Adresa zákazníka</span><input data-k="zak.adresa" placeholder="Ulice 12, 274 01 Slaný" autocomplete="off"></label>
         </div>
-        <div class="photos" data-photos></div>
-      </section>
-
-      <section class="grp">
-        <h2 class="grp__h">Nabídka</h2>
+        <label class="f"><span>Místo stavby <em>když je jinde než adresa</em></span><input data-k="stavba" placeholder="Obec, ulice" autocomplete="off"></label>
+        <h3 class="grp__h3">Nabídka</h3>
+        <label class="f"><span>Název</span><input data-k="nazev" placeholder="Kompletní rekonstrukce střechy"></label>
+        <label class="f"><span>Podnadpis <em>prázdné = vyplní se podle krytiny a oken</em></span><input data-k="podtitul"></label>
         <div class="row3">
-          <label class="f"><span>Číslo nabídky</span><input data-k="cislo"></label>
+          <label class="f"><span>Číslo</span><input data-k="cislo"></label>
           <label class="f"><span>Datum</span><input type="date" data-k="datum"></label>
           <label class="f"><span>Platnost (dní)</span><input type="number" min="1" data-k="platnost"></label>
         </div>
-        <label class="f"><span>Název</span><input data-k="nazev" placeholder="Kompletní rekonstrukce střechy"></label>
-        <label class="f"><span>Podnadpis <em>prázdné = vyplní se podle krytiny a oken</em></span><input data-k="podtitul"></label>
-      </section>
-
-      <section class="grp">
-        <h2 class="grp__h">Zákazník a stavba</h2>
-        <div class="row2">
-          <label class="f"><span>Jméno nebo firma</span><input data-k="zak.jmeno" placeholder="Jan Novák"></label>
-          <label class="f"><span>Telefon</span><input data-k="zak.telefon" placeholder="777 123 456"></label>
-          <label class="f"><span>E-mail</span><input data-k="zak.email" placeholder="jan@seznam.cz"></label>
-          <label class="f"><span>Adresa zákazníka</span><input data-k="zak.adresa" placeholder="Ulice 12, 274 01 Slaný"></label>
         </div>
-        <label class="f"><span>Místo stavby <em>když je jinde než adresa</em></span><input data-k="stavba" placeholder="Obec, ulice"></label>
-      </section>
+      </details>
 
-      <section class="grp">
-        <div class="grp__hrow"><h2 class="grp__h">Krytina</h2><label class="chk"><input type="checkbox" data-k="kryt.ano"> Je součástí zakázky</label></div>
+      <details class="acc" id="s-kryt">
+        <summary class="acc__h"><span class="acc__t">Krytina a okna</span><span class="acc__s" data-acc="kryt"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="kryt" hidden></i></summary>
+        <div class="acc__b">
+          <div class="grp__hrow"><h3 class="grp__h3">Krytina</h3><label class="tgl"><input type="checkbox" data-k="kryt.ano"><span>V zakázce</span></label></div>
         <div class="grp__sub" data-kryt-fields>
-        <div class="chips" data-kryt-typ role="group" aria-label="Typ krytiny"></div>
-        <div class="swbs" data-kryt-barvy role="group" aria-label="Barva krytiny"></div>
-        <div class="row2">
-          <label class="f"><span>Výrobce <em>✓ = obvyklý pro tento typ</em></span><select data-k="kryt.vyrobce"></select></label>
-          <label class="f"><span>Barva v textu</span><input data-k="kryt.barvaTxt" placeholder="černá RAL 9005"></label>
+          <div class="chips" data-kryt-typ role="group" aria-label="Typ krytiny"></div>
+          <div class="swbs" data-kryt-barvy role="group" aria-label="Barva krytiny"></div>
+          <div class="row2">
+            <label class="f"><span>Výrobce <em>✓ obvyklý pro tento typ</em></span><select data-k="kryt.vyrobce"></select></label>
+            <label class="f"><span>Barva v textu</span><input data-k="kryt.barvaTxt" placeholder="černá RAL 9005"></label>
+          </div>
+          <details class="more"><summary>Název a body na kartě krytiny</summary>
+            <label class="f"><span>Název v nabídce</span><input data-k="kryt.nazev"></label>
+            <label class="f"><span>Body <em>každý řádek = jeden bod</em></span><textarea rows="3" data-k="kryt.body"></textarea></label>
+          </details>
         </div>
-        <label class="f"><span>Název v nabídce</span><input data-k="kryt.nazev"></label>
-        <label class="f"><span>Body <em>každý řádek = jeden bod</em></span><textarea rows="3" data-k="kryt.body"></textarea></label>
-        <p class="hint">Úvodní fotka v layoutu S fotkou se vybere podle typu, barvy a oken (dlaždice „Podle krytiny“).</p>
-        </div>
-      </section>
-
-      <section class="grp">
-        <div class="grp__hrow"><h2 class="grp__h">Střešní okna</h2><label class="chk"><input type="checkbox" data-k="okna.ano"> Jsou součástí zakázky</label></div>
+          <div class="grp__hrow grp__hrow--sep"><h3 class="grp__h3">Střešní okna</h3><label class="tgl"><input type="checkbox" data-k="okna.ano"><span>V zakázce</span></label></div>
         <div class="grp__sub" data-okna-fields>
-          <div class="row3">
+          <div class="row3 row3--okna">
             <label class="f"><span>Počet</span><input type="number" min="1" data-k="okna.pocet"></label>
             <label class="f"><span>Okno</span><input data-k="okna.model" placeholder="VELUX GLU 0061Z MK06"></label>
             <label class="f"><span>Lemování</span><input data-k="okna.lemovani" placeholder="EDW 2000 MK06"></label>
           </div>
-          <label class="f"><span>Body</span><textarea rows="2" data-k="okna.body"></textarea></label>
+          <details class="more"><summary>Body na kartě oken</summary>
+            <label class="f"><span>Body</span><textarea rows="2" data-k="okna.body"></textarea></label>
+          </details>
         </div>
-      </section>
-
-      <section class="grp">
-        <h2 class="grp__h">Štítky v hlavičce</h2>
-        <p class="hint">Termín, doba realizace, plocha, záruka… Ikona se vybere podle popisku, prázdný řádek se nezobrazí.</p>
-        <div class="facts" data-facts></div>
-        <label class="chk"><input type="checkbox" data-k="cenaNahore"> Přidat štítek s cenou díla</label>
-      </section>
-
-      <section class="grp">
-        <h2 class="grp__h">Úvodní text</h2>
-        <label class="f"><textarea rows="3" data-k="uvod" placeholder="Děkujeme za zájem…"></textarea></label>
-      </section>
-
-      <section class="grp">
-        <div class="grp__hrow"><h2 class="grp__h">Další materiály</h2><button type="button" class="b b--line b--s" data-act="add-prod">Přidat</button></div>
-        <p class="hint">Volitelně: okapový systém, zateplení, fotovoltaika… Zobrazí se vedle krytiny a oken.</p>
-        <div class="prods" data-prods></div>
-      </section>
-
-      <section class="grp">
-        <div class="grp__hrow"><h2 class="grp__h">Rozpočet</h2>
-          <div class="grp__tools">
-            <select class="sel" data-act="tpl" aria-label="Načíst šablonu položek">
-              <option value="">Šablona položek…</option>
-              <option value="plech">Rekonstrukce – plech</option>
-              <option value="taska">Rekonstrukce – taška</option>
-              <option value="oprava">Oprava střechy</option>
-              <option value="fve">Fotovoltaika</option>
-            </select>
-          </div>
+          <details class="more more--grp" data-prods-wrap><summary><span>Další materiály</span> <em data-prods-count></em></summary>
+          <p class="hint">Okapový systém, zateplení, fotovoltaika… Zobrazí se jako karta vedle krytiny a oken.</p>
+          <div class="prods" data-prods></div>
+          <button type="button" class="b b--line b--s" data-act="add-prod">+ Přidat materiál</button>
+        </details>
         </div>
+      </details>
+
+      <details class="acc" id="s-rozp">
+        <summary class="acc__h"><span class="acc__t">Rozpočet</span><span class="acc__s" data-acc="rozp"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="rozp" hidden></i></summary>
+        <div class="acc__b">
+          <div class="grp__hrow grp__hrow--end">
+          <select class="sel sel--s" data-act="tpl" aria-label="Načíst šablonu položek">
+            <option value="">Načíst šablonu položek…</option>
+            <option value="plech">Rekonstrukce – plech</option>
+            <option value="taska">Rekonstrukce – taška</option>
+            <option value="oprava">Oprava střechy</option>
+            <option value="fve">Fotovoltaika</option>
+          </select>
+        </div>
+        <p class="hint">Položky jsou ve skupinách jako v PDF. Enter v ceně přidá další položku. Žlutý proužek = propojeno s krytinou nebo okny.</p>
         <div class="items" data-items></div>
-        <button type="button" class="b b--line b--block" data-act="add-item">Přidat položku</button>
+        <button type="button" class="b b--line b--block" data-act="add-group">+ Přidat skupinu</button>
         <div class="row3 row3--opts">
           <label class="f"><span>DPH</span>
             <select data-k="dph">
@@ -152,36 +130,67 @@
               <option value="neplatce">Neplátce DPH</option>
             </select></label>
           <label class="f"><span>Sleva (%)</span><input type="number" min="0" max="100" step="0.5" data-k="sleva"></label>
-          <label class="chk chk--f"><input type="checkbox" data-k="mezisoucty"> Mezisoučty skupin</label>
+          <label class="chk chk--f"><input type="checkbox" data-k="mezisoucty"> Mezisoučty skupin v PDF</label>
         </div>
-      </section>
+        <label class="chk"><input type="checkbox" data-k="zaokr"> Zaokrouhlit cenu díla na celé koruny</label>
+        <div class="itotal" data-itotal></div>
+        </div>
+      </details>
 
-      <section class="grp">
-        <h2 class="grp__h">Závěr</h2>
+      <details class="acc" id="s-texty">
+        <summary class="acc__h"><span class="acc__t">Texty a štítky</span><span class="acc__s" data-acc="texty"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="texty" hidden></i></summary>
+        <div class="acc__b">
+        <h3 class="grp__h3">Štítky v hlavičce</h3>
+        <p class="hint">Termín, doba realizace, plocha, záruka… Ikona se vybere podle popisku, prázdný řádek se nezobrazí.</p>
+        <div class="facts" data-facts></div>
+        <label class="chk"><input type="checkbox" data-k="cenaNahore"> Přidat štítek s cenou díla</label>
+        <label class="f"><span>Úvodní text</span><textarea rows="3" data-k="uvod" placeholder="Děkujeme za zájem…"></textarea></label>
         <label class="f"><span>Co je v ceně <em>každý řádek = jeden bod</em></span><textarea rows="5" data-k="shrnuti"></textarea></label>
-        <label class="f"><span>Podmínky</span><textarea rows="4" data-k="podminky"></textarea></label>
-      </section>
+        <label class="f"><span>Podmínky</span><textarea rows="3" data-k="podminky"></textarea></label>
+        </div>
+      </details>
 
-      <section class="grp">
-        <h2 class="grp__h">Podpis</h2>
+      <details class="acc" id="s-vzhled">
+        <summary class="acc__h"><span class="acc__t">Vzhled a fotka</span><span class="acc__s" data-acc="vzhled"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="vzhled" hidden></i></summary>
+        <div class="acc__b">
+        <div class="layouts" role="radiogroup" aria-label="Layout">
+          <label class="lay"><input type="radio" name="layout" value="foto"><span class="lay__box"><i class="lay__th lay__th--foto"></i><b>S fotkou</b><small>Velká fotka nahoře</small></span></label>
+          <label class="lay"><input type="radio" name="layout" value="cista"><span class="lay__box"><i class="lay__th lay__th--cista"></i><b>Čistá</b><small>Bez fotky, víc vzduchu</small></span></label>
+          <label class="lay"><input type="radio" name="layout" value="kompakt"><span class="lay__box"><i class="lay__th lay__th--kompakt"></i><b>Kompaktní</b><small>Menší zakázky na 1 stranu</small></span></label>
+        </div>
+        <div data-photos></div>
+        </div>
+      </details>
+
+      <details class="acc" id="s-podpis">
+        <summary class="acc__h"><span class="acc__t">Podpis</span><span class="acc__s" data-acc="podpis"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="podpis" hidden></i></summary>
+        <div class="acc__b">
         <div class="row2">
           <label class="f"><span>Jméno</span><input data-k="podpis.jmeno"></label>
           <label class="f"><span>Role</span><input data-k="podpis.role"></label>
           <label class="f"><span>Telefon</span><input data-k="podpis.telefon"></label>
           <label class="f"><span>E-mail</span><input data-k="podpis.email"></label>
         </div>
-      </section>
+        </div>
+      </details>
 
-      <p class="ed__note">Nabídky se ukládají jen v tomto prohlížeči. Na jiný počítač je přeneste přes Uložené → Exportovat. Nic se neodesílá na server.</p>
+      <div class="ed__end">
+        <button type="button" class="b b--line" data-act="save-tpl">Uložit jako šablonu</button>
+        <button type="button" class="b b--sun" data-act="pdf">Stáhnout PDF</button>
+      </div>
+      <p class="ed__note">Ukládá se samo, jen v tomto prohlížeči (Ctrl/⌘ + S uloží hned). Na jiný počítač přeneste nabídky v přehledu přes Exportovat. Nic se neodesílá na server.</p>
     </div>
   </aside>
 
   <main class="pv" aria-label="Náhled nabídky">
-    <div class="pv__bar"><span data-pages>Náhled A4</span><span class="pv__sum" data-sum></span></div>
+    <div class="pv__bar">
+      <span data-pages>Náhled A4</span>
+      <div class="pv__checks"><button type="button" class="ckb" data-checks aria-expanded="false"></button><div class="ckl" data-checks-list hidden></div></div>
+      <span class="pv__sum" data-sum></span>
+    </div>
     <div class="pv__scroll"><div class="pv__fit" data-fit><article class="doc" data-doc></article></div></div>
   </main>
 </div>
-
 
 <script src="app.js"></script>
 </body>

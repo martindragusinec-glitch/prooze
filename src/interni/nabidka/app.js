@@ -147,7 +147,7 @@
       nazev: '', podtitul: '', zak: { jmeno: '', telefon: '', email: '', adresa: '' }, stavba: '',
       fakta: [{ k: 'Zahájení', v: '' }, { k: 'Doba realizace', v: '' }, { k: 'Plocha střechy', v: '' }], cenaNahore: true,
       uvod: '', kryt: defaultKryt(), okna: defaultOkna(), prods: [],
-      items: [I('', '', 'kpl')], dph: '12', sleva: '', mezisoucty: false,
+      items: [I('', '', 'kpl')], dph: '12', sleva: '', mezisoucty: false, zaokr: true,
       shrnuti: '', podminky: 'Záloha 30 % při podpisu smlouvy, doplatek po předání díla. Termín zahájení potvrdíme ve smlouvě.',
       podpis: { jmeno: 'Pavel Kočí', role: 'majitel', telefon: '773 898 698', email: 'info@prooze.cz' },
     };
@@ -164,6 +164,8 @@
 
   // starší uložené nabídky (v1) → krytina a okna jako samostatné volby
   function migrate(s) {
+    if (s && !s.stav) s.stav = 'rozpracovana';
+    if (s && s.zaokr === undefined) s.zaokr = true;
     if (s && s.v === 1) {
       s.kryt = defaultKryt(); s.okna = defaultOkna(); s.foto = 'auto'; s.podtitul = s.podtitul || '';
       s.prods = (s.prods || []).filter((p) => !/krytina|okna/i.test(p.nadpis || ''));
@@ -183,7 +185,8 @@
     const zaklad = sum - slevaKc;
     const rate = s.dph === '12' || s.dph === '21' ? Number(s.dph) : 0;
     const dphKc = zaklad * rate / 100;
-    return { rows, sum, sleva, slevaKc, zaklad, rate, dphKc, celkem: zaklad + dphKc };
+    const raw = zaklad + dphKc, celkem = s.zaokr === false ? raw : Math.round(raw);
+    return { rows, sum, sleva, slevaKc, zaklad, rate, dphKc, celkem, zaokrKc: celkem - raw };
   }
   const priceLabel = (s, tt) => (tt.rate ? 's DPH' : s.dph === '0' ? 'bez DPH' : '');
 
@@ -217,17 +220,17 @@
     const meta = `<p class="d-meta"><b>Cenová nabídka č.&nbsp;${esc(s.cislo)}</b><br>${czDate(s.datum)}</p>`;
     const badges = s.fakta.filter((f) => f.k && f.v).map((f) => badge(f.k, f.v));
     if (s.cenaNahore && tt.sum > 0) badges.push(badge(`Cena díla${priceLabel(s, tt) ? ' ' + priceLabel(s, tt) : ''}`, kc(tt.celkem), true));
-    const badgeRow = badges.length ? `<div class="d-badges">${badges.join('')}</div>` : '';
+    const badgeRow = badges.length ? `<div class="d-badges" data-goto="#s-texty">${badges.join('')}</div>` : '';
     const sub = s.podtitul || autoSub(s);
     const title = `<h1>${ph(s.nazev, 'Název nabídky')}</h1>${sub ? `<p class="d-sub">${t(sub)}</p>` : ''}`;
     const head = L === 'foto'
-      ? `<header class="d-cover"><img class="d-cover__img" src="${coverSrc(s)}" alt=""><div class="d-cover__bar"><img class="d-logo" src="${A}brand/logo-bila.svg" alt="PROOZE">${meta}</div><div class="d-cover__txt">${title}${badgeRow}</div></header>`
-      : `<header class="d-head"><div class="d-head__brand"><img class="d-logo" src="${A}brand/logo.svg" alt="PROOZE"><span>Pokrývači, kteří umí i&nbsp;fotovoltaiku</span></div>${meta}</header>`;
+      ? `<header class="d-cover" data-goto='[data-k="nazev"]'><img class="d-cover__img" src="${coverSrc(s)}" alt=""><div class="d-cover__bar"><img class="d-logo" src="${A}brand/logo-bila.svg" alt="PROOZE">${meta}</div><div class="d-cover__txt">${title}${badgeRow}</div></header>`
+      : `<header class="d-head" data-goto='[data-k="cislo"]'><div class="d-head__brand"><img class="d-logo" src="${A}brand/logo.svg" alt="PROOZE"><span>Pokrývači, kteří umí i&nbsp;fotovoltaiku</span></div>${meta}</header>`;
 
     const kde = s.stavba || s.zak.adresa;
-    const parties = `<section class="d-parties">
-      <div><h3>Pro</h3><p>${s.zak.jmeno ? `<b>${t(s.zak.jmeno)}</b>` : '<span class="ph">Jméno zákazníka</span>'}${s.zak.adresa ? '<br>' + t(s.zak.adresa) : ''}${s.zak.telefon ? '<br>' + t(s.zak.telefon) : ''}${s.zak.email ? '<br>' + t(s.zak.email) : ''}</p></div>
-      <div><h3>Místo stavby</h3><p>${ph(kde, 'Adresa stavby')}</p></div>
+    const parties = `<section class="d-parties" data-goto='[data-k="zak.jmeno"]'>
+      <div${s.zak.jmeno ? '' : ' class="is-empty"'}><h3>Pro</h3><p>${s.zak.jmeno ? `<b>${t(s.zak.jmeno)}</b>` : '<span class="ph">Jméno zákazníka</span>'}${s.zak.adresa ? '<br>' + t(s.zak.adresa) : ''}${s.zak.telefon ? '<br>' + t(s.zak.telefon) : ''}${s.zak.email ? '<br>' + t(s.zak.email) : ''}</p></div>
+      <div${kde ? '' : ' class="is-empty"'}><h3>Místo stavby</h3><p>${ph(kde, 'Adresa stavby')}</p></div>
       <div><h3>Připravil</h3><p><b>${t(s.podpis.jmeno)}</b>${s.podpis.role ? ', ' + t(s.podpis.role) : ''}<br>${t(s.podpis.telefon)}<br>${t(s.podpis.email)}</p></div></section>`;
 
     const k = s.kryt, o = s.okna;
@@ -236,7 +239,7 @@
       o && o.ano && o.model ? { nadpis: 'Střešní okna', nazev: `${num(o.pocet) ? fmt(num(o.pocet)) + '× ' : ''}${o.model}`, vyrobce: '', barva: '', hex: '', body: [o.lemovani ? `Lemování ${o.lemovani}` : '', o.body].filter(Boolean).join('\n') } : null,
       ...s.prods.filter((p) => p.nazev || p.img),
     ].filter(Boolean);
-    const prodHtml = prods.length ? `<section class="d-sec d-prods d-prods--${Math.min(prods.length, 3)}">${prods.map((p) => {
+    const prodHtml = prods.length ? `<section class="d-sec d-prods d-prods--${Math.min(prods.length, 3)}" data-goto="#s-kryt">${prods.map((p) => {
       const m = MAKERS[p.vyrobce];
       const logo = p.img ? `<img class="d-prod__img" src="${p.img}" alt="">` : m && m[1] ? `<img class="d-prod__logo" src="${A}brands/${m[1]}" alt="${m[0]}">` : '';
       const color = p.barva || p.hex ? `<p class="d-prod__color">${p.hex ? `<i class="sw" style="background:${esc(p.hex)}"></i>` : ''}${t(p.barva)}</p>` : '';
@@ -253,28 +256,31 @@
       if (!g) groups.push(g = { k, rows: [], sum: 0 });
       g.rows.push([x, tt.rows[i]]); g.sum += tt.rows[i];
     });
-    const tbody = groups.map((g) => `<tbody><tr class="d-cat"><th colspan="4" scope="colgroup">${t(g.k)}</th><td class="r">${s.mezisoucty ? kc(g.sum) : ''}</td></tr>${g.rows.map(([x, total]) => `<tr><td>${t(x.popis)}</td><td class="r">${x.mn !== '' ? fmt(num(x.mn)) : ''}</td><td>${esc(x.jed)}</td><td class="r">${x.cena !== '' ? kc(num(x.cena)) : ''}</td><td class="r"><b>${kc(total)}</b></td></tr>`).join('')}</tbody>`).join('');
+    const tbody = groups.map((g) => `<tbody><tr class="d-cat"><th colspan="4" scope="colgroup">${t(g.k)}</th><td class="r">${s.mezisoucty ? kc(g.sum) : ''}</td></tr>${g.rows.map(([x, total]) => `<tr data-goto='[data-item="${S.items.indexOf(x)}"] [data-if="popis"]'><td>${t(x.popis).replace(/\n/g, '<br>')}</td><td class="r">${x.mn !== '' ? fmt(num(x.mn)) : ''}</td><td>${esc(x.jed)}</td><td class="r">${num(x.cena) ? kc(num(x.cena)) : '—'}</td><td class="r"><b>${total ? kc(total) : '—'}</b></td></tr>`).join('')}</tbody>`).join('');
     const totRows = [];
     if (tt.sleva) totRows.push(['Součet položek', kc(tt.sum)], [`Sleva ${fmt(tt.sleva)} %`, '− ' + kc(tt.slevaKc)]);
     if (tt.rate) totRows.push(['Základ DPH', kc(tt.zaklad)], [`DPH ${tt.rate} %`, kc(tt.dphKc)]);
+    if (Math.abs(tt.zaokrKc) >= 0.005) totRows.push(['Zaokrouhlení', (tt.zaokrKc > 0 ? '+ ' : '− ') + kc(Math.abs(tt.zaokrKc))]);
+    // rekapitulace po skupinách vlevo vedle součtů (od 3 skupin)
+    const recap = groups.length >= 3 ? `<div class="d-recap"><p class="d-recap__h">Rekapitulace</p>${groups.map((g) => `<p><span>${t(g.k)}</span><b>${kc(g.sum)}</b></p>`).join('')}</div>` : '';
     const finalLabel = tt.rate ? 'Cena díla celkem s DPH' : s.dph === '0' ? 'Cena díla celkem bez DPH' : 'Cena díla celkem';
     const budget = groups.length ? `<section class="d-sec d-budget"><h2 class="d-h">Položkový rozpočet</h2>
       <table class="d-tbl"><colgroup><col><col style="width:15mm"><col style="width:11mm"><col style="width:25mm"><col style="width:28mm"></colgroup>
       <thead><tr><th scope="col">Položka</th><th class="r" scope="col">Množství</th><th scope="col">Jedn.</th><th class="r" scope="col">Cena za jedn.</th><th class="r" scope="col">Celkem</th></tr></thead>${tbody}</table>
-      <div class="d-tot">${totRows.length ? `<div class="d-tot__rows">${totRows.map(([a, b]) => `<p><span>${a}</span><b>${b}</b></p>`).join('')}</div>` : ''}
+      <div class="d-tot" data-goto='[data-k="dph"]'><div class="d-tot__grid${recap ? '' : ' d-tot__grid--solo'}">${recap}${totRows.length ? `<div class="d-tot__rows">${totRows.map(([a, b]) => `<p><span>${a}</span><b>${b}</b></p>`).join('')}</div>` : ''}</div>
       <div class="d-tot__final"><span>${finalLabel}</span><b>${kc(tt.celkem)}</b></div>
       ${s.dph === 'neplatce' ? '<p class="d-tot__note">Nejsme plátci DPH.</p>' : ''}</div></section>` : '';
 
     const sh = lines(s.shrnuti);
-    const end = sh.length || s.podminky ? `<section class="d-sec d-end">${sh.length ? `<div><h2 class="d-h">Co je v&nbsp;ceně</h2><ul class="d-check">${sh.map((b) => `<li>${t(b)}</li>`).join('')}</ul></div>` : '<div></div>'}
+    const end = sh.length || s.podminky ? `<section class="d-sec d-end" data-goto='[data-k="shrnuti"]'>${sh.length ? `<div><h2 class="d-h">Co je v&nbsp;ceně</h2><ul class="d-check">${sh.map((b) => `<li>${t(b)}</li>`).join('')}</ul></div>` : '<div></div>'}
       ${s.podminky ? `<div><h2 class="d-h">Podmínky</h2>${lines(s.podminky).map((p) => `<p>${t(p)}</p>`).join('')}</div>` : ''}</section>` : '';
 
     const platnost = s.datum && num(s.platnost) ? `Nabídka platí do ${czDate(addDays(s.datum, num(s.platnost)))}.` : '';
-    const sign = `<section class="d-sign"><div><p class="d-sign__lead">Těšíme se na spolupráci.</p><p>${platnost} Rádi ji s&nbsp;vámi projdeme položku po položce.</p></div>
+    const sign = `<section class="d-sign" data-goto="#s-podpis"><div><p class="d-sign__lead">Těšíme se na spolupráci.</p><p>${platnost} Rádi ji s&nbsp;vámi projdeme položku po položce.</p></div>
       <div class="d-sign__who"><img src="${A}brand/symbol.svg" alt=""><p><b>${t(s.podpis.jmeno)}</b>${s.podpis.role ? '<br>' + t(s.podpis.role) + ', PROOZE' : '<br>PROOZE'}<br>${t(s.podpis.telefon)} · ${t(s.podpis.email)}</p></div></section>`;
 
     return `${head}${L !== 'foto' ? `<section class="d-title">${title}</section>${badgeRow}` : ''}${parties}
-      ${s.uvod ? `<p class="d-intro">${t(s.uvod)}</p>` : ''}${prodHtml}${budget}${end}${sign}`;
+      ${s.uvod.trim() ? `<div class="d-intro" data-goto='[data-k="uvod"]'>${s.uvod.split(/\n\s*\n|\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${t(x)}</p>`).join('')}</div>` : ''}${prodHtml}${budget}${end}${sign}`;
   }
 
   /* ---------- editor ---------- */
@@ -291,8 +297,98 @@
       updateTotalsInEditor(tt);
       fitDoc();
       store(KEY, S);
+      $('[data-ed-no]').textContent = S.cislo;
+      $('[data-ed-name]').textContent = S.zak.jmeno || S.nazev || 'Nová nabídka';
+      renderChecks();
+      renderAccs();
+      autosave();
     });
   }
+  // ukládá se samo (s malým zpožděním), stav ukazuje lišta pod hlavičkou
+  let saveT = 0;
+  function autosave() {
+    const el = $('[data-saved-at]'); el.textContent = 'Ukládám…';
+    clearTimeout(saveT);
+    saveT = setTimeout(() => { saveCurrent(true); el.textContent = `Uloženo ${new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}`; }, 700);
+  }
+  addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && document.body.dataset.view === 'edit') { e.preventDefault(); clearTimeout(saveT); saveCurrent(); $('[data-saved-at]').textContent = 'Uloženo'; }
+  });
+
+  // kontrola před odesláním
+  const plural = (n, a, b, c) => (n === 1 ? a : n >= 2 && n <= 4 ? b : c);
+  function checks(s) {
+    const c = [];
+    if (!s.zak.jmeno) c.push(['Jméno zákazníka', '[data-k="zak.jmeno"]']);
+    if (!s.stavba && !s.zak.adresa) c.push(['Adresa stavby', '[data-k="zak.adresa"]']);
+    if (!s.nazev) c.push(['Název nabídky', '[data-k="nazev"]']);
+    const live = s.items.map((x, i) => [x, i]).filter(([x]) => x.popis && !offItem(s, x));
+    const noPrice = live.filter(([x]) => !num(x.cena)), noQty = live.filter(([x]) => !num(x.mn));
+    if (noPrice.length) c.push([`${noPrice.length} ${plural(noPrice.length, 'položka', 'položky', 'položek')} bez ceny`, `[data-item="${noPrice[0][1]}"] [data-if="cena"]`]);
+    if (noQty.length) c.push([`${noQty.length} ${plural(noQty.length, 'položka', 'položky', 'položek')} bez množství`, `[data-item="${noQty[0][1]}"] [data-if="mn"]`]);
+    if (s.okna?.ano && !s.okna.model) c.push(['Typ střešních oken', '[data-k="okna.model"]']);
+    return c;
+  }
+  function renderChecks() {
+    const c = checks(S), btn = $('[data-checks]'), list = $('[data-checks-list]');
+    btn.className = `ckb${c.length ? '' : ' ckb--ok'}`;
+    btn.textContent = c.length ? `${c.length} ${plural(c.length, 'věc', 'věci', 'věcí')} k doplnění` : 'Připraveno k odeslání';
+    list.innerHTML = c.map(([m, sel]) => `<button type="button" data-goto="${esc(sel)}">${m}</button>`).join('');
+    if (!c.length) { list.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+  }
+  $('[data-checks]').addEventListener('click', () => { const l = $('[data-checks-list]'); if (!l.innerHTML) return; l.hidden = !l.hidden; $('[data-checks]').setAttribute('aria-expanded', String(!l.hidden)); });
+
+  // skok na pole v editoru (z náhledu, z kontroly)
+  // posouvá jen sloupec editoru (scrollIntoView by posunul i celou stránku)
+  function scrollEd(el, where = 'center') {
+    const body = $('.ed__body'), r = el.getBoundingClientRect(), b = body.getBoundingClientRect();
+    const top = body.scrollTop + r.top - b.top - (where === 'start' ? 8 : (b.height - r.height) / 2);
+    body.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+  function goto(sel) {
+    const el = $(sel); if (!el) return;
+    for (let d = el.closest('details'); d; d = d.parentElement.closest('details')) d.open = true;
+    setTimeout(() => scrollEd(el), 40);
+    const box = el.closest('.it, .grp') || el;
+    box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash');
+    if (el.matches('input, textarea, select')) setTimeout(() => el.focus({ preventScroll: true }), 350);
+  }
+  document.addEventListener('click', (e) => { const g = e.target.closest('[data-goto]'); if (g) { e.preventDefault(); $('[data-checks-list]').hidden = true; goto(g.dataset.goto); } });
+
+  // roletky: otevřená je jedna, sbalené ukazují shrnutí a tečku, když v nich něco chybí
+  const accs = [...document.querySelectorAll('.acc')];
+  accs.forEach((d) => d.addEventListener('toggle', () => {
+    if (d.open) accs.forEach((o) => { if (o !== d) o.open = false; });
+    if (d.open) setTimeout(() => scrollEd(d, 'start'), 30);
+    if (d.id === 's-rozp' && d.open) autosize();
+  }));
+  function renderAccs() {
+    const k = S.kryt, o = S.okna, tt = totals(S), live = S.items.filter((x) => x.popis && !offItem(S, x));
+    const obec = (S.stavba || S.zak.adresa || '').split(',').pop().replace(/\d{3}\s?\d{2}/, '').trim();
+    const sum = {
+      zak: [S.zak.jmeno || 'Doplňte zákazníka', obec].filter(Boolean).join(' · '),
+      kryt: [k.ano === false ? 'Bez krytiny' : `${KRYTINY[k.typ].n}${k.barvaTxt ? ', ' + k.barvaTxt : ''}`, o.ano ? `${o.pocet || ''}× okno`.trim() : 'bez oken'].join(' · '),
+      rozp: `${live.length} ${plural(live.length, 'položka', 'položky', 'položek')}${tt.sum ? ' · ' + kc(tt.celkem) + (priceLabel(S, tt) ? ' ' + priceLabel(S, tt) : '') : ''}`,
+      texty: [((n) => (n ? `${n} ${plural(n, 'štítek', 'štítky', 'štítků')}` : 'bez štítků'))(S.fakta.filter((f) => f.k && f.v).length), S.uvod ? 'úvod' : '',
+        ((n) => (n ? `${n} ${plural(n, 'bod', 'body', 'bodů')} v ceně` : ''))(lines(S.shrnuti).length)].filter(Boolean).join(' · '),
+      vzhled: `${{ foto: 'S fotkou', cista: 'Čistá', kompakt: 'Kompaktní' }[S.layout]}${S.layout === 'foto' ? (S.fotoData || (S.foto && S.foto !== 'auto') ? ' · vlastní fotka' : ' · fotka podle krytiny') : ''}`,
+      podpis: [S.podpis.jmeno, S.podpis.role].filter(Boolean).join(', '),
+    };
+    const c = checks(S).map((x) => x[1]);
+    const miss = { zak: c.some((x) => /zak\.|nazev/.test(x)), kryt: c.some((x) => /okna\./.test(x)), rozp: c.some((x) => /data-item/.test(x)) };
+    Object.entries(sum).forEach(([key, v]) => { const el = document.querySelector(`[data-acc="${key}"]`); if (el) el.textContent = v; });
+    document.querySelectorAll('[data-accdot]').forEach((el) => { el.hidden = !miss[el.dataset.accdot]; });
+  }
+
+  // náhled jde schovat, editor se pak roztáhne (volba se pamatuje)
+  function setPreview(on) {
+    document.body.classList.toggle('no-pv', !on);
+    const b = $('[data-act="preview"]'); b.setAttribute('aria-pressed', String(on)); b.textContent = 'Náhled'; b.title = on ? 'Schovat náhled a roztáhnout formulář' : 'Zobrazit náhled PDF';
+    try { localStorage.setItem('prooze-nabidka-nahled', on ? '1' : '0'); } catch {}
+    if (on) { fitDoc(); setTimeout(fitDoc, 50); }
+    autosize();
+  }
+  setPreview(load('prooze-nabidka-nahled', 1) !== 0);
   function fitDoc() {
     if (document.body.dataset.view !== 'edit') return;
     const w = scroller.clientWidth - 48;
@@ -336,15 +432,21 @@
   }
 
   // fotky (jen layout s fotkou)
+  let photosOpen = false;
   function renderPhotos() {
     const box = $('[data-photos]');
     box.hidden = S.layout !== 'foto';
+    const own = !!S.fotoData || (S.foto && S.foto !== 'auto');
     const auto = { ...S, foto: 'auto', fotoData: '' };
-    box.innerHTML = `<button type="button" class="ph-btn ph-btn--auto${!S.fotoData && S.foto === 'auto' ? ' is-on' : ''}" data-photo="auto" title="Podle zvolené krytiny a oken"><img src="${coverSrc(auto)}" alt=""><span>Podle krytiny</span></button>`
+    const head = `<div class="cov"><img src="${coverSrc(S)}" alt=""><div class="cov__t"><b>${own ? 'Vlastní výběr fotky' : 'Fotka podle krytiny'}</b><small>${own ? 'Fotka se nemění s krytinou.' : 'Mění se sama podle typu, barvy a oken.'}</small>
+      <span class="cov__b"><button type="button" class="b b--line b--s" data-photo-toggle>${photosOpen ? 'Skrýt fotky' : 'Vybrat jinou'}</button>${own ? '<button type="button" class="b b--ghost b--s" data-photo="auto">Zpět podle krytiny</button>' : ''}</span></div></div>`;
+    if (!photosOpen) { box.innerHTML = head; return; }
+    box.innerHTML = head + '<div class="photos">' + `<button type="button" class="ph-btn ph-btn--auto${!own ? ' is-on' : ''}" data-photo="auto" title="Podle zvolené krytiny a oken"><img src="${coverSrc(auto)}" alt=""><span>Podle krytiny</span></button>`
       + PHOTOS.map(([k, n]) => `<button type="button" class="ph-btn${!S.fotoData && S.foto === k ? ' is-on' : ''}" data-photo="${k}" title="${n}"><img src="${A}img/web/${k}-800.webp" alt="${n}" loading="lazy"></button>`).join('')
-      + `<label class="ph-btn ph-btn--up${S.fotoData ? ' is-on' : ''}" title="Vlastní fotka">${S.fotoData ? `<img src="${S.fotoData}" alt="">` : '<span>Vlastní<br>fotka</span>'}<input type="file" accept="image/*" data-upload="foto" hidden></label>`;
+      + `<label class="ph-btn ph-btn--up${S.fotoData ? ' is-on' : ''}" title="Vlastní fotka">${S.fotoData ? `<img src="${S.fotoData}" alt="">` : '<span>Nahrát<br>vlastní</span>'}<input type="file" accept="image/*" data-upload="foto" hidden></label></div>`;
   }
   $('[data-photos]').addEventListener('click', (e) => {
+    if (e.target.closest('[data-photo-toggle]')) { photosOpen = !photosOpen; renderPhotos(); return; }
     const b = e.target.closest('[data-photo]');
     if (!b) return;
     S.foto = b.dataset.photo; S.fotoData = ''; renderPhotos(); refresh();
@@ -388,6 +490,8 @@
 
   // materiály
   function renderProds() {
+    $('[data-prods-count]').textContent = S.prods.length ? `(${S.prods.length})` : '';
+    if (S.prods.length) $('[data-prods-wrap]').open = true;
     $('[data-prods]').innerHTML = S.prods.map((p, i) => {
       const custom = p.hex && !SWATCH.some(([h]) => h === p.hex);
       return `<div class="prod" data-prod="${i}">
@@ -415,50 +519,95 @@
     renderProds(); refresh();
   });
 
-  // položky rozpočtu
-  function renderItems() {
-    const kats = [...new Set(S.items.map((x) => x.kat).filter(Boolean).concat(['Krytina', 'Ostatní materiál', 'Klempířské prvky', 'Střešní okna', 'Doprava a zařízení stavby', 'Odpady', 'Práce']))];
-    syncLinked(S);
-    $('[data-items]').innerHTML = `<datalist id="kats">${kats.map((k) => `<option value="${esc(k)}">`).join('')}</datalist>` + S.items.map((x, i) => `<div class="it${offItem(S, x) ? ' it--off' : ''}${x.link && !x.manual ? ' it--link' : ''}" data-item="${i}" title="${offItem(S, x) ? 'Není v součtu: ' + (x.link === 'kryt' ? 'krytina' : 'okna') + ' nejsou součástí zakázky' : x.link && !x.manual ? 'Propojeno s volbou ' + (x.link === 'kryt' ? 'krytiny' : 'oken') + ' nahoře' : ''}">
-      <input class="it__kat" list="kats" data-if="kat" value="${esc(x.kat)}" placeholder="Skupina" aria-label="Skupina">
+  // položky rozpočtu: ve skupinách jako v PDF (pořadí skupin = první výskyt)
+  let groups = [];
+  function groupsOf(items) {
+    const g = [];
+    items.forEach((x, i) => { const k = x.kat || ''; let G = g.find((y) => y.k === k); if (!G) g.push(G = { k, idx: [] }); G.idx.push(i); });
+    return g;
+  }
+  const rowTitle = (x) => (offItem(S, x) ? `Není v součtu: ${x.link === 'kryt' ? 'krytina' : 'okna'} nejsou součástí zakázky` : x.link && !x.manual ? `Propojeno s volbou ${x.link === 'kryt' ? 'krytiny' : 'oken'} nahoře` : '');
+  const IACT = [['up', 'Posunout nahoru', '<path d="M12 18V6M6.5 11.5 12 6l5.5 5.5"/>'], ['down', 'Posunout dolů', '<path d="M12 6v12M6.5 12.5 12 18l5.5-5.5"/>'],
+    ['dup', 'Duplikovat', '<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>'],
+    ['del', 'Smazat', '<path d="M5 7h14M10 7V5h4v2M7 7l.8 12h8.4L17 7"/>']];
+  function itemRow(x, i) {
+    const v = num(x.mn) * num(x.cena);
+    return `<div class="it${offItem(S, x) ? ' it--off' : ''}${x.link && !x.manual ? ' it--link' : ''}" data-item="${i}" title="${rowTitle(x)}">
       <textarea class="it__popis" rows="1" data-if="popis" placeholder="Popis položky" aria-label="Popis">${esc(x.popis)}</textarea>
       <input class="it__mn" inputmode="decimal" data-if="mn" value="${esc(x.mn)}" placeholder="Množ." aria-label="Množství">
       <select class="it__jed" data-if="jed" aria-label="Jednotka">${UNITS.map((u) => `<option${u === x.jed ? ' selected' : ''}>${u}</option>`).join('')}</select>
-      <input class="it__cena" inputmode="decimal" data-if="cena" value="${esc(x.cena)}" placeholder="Kč / jedn." aria-label="Cena za jednotku">
-      <output class="it__sum" data-isum>${num(x.mn) * num(x.cena) ? kc(num(x.mn) * num(x.cena)) : '–'}</output>
-      <span class="it__act"><button type="button" data-iact="up" title="Nahoru" aria-label="Posunout nahoru">↑</button><button type="button" data-iact="down" title="Dolů" aria-label="Posunout dolů">↓</button><button type="button" data-iact="dup" title="Duplikovat" aria-label="Duplikovat">⧉</button><button type="button" data-iact="del" title="Smazat" aria-label="Smazat">×</button></span></div>`).join('');
-    autosize();
+      <input class="it__cena${x.popis && !num(x.cena) && !offItem(S, x) ? ' is-empty' : ''}" inputmode="decimal" data-if="cena" value="${esc(x.cena)}" placeholder="Kč za jedn." aria-label="Cena za jednotku">
+      <output class="it__sum${v ? '' : ' is-zero'}" data-isum>${v ? kc(v) : '–'}</output>
+      <span class="it__act">${IACT.map(([a, label, path]) => `<button type="button" data-iact="${a}" title="${label}" aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg></button>`).join('')}</span></div>`;
+  }
+  function renderItems() {
+    syncLinked(S);
+    groups = groupsOf(S.items);
+    $('[data-items]').innerHTML = groups.map((g, gi) => `<div class="ig" data-g="${gi}">
+      <div class="ig__head"><input class="ig__name" data-gname="${gi}" value="${esc(g.k)}" placeholder="Název skupiny, např. Práce" aria-label="Název skupiny"><output class="ig__sum" data-gsum="${gi}"></output><span class="ig__pad"></span></div>
+      ${g.idx.map((i) => itemRow(S.items[i], i)).join('')}
+      <button type="button" class="ig__add" data-gadd="${gi}">+ Položka do skupiny</button></div>`).join('');
+    autosize(); updateTotalsInEditor();
   }
   function autosize() { document.querySelectorAll('.it__popis').forEach((ta) => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }); }
   function updateTotalsInEditor() {
     document.querySelectorAll('[data-item]').forEach((row) => {
       const x = S.items[row.dataset.item]; if (!x) return;
       const v = num(x.mn) * num(x.cena);
-      row.querySelector('[data-isum]').textContent = v ? kc(v) : '–';
+      const sumEl = row.querySelector('[data-isum]'); sumEl.textContent = v ? kc(v) : '–'; sumEl.classList.toggle('is-zero', !v);
+      row.querySelector('[data-if="cena"]').classList.toggle('is-empty', !!x.popis && !num(x.cena) && !offItem(S, x));
     });
+    groups.forEach((g, gi) => { const el = document.querySelector(`[data-gsum="${gi}"]`); if (!el) return; const v = g.idx.reduce((a, i) => a + (offItem(S, S.items[i]) ? 0 : num(S.items[i].mn) * num(S.items[i].cena)), 0); el.textContent = v ? kc(v) : ''; });
+    const tt = totals(S), lab = priceLabel(S, tt);
+    $('[data-itotal]').innerHTML = tt.sum ? `<span>Součet položek ${kc(tt.sum)}${tt.sleva ? ` · po slevě ${kc(tt.zaklad)}` : ''}</span><b>${kc(tt.celkem)}${lab ? ' ' + lab : ''}</b>` : '<span>Zatím bez cen</span>';
   }
   const itemsBox = $('[data-items]');
   itemsBox.addEventListener('input', (e) => {
-    const el = e.target, row = el.closest('[data-item]');
+    const el = e.target;
+    if (el.dataset.gname !== undefined) { // přejmenování skupiny = všechny její položky
+      const g = groups[el.dataset.gname]; g.idx.forEach((i) => { S.items[i].kat = el.value; }); g.k = el.value; refresh(); return;
+    }
+    const row = el.closest('[data-item]');
     if (!row || !el.dataset.if) return;
     const it = S.items[row.dataset.item];
     it[el.dataset.if] = el.value;
-    if (it.link && (el.dataset.if === 'popis' || el.dataset.if === 'mn')) { it.manual = true; row.classList.remove('it--link'); }
+    if (it.link && (el.dataset.if === 'popis' || el.dataset.if === 'mn')) { it.manual = true; row.classList.remove('it--link'); row.title = ''; }
     if (el.tagName === 'TEXTAREA') { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
     refresh();
+  });
+  // stejně pojmenované skupiny se sloučí; až po dokončení kliknutí, které změnu vyvolalo
+  itemsBox.addEventListener('change', (e) => {
+    if (e.target.dataset.gname === undefined) return;
+    const names = groups.map((g) => g.k);
+    if (new Set(names).size !== names.length) setTimeout(renderItems, 250);
+  });
+  itemsBox.addEventListener('focusout', (e) => {
+    const el = e.target, f = el.dataset.if;
+    if (f !== 'mn' && f !== 'cena') return;
+    const v = el.value.trim(); if (!v || !/^[\d\s\u00a0.,]+$/.test(v)) return;
+    const pretty = num(v).toLocaleString('cs-CZ', { maximumFractionDigits: 2 }).replace(/\s/g, ' ');
+    if (pretty === v) return;
+    el.value = pretty; S.items[el.closest('[data-item]').dataset.item][f] = pretty; refresh();
   });
   itemsBox.addEventListener('keydown', (e) => {
     // Enter v ceně = nová položka pod
     if (e.key === 'Enter' && e.target.dataset.if === 'cena') { e.preventDefault(); const i = +e.target.closest('[data-item]').dataset.item; addItem(i + 1, S.items[i].kat); }
   });
   itemsBox.addEventListener('click', (e) => {
+    const add = e.target.closest('[data-gadd]');
+    if (add) { const g = groups[add.dataset.gadd]; addItem(g.idx.at(-1) + 1, g.k); return; }
     const b = e.target.closest('[data-iact]'); if (!b) return;
     const i = +b.closest('[data-item]').dataset.item, it = S.items;
-    if (b.dataset.iact === 'del') it.splice(i, 1);
-    if (b.dataset.iact === 'dup') it.splice(i + 1, 0, { ...it[i] });
-    if (b.dataset.iact === 'up' && i > 0) [it[i - 1], it[i]] = [it[i], it[i - 1]];
-    if (b.dataset.iact === 'down' && i < it.length - 1) [it[i + 1], it[i]] = [it[i], it[i + 1]];
-    if (!it.length) it.push(I('', '', 'kpl'));
+    const g = groups.find((y) => y.idx.includes(i)), pos = g.idx.indexOf(i);
+    const swap = (j) => { [it[i], it[j]] = [it[j], it[i]]; };
+    if (b.dataset.iact === 'del') {
+      const removed = it.splice(i, 1)[0];
+      if (!it.length) it.push(I('', '', 'kpl'));
+      toast(`Položka „${(removed.popis || 'bez popisu').slice(0, 40)}“ smazána.`, ['Vrátit', () => { S.items.splice(i, 0, removed); renderItems(); refresh(); }]);
+    }
+    if (b.dataset.iact === 'dup') it.splice(i + 1, 0, { ...it[i], link: undefined, manual: undefined });
+    if (b.dataset.iact === 'up' && pos > 0) swap(g.idx[pos - 1]);
+    if (b.dataset.iact === 'down' && pos < g.idx.length - 1) swap(g.idx[pos + 1]);
     renderItems(); refresh();
   });
   function addItem(at = S.items.length, kat = S.items.at(-1)?.kat || '') {
@@ -601,6 +750,7 @@
     const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
     const act = b.dataset.act;
     if (act === 'board') go('board');
+    if (act === 'preview') setPreview(document.body.classList.contains('no-pv'));
     if (act === 'save') saveCurrent();
     if (act === 'save-tpl') {
       const name = prompt('Název šablony (uloží se bez zákazníka, s položkami a texty):', S.nazev || 'Moje šablona');
@@ -611,9 +761,11 @@
       toast(`Šablona „${name}“ je uložená v přehledu.`);
     }
     if (act === 'export') download(`prooze-nabidky-${today()}.json`, JSON.stringify({ nabidky: listAll(), sablony: tplAll() }, null, 1));
-    if (act === 'add-item') addItem();
+    if (act === 'add-group') { addItem(S.items.length, ''); const n = itemsBox.querySelectorAll('.ig__name'); const last = n[n.length - 1]; if (last) last.focus(); }
     if (act === 'add-prod') { S.prods.push({ nadpis: '', nazev: '', vyrobce: '', barva: '', hex: '', body: '', img: '' }); renderProds(); refresh(); }
     if (act === 'pdf') {
+      const c = checks(S);
+      if (c.length && !confirm(`Ještě chybí:\n• ${c.map((x) => x[0]).join('\n• ')}\n\nStáhnout PDF i tak?`)) { goto(c[0][1]); return; }
       saveCurrent(true);
       const old = document.title;
       document.title = `Nabídka ${S.cislo}${S.zak.jmeno ? ' ' + S.zak.jmeno : ''}`.replace(/[\\/:*?"<>|]/g, '');
@@ -643,10 +795,13 @@
   });
 
   let toastT;
-  function toast(msg) {
+  function toast(msg, action) {
     let el = $('.toast'); if (!el) { el = document.createElement('div'); el.className = 'toast'; el.setAttribute('role', 'status'); document.body.append(el); }
-    el.textContent = msg; el.classList.add('is-on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('is-on'), 4200);
+    el.innerHTML = `<span>${esc(msg)}</span>${action ? `<button type="button">${action[0]}</button>` : ''}`;
+    if (action) el.querySelector('button').onclick = () => { action[1](); el.classList.remove('is-on'); };
+    el.classList.add('is-on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('is-on'), action ? 7000 : 4200);
   }
+
 
   // první spuštění: vzorová nabídka v přehledu, rozpracovaná nabídka se uloží do seznamu
   if (!listAll().length && !S) { S = demo(); S.cislo = 'VZOR'; }
