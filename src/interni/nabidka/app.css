@@ -560,3 +560,14 @@ details.more[open] > summary::before { transform: none; }
 .ig__head { grid-template-areas: "name name name sum"; }
 .ig__pad { display: none; }
 body.no-pv .ig__pad { display: block; }
+
+/* rozbalovací pole: vlastní šipka s odsazením (všude) */
+select {
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%230F3A2E' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important; background-position: right 10px center !important; background-size: 14px 14px !important;
+  padding-right: 32px !important; cursor: pointer;
+}
+.it select { padding-right: 24px !important; padding-left: 9px !important; background-position: right 7px center !important; }
+.of__st--prijata { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important; }
+.stsel, .of__st { padding-left: 12px; }
