@@ -30,6 +30,11 @@
     const k = KRYTINY[typ], v = vyrobce && k.vyrobci.includes(vyrobce) ? vyrobce : k.vyrobci[0], [b, bt, hex] = k.barvy[0];
     return { ano: true, typ, barva: b, barvaTxt: bt, hex, vyrobce: v, nazev: `${k.n}${v && typ !== 'prefa' ? ' ' + MAKERS[v][0] : ''}`, body: k.body };
   }
+  const defaultProofs = () => [
+    { t: 'Střecha i fotovoltaika', s: 'Jedno lešení, jedna smlouva, jedna záruka' },
+    { t: 'Pevná cena před podpisem', s: 'Vícepráce jen s vaším souhlasem' },
+    { t: 'Záruka písemně', s: 'Na práci ve smlouvě, na krytinu od výrobce' },
+    { t: 'Podnikáme od roku 2011', s: 'Střechy ve Slaném a okolí' }];
   const defaultOkna = () => ({ ano: true, pocet: '2', model: 'VELUX GLU 0061Z MK06', lemovani: 'EDW 2000 MK06', body: 'Montáž včetně napojení na fólii a krytinu' });
   function coverSrc(s) {
     if (s.fotoData) return s.fotoData;
@@ -147,7 +152,7 @@
       nazev: '', podtitul: '', zak: { jmeno: '', telefon: '', email: '', adresa: '' }, stavba: '',
       fakta: [{ k: 'Zahájení', v: '' }, { k: 'Doba realizace', v: '' }, { k: 'Plocha střechy', v: '' }], cenaNahore: true,
       uvod: '', kryt: defaultKryt(), okna: defaultOkna(), prods: [],
-      items: [I('', '', 'kpl')], dph: '12', sleva: '', mezisoucty: false, zaokr: true,
+      items: [I('', '', 'kpl')], dph: '12', sleva: '', mezisoucty: false, zaokr: true, proofsOn: true, proofs: defaultProofs(),
       shrnuti: '', podminky: 'Záloha 30 % při podpisu smlouvy, doplatek po předání díla. Termín zahájení potvrdíme ve smlouvě.',
       podpis: { jmeno: 'Pavel Kočí', role: 'majitel', telefon: '773 898 698', email: 'info@prooze.cz' },
     };
@@ -166,6 +171,7 @@
   function migrate(s) {
     if (s && !s.stav) s.stav = 'rozpracovana';
     if (s && s.zaokr === undefined) s.zaokr = true;
+    if (s && !s.proofs) { s.proofs = defaultProofs(); s.proofsOn = true; }
     if (s && s.v === 1) {
       s.kryt = defaultKryt(); s.okna = defaultOkna(); s.foto = 'auto'; s.podtitul = s.podtitul || '';
       s.prods = (s.prods || []).filter((p) => !/krytina|okna/i.test(p.nadpis || ''));
@@ -208,6 +214,7 @@
     if (/z[aá]ruk/.test(l)) return 'shield';
     if (/cena|k[čc]|úvěr|dotac/.test(l)) return 'price';
     if (/dům|objekt|stavb|střech/.test(l)) return 'house';
+    if (/rok|let |tradic|zkušen/.test(l)) return 'cal';
     return 'check';
   };
   const badge = (label, value, sun) => `<div class="d-badge${sun ? ' d-badge--sun' : ''}"><span class="d-badge__ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[sun ? 'price' : iconFor(label)]}</svg></span><span class="d-badge__t"><small>${t(label)}</small><b>${sun ? value : t(value)}</b></span></div>`;
@@ -229,9 +236,9 @@
 
     const kde = s.stavba || s.zak.adresa;
     const parties = `<section class="d-parties" data-goto='[data-k="zak.jmeno"]'>
-      <div${s.zak.jmeno ? '' : ' class="is-empty"'}><h3>Pro</h3><p>${s.zak.jmeno ? `<b>${t(s.zak.jmeno)}</b>` : '<span class="ph">Jméno zákazníka</span>'}${s.zak.adresa ? '<br>' + t(s.zak.adresa) : ''}${s.zak.telefon ? '<br>' + t(s.zak.telefon) : ''}${s.zak.email ? '<br>' + t(s.zak.email) : ''}</p></div>
+      <div${s.zak.jmeno ? '' : ' class="is-empty"'}><h3>Pro</h3><p>${s.zak.jmeno ? `<b>${t(s.zak.jmeno)}</b>` : '<span class="ph">Jméno zákazníka</span>'}${s.zak.adresa ? '<br>' + t(s.zak.adresa) : ''}${s.zak.telefon || s.zak.email ? '<br>' + [s.zak.telefon, s.zak.email].filter(Boolean).map(t).join(' · ') : ''}</p></div>
       <div${kde ? '' : ' class="is-empty"'}><h3>Místo stavby</h3><p>${ph(kde, 'Adresa stavby')}</p></div>
-      <div><h3>Připravil</h3><p><b>${t(s.podpis.jmeno)}</b>${s.podpis.role ? ', ' + t(s.podpis.role) : ''}<br>${t(s.podpis.telefon)}<br>${t(s.podpis.email)}</p></div></section>`;
+      <div><h3>Připravil</h3><p><b>${t(s.podpis.jmeno)}</b>${s.podpis.role ? ', ' + t(s.podpis.role) : ''}<br>${t(s.podpis.telefon)} · ${t(s.podpis.email)}</p></div></section>`;
 
     const k = s.kryt, o = s.okna;
     const prods = [
@@ -281,13 +288,19 @@
 
     const intro = s.uvod.trim() ? `<div class="d-intro" data-goto='[data-k="uvod"]'>${s.uvod.split(/\n\s*\n|\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${t(x)}</p>`).join('')}</div>` : '';
     const p1 = `${head}${L !== 'foto' ? `<section class="d-title">${title}</section>${badgeRow}` : ''}${parties}${intro}${prodHtml}`;
-    const close = `<div class="d-close">${end}${sign}</div>`; // závěr a podpis se nerozdělí
+    const foot = `<footer class="d-foot"><div class="d-foot__brand"><img src="${A}brand/logo-bila.svg" alt="PROOZE"><p>Pokrývači, kteří umí i&nbsp;fotovoltaiku.</p></div>
+      <div class="d-foot__c"><p><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h3l1.5 4.2-2 1.4a11 11 0 0 0 5.8 5.8l1.4-2 4.2 1.5v3c0 1.1-.9 2-2 2A16.5 16.5 0 0 1 4.6 5.5c0-1.1.9-2 2-2Z"/></svg>773&nbsp;898&nbsp;698</p>
+      <p><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6.5h17v11h-17z"/><path d="m4 7 8 6.5L20 7"/></svg>info@prooze.cz</p>
+      <p><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5S9.7 5.9 12 3.5Z"/></svg>prooze.cz</p></div></footer>`;
+    const close = `<div class="d-close">${end}${sign}${foot}</div>`; // závěr, podpis a patička se nerozdělí
     if (L === 'kompakt') return `${p1}${budget}${close}`;
     // úvodní strana: obsah nahoře, souhrn cena + platnost dole; rozpočet vždy od nové strany
     const plat = s.datum && num(s.platnost) ? czDate(addDays(s.datum, num(s.platnost))) : '';
+    const proofs = s.proofsOn !== false ? (s.proofs || []).filter((x) => x.t) : [];
+    const proofRow = proofs.length ? `<div class="d-proofs d-proofs--${proofs.length}" data-goto="#s-proofs">${proofs.map((x) => `<div class="d-proof"><span class="d-badge__ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[iconFor(x.t)]}</svg></span><span><b>${t(x.t)}</b>${x.s ? `<small>${t(x.s)}</small>` : ''}</span></div>`).join('')}</div>` : '';
     const strip = tt.sum > 0 ? `<div class="d-strip" data-goto='[data-k="dph"]'><div class="d-strip__price"><span>${finalLabel}</span><b>${kc(tt.celkem)}</b></div>
-      ${plat ? `<div><span>Nabídka platí do</span><b>${plat}</b></div>` : ''}<div><span>Položkový rozpočet</span><b>na další straně</b></div></div>` : '';
-    return `<div class="d-p1">${p1}<div class="d-p1__end">${strip}</div></div>${budget}${close}`;
+      ${plat ? `<div><span>Nabídka platí do</span><b>${plat}</b></div>` : ''}<div><span>Dotazy k nabídce</span><b>${t(s.podpis.telefon)}</b></div></div>` : '';
+    return `<div class="d-p1">${p1}<div class="d-p1__end">${proofRow}${strip}</div></div>${budget}${close}`;
   }
 
   /* ---------- editor ---------- */
@@ -408,11 +421,12 @@
     const bud = docEl.querySelector('.d-budget'), p1 = docEl.querySelector('.d-p1');
     // úvodní strana se nevejde (dlouhý úvod, víc karet) → bez souhrnného pruhu a bez vynuceného zlomu
     if (p1) {
-      p1.classList.remove('is-long');
+      p1.classList.remove('is-long', 'no-proofs');
       const kids = [...p1.children].filter((x) => !x.classList.contains('d-p1__end'));
       const contentEnd = Math.max(...kids.map((x) => px(x) + x.getBoundingClientRect().height / z / 3.7795));
-      const endH = p1.querySelector('.d-p1__end').getBoundingClientRect().height / z / 3.7795;
-      if (contentEnd + endH > 281) p1.classList.add('is-long');
+      const endH = () => p1.querySelector('.d-p1__end').getBoundingClientRect().height / z / 3.7795;
+      if (contentEnd + endH() > 281) p1.classList.add('no-proofs');
+      if (contentEnd + endH() > 281) p1.classList.add('is-long');
     }
     const forced = !!bud && !!p1 && !p1.classList.contains('is-long');
     if (bud && !forced) {
@@ -437,7 +451,7 @@
       if (el.type === 'checkbox') el.checked = !!v; else el.value = v ?? '';
     });
     document.querySelectorAll('input[name="layout"]').forEach((r) => { r.checked = r.value === S.layout; });
-    renderKryt(); renderPhotos(); renderFacts(); renderProds(); renderItems();
+    renderKryt(); renderPhotos(); renderFacts(); renderProofs(); renderProds(); renderItems();
     $('[data-k="podtitul"]').placeholder = autoSub(S) || 'Krátce, co nabízíte';
   }
   document.addEventListener('input', (e) => {
@@ -508,6 +522,11 @@
     $('[data-kryt-barvy]').querySelectorAll('.swb').forEach((x) => x.classList.toggle('is-on', x.contains(e.target)));
     renderPhotos(); refresh();
   });
+
+  function renderProofs() {
+    $('[data-proofs]').innerHTML = S.proofs.map((x, i) => `<div class="fact"><input data-proof="${i}" data-pf2="t" value="${esc(x.t)}" placeholder="Nadpis"><input data-proof="${i}" data-pf2="s" value="${esc(x.s)}" placeholder="Krátké vysvětlení"></div>`).join('');
+  }
+  $('[data-proofs]').addEventListener('input', (e) => { const el = e.target; if (el.dataset.proof === undefined) return; S.proofs[el.dataset.proof][el.dataset.pf2] = el.value; refresh(); });
 
   // přehled nahoře
   function renderFacts() {

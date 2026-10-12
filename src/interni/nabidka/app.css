@@ -594,3 +594,32 @@ select {
 .doc .d-p1.is-long + .d-budget { break-before: auto; padding-top: 0; margin-top: 11mm; }
 .doc .d-p1.is-long + .d-budget.is-break { break-before: page; }
 .d-close { break-inside: avoid; }
+
+/* ---------------------------------------------------------------- proč PROOZE a patička */
+.d-cover { height: 112mm; }
+.d-p1__end { display: grid; gap: 7mm; }
+.d-proofs { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 5mm; padding: 5mm 0 0; border-top: .6pt solid var(--line); }
+.d-proofs--1 { --n: 1; } .d-proofs--2 { --n: 2; } .d-proofs--3 { --n: 3; } .d-proofs--4 { --n: 4; }
+.d-proof { display: flex; gap: 2.6mm; align-items: flex-start; }
+.d-proof .d-badge__ic { width: 8.4mm; height: 8.4mm; flex: none; }
+.d-proof b { display: block; font: 700 8.8pt/1.2 var(--display); }
+.d-proof small { display: block; margin-top: .6mm; font-size: 7.4pt; line-height: 1.35; color: var(--muted); }
+.d-p1.no-proofs .d-proofs { display: none; }
+.d-foot { display: flex; justify-content: space-between; align-items: center; gap: 8mm; margin: 10mm 16mm 0; padding: 7mm 8mm; border-radius: 4mm; background: var(--pine); color: #fff; }
+.d-foot__brand { display: grid; gap: 2mm; }
+.d-foot__brand img { height: 8mm; width: auto; }
+.d-foot__brand p { font-size: 8.6pt; color: rgba(255, 255, 255, .78); }
+.d-foot__c { display: grid; gap: 1.6mm; }
+.d-foot__c p { display: flex; align-items: center; gap: 2.4mm; font: 600 9.4pt/1.2 var(--text); }
+.d-foot__c svg { width: 4.2mm; height: 4.2mm; fill: none; stroke: var(--sun); stroke-width: 1.8; stroke-linejoin: round; }
+.doc--kompakt .d-foot { margin-top: 7mm; padding: 5mm 6mm; }
+
+/* 1. strana: místo pro pás „proč PROOZE“ */
+.d-cover { height: 108mm; }
+.d-cover + .d-parties { margin-top: 8mm; }
+.d-intro { margin-top: 7mm; }
+.d-p1 .d-prods { margin-top: 8mm; }
+.d-p1 .d-prod { padding: 4.6mm 5.2mm; gap: 2.2mm; }
+.d-p1__end { padding-top: 6mm; gap: 5mm; }
+.d-proofs { padding-top: 4mm; }
+.doc--kompakt .d-foot { display: none; }
