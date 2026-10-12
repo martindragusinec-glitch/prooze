@@ -81,6 +81,9 @@ OG obrázek: `assets/img/og-prooze-2026.jpg` (1200×630). Po změně ověřit v 
 ## Generátor nabídek (interní)
 
 - Adresa: `/interni/nabidka/` (noindex, `Disallow: /interni/` v robots.txt, nikde neodkazováno). Zdroj: `src/interni/nabidka/` (index.html, app.js, app.css), build ho jen zkopíruje.
+- Otevírá se **přehled**: šablony (Rekonstrukce plech / taška, Oprava, Fotovoltaika + vlastní uložené tlačítkem „Jako šablonu“), počty a součty podle stavu (rozpracovaná, odeslaná = ve hře, přijatá = získáno, odmítnutá), hledání, filtry, kopie, upozornění na prošlou platnost.
+- **Krytina a okna**: typ (pálená, betonová, plechová tašková tabule, falc, šindel, Prefa), barva, výrobce, okna ano/ne + počet a model. Položky rozpočtu ze šablon jsou s volbou propojené (popis krytiny, model a počet oken); okna vypnutá = jejich položky se vyřadí ze součtu. Ruční úprava položky vazbu zruší.
+- **Úvodní fotka podle krytiny**: `assets/img/krytiny/<typ>-<barva>-<okna|bez>.jpg`, 18 variant stejného domu (GPT Image 2.5 přes Higgsfield, úprava jedné fotky, 1 kredit/ks, 12. 10. 2026). Jiná barva → nejbližší varianta. Nová varianta = vygenerovat stejným promptem a přidat barvu do `KRYTINY` v app.js.
 - Vlevo formulář, vpravo živý náhled A4. Layouty: **S fotkou** (nadpis a štítky přímo na fotce), **Čistá**, **Kompaktní** (menší zakázky). Fotka z webu nebo vlastní.
 - Štítky v hlavičce (termín, doba realizace, plocha, záruka… ikona podle popisku) + volitelný štítek s cenou díla.
 - Materiály s logem výrobce (Tondach, Bramac, KM Beta, Comax, Prefa, Satjam) nebo vlastním obrázkem, vzorek barvy.

@@ -10,15 +10,42 @@
 <link rel="stylesheet" href="../../assets/fonts/fonts.css">
 <link rel="stylesheet" href="app.css">
 </head>
-<body>
+<body data-view="board">
+<div class="board" data-board>
+  <header class="bd__top">
+    <img class="ed__logo" src="../../assets/brand/logo.svg" alt="PROOZE" width="120" height="26">
+    <span class="ed__app">Nabídky</span>
+    <div class="ed__actions">
+      <button type="button" class="b b--ghost" data-act="export">Exportovat</button>
+      <label class="b b--ghost">Importovat<input type="file" accept="application/json,.json" data-act="import" hidden></label>
+    </div>
+  </header>
+  <main class="bd__in">
+    <section class="bd__sec">
+      <div class="bd__head bd__head--row"><div class="bd__head"><h1 class="bd__h1">Nová nabídka</h1><p>Vyberte šablonu. Vlastní šablonu uložíte v editoru tlačítkem „Jako šablonu“.</p></div>
+        <button type="button" class="b b--line" data-new="blank">+ Prázdná nabídka</button></div>
+      <div class="tpls" data-tpls></div>
+    </section>
+    <section class="bd__sec">
+      <div class="stats" data-stats></div>
+    </section>
+    <section class="bd__sec">
+      <div class="bd__head bd__head--row"><h2 class="bd__h2">Nabídky</h2>
+        <label class="search"><span class="sr">Hledat</span><input type="search" data-hledat placeholder="Hledat číslo, název nebo zákazníka"></label></div>
+      <div class="chips" data-filtr role="group" aria-label="Filtr podle stavu"></div>
+      <ul class="offers" data-offers></ul>
+      <p class="ed__note">Nabídky a šablony se ukládají jen v tomto prohlížeči. Na jiný počítač je přenesete přes Exportovat a Importovat. Nic se neodesílá na server.</p>
+    </section>
+  </main>
+</div>
+
 <div class="app">
   <aside class="ed" aria-label="Úprava nabídky">
     <header class="ed__top">
-      <img class="ed__logo" src="../../assets/brand/logo.svg" alt="PROOZE" width="120" height="26">
-      <span class="ed__app">Nabídky</span>
+      <button type="button" class="b b--ghost b--back" data-act="board">← Přehled</button>
       <div class="ed__actions">
-        <button type="button" class="b b--ghost" data-act="new">Nová</button>
-        <button type="button" class="b b--ghost" data-act="list">Uložené</button>
+        <select class="sel sel--s" data-k="stav" aria-label="Stav nabídky"><option value="rozpracovana">Rozpracovaná</option><option value="odeslana">Odeslaná</option><option value="prijata">Přijatá</option><option value="odmitnuta">Odmítnutá</option></select>
+        <button type="button" class="b b--ghost" data-act="save-tpl">Jako šablonu</button>
         <button type="button" class="b b--ghost" data-act="save">Uložit</button>
         <button type="button" class="b b--sun" data-act="pdf">Stáhnout PDF</button>
       </div>
@@ -43,7 +70,7 @@
           <label class="f"><span>Platnost (dní)</span><input type="number" min="1" data-k="platnost"></label>
         </div>
         <label class="f"><span>Název</span><input data-k="nazev" placeholder="Kompletní rekonstrukce střechy"></label>
-        <label class="f"><span>Podnadpis</span><input data-k="podtitul" placeholder="Falcovaný plech COMAX, černá RAL 9005, včetně střešních oken"></label>
+        <label class="f"><span>Podnadpis <em>prázdné = vyplní se podle krytiny a oken</em></span><input data-k="podtitul"></label>
       </section>
 
       <section class="grp">
@@ -55,6 +82,33 @@
           <label class="f"><span>Adresa zákazníka</span><input data-k="zak.adresa" placeholder="Ulice 12, 274 01 Slaný"></label>
         </div>
         <label class="f"><span>Místo stavby <em>když je jinde než adresa</em></span><input data-k="stavba" placeholder="Obec, ulice"></label>
+      </section>
+
+      <section class="grp">
+        <div class="grp__hrow"><h2 class="grp__h">Krytina</h2><label class="chk"><input type="checkbox" data-k="kryt.ano"> Je součástí zakázky</label></div>
+        <div class="grp__sub" data-kryt-fields>
+        <div class="chips" data-kryt-typ role="group" aria-label="Typ krytiny"></div>
+        <div class="swbs" data-kryt-barvy role="group" aria-label="Barva krytiny"></div>
+        <div class="row2">
+          <label class="f"><span>Výrobce <em>✓ = obvyklý pro tento typ</em></span><select data-k="kryt.vyrobce"></select></label>
+          <label class="f"><span>Barva v textu</span><input data-k="kryt.barvaTxt" placeholder="černá RAL 9005"></label>
+        </div>
+        <label class="f"><span>Název v nabídce</span><input data-k="kryt.nazev"></label>
+        <label class="f"><span>Body <em>každý řádek = jeden bod</em></span><textarea rows="3" data-k="kryt.body"></textarea></label>
+        <p class="hint">Úvodní fotka v layoutu S fotkou se vybere podle typu, barvy a oken (dlaždice „Podle krytiny“).</p>
+        </div>
+      </section>
+
+      <section class="grp">
+        <div class="grp__hrow"><h2 class="grp__h">Střešní okna</h2><label class="chk"><input type="checkbox" data-k="okna.ano"> Jsou součástí zakázky</label></div>
+        <div class="grp__sub" data-okna-fields>
+          <div class="row3">
+            <label class="f"><span>Počet</span><input type="number" min="1" data-k="okna.pocet"></label>
+            <label class="f"><span>Okno</span><input data-k="okna.model" placeholder="VELUX GLU 0061Z MK06"></label>
+            <label class="f"><span>Lemování</span><input data-k="okna.lemovani" placeholder="EDW 2000 MK06"></label>
+          </div>
+          <label class="f"><span>Body</span><textarea rows="2" data-k="okna.body"></textarea></label>
+        </div>
       </section>
 
       <section class="grp">
@@ -70,7 +124,8 @@
       </section>
 
       <section class="grp">
-        <div class="grp__hrow"><h2 class="grp__h">Materiály</h2><button type="button" class="b b--line b--s" data-act="add-prod">Přidat</button></div>
+        <div class="grp__hrow"><h2 class="grp__h">Další materiály</h2><button type="button" class="b b--line b--s" data-act="add-prod">Přidat</button></div>
+        <p class="hint">Volitelně: okapový systém, zateplení, fotovoltaika… Zobrazí se vedle krytiny a oken.</p>
         <div class="prods" data-prods></div>
       </section>
 
@@ -127,16 +182,6 @@
   </main>
 </div>
 
-<dialog class="dlg" data-dlg>
-  <form method="dialog" class="dlg__in">
-    <header class="dlg__head"><h2>Uložené nabídky</h2><button class="b b--ghost b--s" value="close">Zavřít</button></header>
-    <ul class="saved" data-saved></ul>
-    <footer class="dlg__foot">
-      <button type="button" class="b b--line b--s" data-act="export">Exportovat vše (.json)</button>
-      <label class="b b--line b--s">Importovat<input type="file" accept="application/json,.json" data-act="import" hidden></label>
-    </footer>
-  </form>
-</dialog>
 
 <script src="app.js"></script>
 </body>

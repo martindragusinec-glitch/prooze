@@ -9,32 +9,79 @@
     ['pokryvaci-palena', 'Pokládka'], ['rekonstrukce-leseni', 'Rekonstrukce'], ['prefa-sablony', 'Prefa'], ['sindel-chata', 'Šindel'], ['strecha-kontrola', 'Kontrola'],
     ['rd-fve-hero', 'FVE na domě'], ['montaz-fve', 'Montáž FVE'], ['hala-fve', 'FVE na hale'], ['bytovy-dum', 'Bytový dům'], ['stridac-baterie', 'Střídač']];
   const MAKERS = { '': ['Bez loga'], tondach: ['Tondach', 'tondach.svg'], bramac: ['Bramac', 'bramac.svg'], kmbeta: ['KM Beta', 'kmbeta-bez-claimu.svg'],
-    comax: ['Comax', 'comax.svg'], prefa: ['Prefa', 'prefa.svg'], satjam: ['Satjam', 'satjam.png'] };
+    comax: ['COMAX', 'comax.svg'], prefa: ['PREFA', 'prefa.svg'], satjam: ['SATJAM', 'satjam.png'] };
+  // krytiny: typ → výrobci, barvy (klíč, popis, vzorek) a výchozí body; fotky v assets/img/krytiny/<typ>-<barva>-<okna|bez>.jpg
+  const KRYTINY = {
+    palena: { n: 'Pálená taška', vyrobci: ['tondach', 'bramac', 'kmbeta'], barvy: [['cervena', 'přírodní červená', '#A34A2E'], ['cerna', 'černá engoba', '#1E1E20']],
+      body: 'Keramika s dlouhou životností\nBarva se časem nemění, jen zušlechťuje\nKompletní systém včetně hřebenáčů a větracích tašek' },
+    betonova: { n: 'Betonová taška', vyrobci: ['bramac', 'kmbeta'], barvy: [['antracit', 'antracitová', '#383E42'], ['hneda', 'tmavě hnědá', '#3A3330']],
+      body: 'Pevná a odolná krytina za rozumnou cenu\nTvarová přesnost, rychlá pokládka\nKompletní systém včetně příslušenství' },
+    'plech-taskova': { n: 'Plechová tašková tabule', vyrobci: ['satjam', 'comax'], barvy: [['cerna', 'černá', '#141517']],
+      body: 'Vzhled tašek s nízkou hmotností plechu\nŠetrná ke krovu, vhodná i na rekonstrukce\nKompletní systém včetně klempířských prvků' },
+    falc: { n: 'Falcovaný plech', vyrobci: ['comax', 'satjam', 'prefa'], barvy: [['cerna', 'černá RAL 9005', '#141517'], ['antracit', 'antracit RAL 7016', '#383E42']],
+      body: 'Nízká hmotnost, šetrná ke krovu\nHladký moderní vzhled bez viditelných šroubů\nKompletní systém včetně klempířských prvků' },
+    sindel: { n: 'Kanadský šindel', vyrobci: [''], barvy: [['hneda', 'tmavě hnědá', '#4A3B33']],
+      body: 'Lehká krytina vhodná i pro členité střechy\nPokládka na celoplošné bednění\nKompletní systém včetně hřebenových pásů' },
+    prefa: { n: 'Hliníkové šablony PREFA', vyrobci: ['prefa'], barvy: [['antracit', 'antracit', '#383E42']],
+      body: 'Hliník, který nekoroduje a nerezaví\nNízká hmotnost, vhodný i na starší krovy\nKompletní systém včetně odvodnění' },
+  };
+  const hexDist = (a, b) => { const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); const [x, y] = [p(a), p(b)]; return x.reduce((s, v, i) => s + (v - y[i]) ** 2, 0); };
+  function defaultKryt(typ = 'falc', vyrobce) {
+    const k = KRYTINY[typ], v = vyrobce && k.vyrobci.includes(vyrobce) ? vyrobce : k.vyrobci[0], [b, bt, hex] = k.barvy[0];
+    return { ano: true, typ, barva: b, barvaTxt: bt, hex, vyrobce: v, nazev: `${k.n}${v && typ !== 'prefa' ? ' ' + MAKERS[v][0] : ''}`, body: k.body };
+  }
+  const defaultOkna = () => ({ ano: true, pocet: '2', model: 'VELUX GLU 0061Z MK06', lemovani: 'EDW 2000 MK06', body: 'Montáž včetně napojení na fólii a krytinu' });
+  function coverSrc(s) {
+    if (s.fotoData) return s.fotoData;
+    if (s.foto && s.foto !== 'auto') return `${A}img/web/${s.foto}-1600.jpg`;
+    if (s.kryt && s.kryt.ano === false) return `${A}img/web/${s.okna?.ano ? 'rekonstrukce-leseni' : 'rd-fve-hero'}-1600.jpg`;
+    const typ = KRYTINY[s.kryt?.typ] ? s.kryt.typ : 'falc', barvy = KRYTINY[typ].barvy;
+    const b = barvy.find((x) => x[0] === s.kryt.barva) || (s.kryt.hex ? [...barvy].sort((x, y) => hexDist(x[2], s.kryt.hex) - hexDist(y[2], s.kryt.hex))[0] : barvy[0]);
+    return `${A}img/krytiny/${typ}-${b[0]}-${s.okna?.ano ? 'okna' : 'bez'}.jpg`;
+  }
+  const KRYT_POPIS = { palena: ' (tašky, hřebenáče, koncové a větrací tašky)', betonova: ' (tašky, hřebenáče, koncové a větrací tašky)', 'plech-taskova': ', včetně příslušenství, lišt a zakončení',
+    falc: ', včetně příslušenství, lišt a zakončení', prefa: ', včetně příslušenství a lišt', sindel: ' (šindele, hřebenové pásy, podkladní pás)' };
+  // je položka vyřazená, protože krytina/okna nejsou součástí zakázky?
+  const offItem = (s, x) => (x.link === 'kryt' && s.kryt?.ano === false) || (['okno', 'lem', 'okna'].includes(x.link) && !s.okna?.ano);
+  function syncLinked(s) {
+    s.items.forEach((x) => {
+      if (!x.link || x.manual) return;
+      if (x.link === 'kryt' && s.kryt) x.popis = `${s.kryt.nazev}${s.kryt.barvaTxt ? ', ' + s.kryt.barvaTxt : ''}${KRYT_POPIS[s.kryt.typ] || ''}`;
+      if (x.link === 'okno' && s.okna) { x.popis = s.okna.model; x.mn = s.okna.pocet; }
+      if (x.link === 'lem' && s.okna) { x.popis = `Lemování ${s.okna.lemovani}`; x.mn = s.okna.pocet; }
+    });
+  }
+  function autoSub(s) {
+    const k = s.kryt; if (!k || !k.nazev || k.ano === false) return '';
+    const n = num(s.okna?.pocet) || 0;
+    const okna = s.okna?.ano ? (n === 1 ? ', včetně střešního okna' : `, včetně ${n ? n + ' ' : ''}střešních oken`) : '';
+    return `${k.nazev}${k.barvaTxt ? ', ' + k.barvaTxt : ''}${okna}`;
+  }
   const SWATCH = [['', 'Bez vzorku barvy'], ['#141517', 'Černá (RAL 9005)'], ['#383E42', 'Antracit (RAL 7016)'], ['#3A3330', 'Tmavě hnědá (RAL 8019)'],
     ['#5E2028', 'Vínová (RAL 3005)'], ['#A34A2E', 'Cihlová'], ['#6F7377', 'Grafit'], ['custom', 'Vlastní barva…']];
   const UNITS = ['m²', 'bm', 'ks', 'kpl', 'm³', 'hod', 'den', 'kWp', 'kWh', 'km'];
   const MESICE = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
 
-  const I = (kat, popis, jed, mn = '', cena = '') => ({ kat, popis, jed, mn, cena });
+  const I = (kat, popis, jed, mn = '', cena = '', link) => (link ? { kat, popis, jed, mn, cena, link } : { kat, popis, jed, mn, cena });
   const TPL = {
     plech: [
-      I('Krytina', 'Falcovaný plech COMAX, černá RAL 9005, tl. 0,6 mm, včetně příslušenství, lišt a zakončení', 'm²'),
+      I('Krytina', 'Falcovaný plech COMAX, černá RAL 9005, tl. 0,6 mm, včetně příslušenství, lišt a zakončení', 'm²', '', '', 'kryt'),
       I('Ostatní materiál', 'Střešní latě / rošt (dle systému)', 'm²'), I('Ostatní materiál', 'Difuzní fólie (pojistná hydroizolace)', 'm²'),
       I('Ostatní materiál', 'Kontralatě a upevňovací materiál', 'm²'), I('Ostatní materiál', 'Okapový systém (žlaby, svody, kotlíky, kolena, objímky, háky)', 'bm'),
       I('Ostatní materiál', 'Sněhové zábrany (trubkové)', 'bm'), I('Ostatní materiál', 'Klempířské prvky (lemování komínu, úžlabí, nároží, štítové lišty)', 'kpl'),
-      I('Střešní okna', 'VELUX GLU 0061Z MK06 (New Look)', 'ks'), I('Střešní okna', 'VELUX lemování EDW 2000 MK06', 'ks'),
+      I('Střešní okna', 'VELUX GLU 0061Z MK06 (New Look)', 'ks', '', '', 'okno'), I('Střešní okna', 'VELUX lemování EDW 2000 MK06', 'ks', '', '', 'lem'),
       I('Fólie', 'Tegola Difbar 150S (dle potřeby, u detailů)', 'm²'), I('Stavební materiál', 'Zdivo, malta, těsnicí pásy, penetrace (komín, detaily)', 'kpl'),
       I('Doprava a zařízení stavby', 'Doprava materiálu', 'kpl'), I('Doprava a zařízení stavby', 'Stavební výtah', 'kpl'),
       I('Odpady', 'Kontejner 10 m³, odvoz a likvidace odpadu', 'ks'),
       I('Práce', 'Demontáž stávající krytiny (tašky, latě, fólie, okapový systém)', 'kpl'), I('Práce', 'Montáž nového střešního systému (rošt, fólie, krytina, detaily)', 'kpl'),
-      I('Práce', 'Montáž střešních oken včetně lemování', 'kpl'), I('Práce', 'Oplechování komínu a detailů', 'kpl'),
+      I('Práce', 'Montáž střešních oken včetně lemování', 'kpl', '', '', 'okna'), I('Práce', 'Oplechování komínu a detailů', 'kpl'),
       I('Práce', 'Dořez (úžlabí, nároží, detaily)', 'kpl'), I('Práce', 'Dokončovací práce, těsnění, kontrola, úklid', 'kpl')],
     taska: [
-      I('Krytina', 'KM Beta Elegant, cihlově červená (tašky, hřebenáče, koncové, křížové a větrací tašky)', 'm²'),
+      I('Krytina', 'Pálená taška Tondach, přírodní červená (tašky, hřebenáče, koncové a větrací tašky)', 'm²', '', '', 'kryt'),
       I('Ostatní materiál', 'Příchytky hřebenáčů', 'ks'), I('Ostatní materiál', 'Hřebenový a nárožní pás (role 5 m)', 'ks'), I('Ostatní materiál', 'Ochranný pás proti ptákům (5 m)', 'ks'),
       I('Ostatní materiál', 'Větrací mřížka', 'bm'), I('Ostatní materiál', 'Spojovací materiál (šrouby, vruty, hřebíky)', 'kpl'),
-      I('Dřevo', 'Latě 40 × 60 mm, sušené', 'bm'), I('Fólie', 'Tegola Difbar 150S', 'm²'), I('Střešní okna', 'VELUX GLU 0061Z MK06 (New Look)', 'ks'),
-      I('Střešní okna', 'VELUX lemování EDW 2000 MK06', 'ks'), I('Střešní okna', 'Střešní výlez', 'ks'),
+      I('Dřevo', 'Latě 40 × 60 mm, sušené', 'bm'), I('Fólie', 'Tegola Difbar 150S', 'm²'), I('Střešní okna', 'VELUX GLU 0061Z MK06 (New Look)', 'ks', '', '', 'okno'),
+      I('Střešní okna', 'VELUX lemování EDW 2000 MK06', 'ks', '', '', 'lem'), I('Střešní okna', 'Střešní výlez', 'ks'),
       I('Klempířský materiál', 'Tabule plech (lemy, štítovky, okapnice)', 'ks'), I('Okapový systém', 'Žlaby, svody, rohy, kotlíky, kolena, objímky, háky', 'bm'),
       I('Stavební materiál', 'Komín: cihly, zdicí malta, lepidlo, perlinka', 'kpl'), I('Doprava a zařízení stavby', 'Doprava materiálu', 'kpl'),
       I('Doprava a zařízení stavby', 'Stavební výtah', 'kpl'), I('Odpady', 'Kontejner 10 m³, odvoz a likvidace odpadu', 'ks'),
@@ -96,10 +143,10 @@
 
   function blank() {
     return {
-      v: 1, id: uid(), layout: 'foto', foto: 'plech-falc', fotoData: '', cislo: nextNo(true), datum: today(), platnost: 30,
+      v: 2, id: uid(), stav: 'rozpracovana', layout: 'foto', foto: 'auto', fotoData: '', cislo: '', datum: today(), platnost: 30,
       nazev: '', podtitul: '', zak: { jmeno: '', telefon: '', email: '', adresa: '' }, stavba: '',
       fakta: [{ k: 'Zahájení', v: '' }, { k: 'Doba realizace', v: '' }, { k: 'Plocha střechy', v: '' }], cenaNahore: true,
-      uvod: '', prods: [{ nadpis: 'Střešní krytina', nazev: '', vyrobce: '', barva: '', hex: '', body: '', img: '' }],
+      uvod: '', kryt: defaultKryt(), okna: defaultOkna(), prods: [],
       items: [I('', '', 'kpl')], dph: '12', sleva: '', mezisoucty: false,
       shrnuti: '', podminky: 'Záloha 30 % při podpisu smlouvy, doplatek po předání díla. Termín zahájení potvrdíme ve smlouvě.',
       podpis: { jmeno: 'Pavel Kočí', role: 'majitel', telefon: '773 898 698', email: 'info@prooze.cz' },
@@ -107,23 +154,29 @@
   }
   function demo() {
     return Object.assign(blank(), {
-      nazev: 'Kompletní rekonstrukce střechy', podtitul: 'Falcovaný plech COMAX v černé barvě, včetně dvou střešních oken VELUX',
+      nazev: 'Kompletní rekonstrukce střechy', podtitul: '',
       fakta: [{ k: 'Zahájení', v: 'do 3 týdnů od podpisu' }, { k: 'Doba realizace', v: 'cca 14 dní' }, { k: 'Plocha střechy', v: '' }],
       uvod: 'Děkujeme za zájem a za čas na prohlídce. Podle zaměření posíláme nabídku na kompletní rekonstrukci střechy: demontáž staré krytiny, novou skladbu s plechem COMAX, dvě střešní okna a odvoz odpadu.',
-      prods: [
-        { nadpis: 'Střešní krytina', nazev: 'Falcovaný plech COMAX', vyrobce: 'comax', barva: 'černá RAL 9005', hex: '#141517', body: 'Nízká hmotnost, šetrná ke krovu\nHladký moderní vzhled bez viditelných šroubů\nKompletní systém včetně klempířských prvků', img: '' },
-        { nadpis: 'Střešní okna', nazev: 'VELUX GLU 0061Z MK06', vyrobce: '', barva: '', hex: '', body: 'Lemování EDW 2000 MK06 pro plechovou krytinu\nMontáž včetně napojení na fólii a krytinu', img: '' }],
       items: DEMO_ITEMS.map((x) => ({ ...x })),
       shrnuti: 'Demontáž stávající krytiny, odvoz a likvidace odpadu\nNová skladba střechy: latě, kontralatě, difuzní fólie\nDodávka a montáž plechu COMAX včetně klempířských prvků\nDodávka a montáž 2 střešních oken VELUX s lemováním\nDoprava materiálu a stavební výtah',
     });
   }
 
-  let S = load(KEY, null);
-  if (!S || S.v !== 1) { S = demo(); store(KEY, S); }
+  // starší uložené nabídky (v1) → krytina a okna jako samostatné volby
+  function migrate(s) {
+    if (s && s.v === 1) {
+      s.kryt = defaultKryt(); s.okna = defaultOkna(); s.foto = 'auto'; s.podtitul = s.podtitul || '';
+      s.prods = (s.prods || []).filter((p) => !/krytina|okna/i.test(p.nadpis || ''));
+      s.v = 2;
+    }
+    return s;
+  }
+  let S = migrate(load(KEY, null));
+  if (S && S.v !== 2) S = null;
 
   /* ---------- výpočty ---------- */
   function totals(s) {
-    const rows = s.items.map((x) => num(x.mn) * num(x.cena));
+    const rows = s.items.map((x) => (offItem(s, x) ? 0 : num(x.mn) * num(x.cena)));
     const sum = rows.reduce((a, b) => a + b, 0);
     const sleva = Math.min(100, Math.max(0, num(s.sleva)));
     const slevaKc = sum * sleva / 100;
@@ -156,7 +209,7 @@
   };
   const badge = (label, value, sun) => `<div class="d-badge${sun ? ' d-badge--sun' : ''}"><span class="d-badge__ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[sun ? 'price' : iconFor(label)]}</svg></span><span class="d-badge__t"><small>${t(label)}</small><b>${sun ? value : t(value)}</b></span></div>`;
   const ph = (v, text) => (v ? t(v) : `<span class="ph">${text}</span>`);
-  function photoSrc(s) { return s.fotoData || `${A}img/web/${s.foto || 'plech-falc'}-1600.jpg`; }
+
 
   function renderDoc(s) {
     const tt = totals(s);
@@ -165,9 +218,10 @@
     const badges = s.fakta.filter((f) => f.k && f.v).map((f) => badge(f.k, f.v));
     if (s.cenaNahore && tt.sum > 0) badges.push(badge(`Cena díla${priceLabel(s, tt) ? ' ' + priceLabel(s, tt) : ''}`, kc(tt.celkem), true));
     const badgeRow = badges.length ? `<div class="d-badges">${badges.join('')}</div>` : '';
-    const title = `<h1>${ph(s.nazev, 'Název nabídky')}</h1>${s.podtitul ? `<p class="d-sub">${t(s.podtitul)}</p>` : ''}`;
+    const sub = s.podtitul || autoSub(s);
+    const title = `<h1>${ph(s.nazev, 'Název nabídky')}</h1>${sub ? `<p class="d-sub">${t(sub)}</p>` : ''}`;
     const head = L === 'foto'
-      ? `<header class="d-cover"><img class="d-cover__img" src="${photoSrc(s)}" alt=""><div class="d-cover__bar"><img class="d-logo" src="${A}brand/logo-bila.svg" alt="PROOZE">${meta}</div><div class="d-cover__txt">${title}${badgeRow}</div></header>`
+      ? `<header class="d-cover"><img class="d-cover__img" src="${coverSrc(s)}" alt=""><div class="d-cover__bar"><img class="d-logo" src="${A}brand/logo-bila.svg" alt="PROOZE">${meta}</div><div class="d-cover__txt">${title}${badgeRow}</div></header>`
       : `<header class="d-head"><div class="d-head__brand"><img class="d-logo" src="${A}brand/logo.svg" alt="PROOZE"><span>Pokrývači, kteří umí i&nbsp;fotovoltaiku</span></div>${meta}</header>`;
 
     const kde = s.stavba || s.zak.adresa;
@@ -176,7 +230,12 @@
       <div><h3>Místo stavby</h3><p>${ph(kde, 'Adresa stavby')}</p></div>
       <div><h3>Připravil</h3><p><b>${t(s.podpis.jmeno)}</b>${s.podpis.role ? ', ' + t(s.podpis.role) : ''}<br>${t(s.podpis.telefon)}<br>${t(s.podpis.email)}</p></div></section>`;
 
-    const prods = s.prods.filter((p) => p.nazev || p.img);
+    const k = s.kryt, o = s.okna;
+    const prods = [
+      k && k.ano !== false && k.nazev ? { nadpis: 'Střešní krytina', nazev: k.nazev, vyrobce: k.vyrobce, barva: k.barvaTxt, hex: k.hex, body: k.body } : null,
+      o && o.ano && o.model ? { nadpis: 'Střešní okna', nazev: `${num(o.pocet) ? fmt(num(o.pocet)) + '× ' : ''}${o.model}`, vyrobce: '', barva: '', hex: '', body: [o.lemovani ? `Lemování ${o.lemovani}` : '', o.body].filter(Boolean).join('\n') } : null,
+      ...s.prods.filter((p) => p.nazev || p.img),
+    ].filter(Boolean);
     const prodHtml = prods.length ? `<section class="d-sec d-prods d-prods--${Math.min(prods.length, 3)}">${prods.map((p) => {
       const m = MAKERS[p.vyrobce];
       const logo = p.img ? `<img class="d-prod__img" src="${p.img}" alt="">` : m && m[1] ? `<img class="d-prod__logo" src="${A}brands/${m[1]}" alt="${m[0]}">` : '';
@@ -188,7 +247,7 @@
     // rozpočet seskupený podle kategorií (v pořadí prvního výskytu)
     const groups = [];
     s.items.forEach((x, i) => {
-      if (!x.popis && !num(x.cena)) return;
+      if ((!x.popis && !num(x.cena)) || offItem(s, x)) return;
       const k = x.kat || 'Ostatní';
       let g = groups.find((y) => y.k === k);
       if (!g) groups.push(g = { k, rows: [], sum: 0 });
@@ -224,6 +283,7 @@
   function refresh() {
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(() => {
+      syncLinked(S);
       docEl.className = `doc doc--${S.layout}`;
       docEl.innerHTML = renderDoc(S);
       const tt = totals(S);
@@ -234,6 +294,7 @@
     });
   }
   function fitDoc() {
+    if (document.body.dataset.view !== 'edit') return;
     const w = scroller.clientWidth - 48;
     const z = Math.min(1, w / 793.7); // A4 = 210 mm
     fit.style.zoom = z;
@@ -252,26 +313,70 @@
       if (el.type === 'checkbox') el.checked = !!v; else el.value = v ?? '';
     });
     document.querySelectorAll('input[name="layout"]').forEach((r) => { r.checked = r.value === S.layout; });
-    renderPhotos(); renderFacts(); renderProds(); renderItems();
+    renderKryt(); renderPhotos(); renderFacts(); renderProds(); renderItems();
+    $('[data-k="podtitul"]').placeholder = autoSub(S) || 'Krátce, co nabízíte';
   }
   document.addEventListener('input', (e) => {
     const el = e.target;
-    if (el.dataset.k) { set(S, el.dataset.k, el.type === 'checkbox' ? el.checked : el.value); refresh(); return; }
+    if (el.dataset.k) {
+      set(S, el.dataset.k, el.type === 'checkbox' ? el.checked : el.value);
+      if (el.dataset.k === 'kryt.vyrobce') { S.kryt.nazev = `${KRYTINY[S.kryt.typ].n}${S.kryt.vyrobce && S.kryt.typ !== 'prefa' ? ' ' + MAKERS[S.kryt.vyrobce][0] : ''}`; $('[data-k="kryt.nazev"]').value = S.kryt.nazev; }
+      if (el.dataset.k.startsWith('kryt.') || el.dataset.k.startsWith('okna.')) { $('[data-okna-fields]').hidden = !S.okna.ano; $('[data-k="podtitul"]').placeholder = autoSub(S) || ''; renderPhotos(); syncLinked(S); updateLinkedRows(); }
+      refresh(); return;
+    }
     if (el.name === 'layout') { S.layout = el.value; renderPhotos(); refresh(); }
   });
-  document.addEventListener('change', (e) => { if (e.target.dataset.k && e.target.type === 'checkbox') { set(S, e.target.dataset.k, e.target.checked); refresh(); } });
+  document.addEventListener('change', (e) => { if (e.target.dataset.k && e.target.type === 'checkbox') { set(S, e.target.dataset.k, e.target.checked); $('[data-okna-fields]').hidden = !S.okna.ano; $('[data-kryt-fields]').hidden = S.kryt.ano === false; renderPhotos(); renderItems(); refresh(); } });
+  // přepsat jen propojené řádky v editoru (bez ztráty fokusu v ostatních polích)
+  function updateLinkedRows() {
+    document.querySelectorAll('[data-item]').forEach((row) => {
+      const x = S.items[row.dataset.item]; if (!x || !x.link || x.manual) return;
+      row.querySelector('[data-if="popis"]').value = x.popis; row.querySelector('[data-if="mn"]').value = x.mn;
+    });
+  }
 
   // fotky (jen layout s fotkou)
   function renderPhotos() {
     const box = $('[data-photos]');
     box.hidden = S.layout !== 'foto';
-    box.innerHTML = PHOTOS.map(([k, n]) => `<button type="button" class="ph-btn${!S.fotoData && S.foto === k ? ' is-on' : ''}" data-photo="${k}" title="${n}"><img src="${A}img/web/${k}-800.webp" alt="${n}" loading="lazy"></button>`).join('')
+    const auto = { ...S, foto: 'auto', fotoData: '' };
+    box.innerHTML = `<button type="button" class="ph-btn ph-btn--auto${!S.fotoData && S.foto === 'auto' ? ' is-on' : ''}" data-photo="auto" title="Podle zvolené krytiny a oken"><img src="${coverSrc(auto)}" alt=""><span>Podle krytiny</span></button>`
+      + PHOTOS.map(([k, n]) => `<button type="button" class="ph-btn${!S.fotoData && S.foto === k ? ' is-on' : ''}" data-photo="${k}" title="${n}"><img src="${A}img/web/${k}-800.webp" alt="${n}" loading="lazy"></button>`).join('')
       + `<label class="ph-btn ph-btn--up${S.fotoData ? ' is-on' : ''}" title="Vlastní fotka">${S.fotoData ? `<img src="${S.fotoData}" alt="">` : '<span>Vlastní<br>fotka</span>'}<input type="file" accept="image/*" data-upload="foto" hidden></label>`;
   }
   $('[data-photos]').addEventListener('click', (e) => {
     const b = e.target.closest('[data-photo]');
     if (!b) return;
     S.foto = b.dataset.photo; S.fotoData = ''; renderPhotos(); refresh();
+  });
+
+  // krytina: typ, barva, výrobce
+  function renderKryt() {
+    const k = S.kryt, def = KRYTINY[k.typ];
+    $('[data-kryt-typ]').innerHTML = Object.entries(KRYTINY).map(([key, x]) => `<button type="button" class="chip${key === k.typ ? ' is-on' : ''}" data-typ="${key}">${x.n}</button>`).join('');
+    $('[data-kryt-barvy]').innerHTML = def.barvy.map(([b, bt, hex]) => `<button type="button" class="swb${b === k.barva ? ' is-on' : ''}" data-barva="${b}" title="${bt}"><i style="background:${hex}"></i>${bt}</button>`).join('')
+      + `<label class="swb${!k.barva ? ' is-on' : ''}" title="Jiná barva (fotka se vybere podle nejbližší)"><input type="color" data-kryt-hex value="${esc(k.hex || '#141517')}">Jiná barva</label>`;
+    const sel = $('[data-k="kryt.vyrobce"]');
+    sel.innerHTML = Object.entries(MAKERS).map(([key, [n]]) => `<option value="${key}"${key === k.vyrobce ? ' selected' : ''}>${n}${def.vyrobci.includes(key) && key ? ' ✓' : ''}</option>`).join('');
+    $('[data-okna-fields]').hidden = !S.okna.ano;
+    $('[data-kryt-fields]').hidden = S.kryt.ano === false;
+  }
+  $('[data-kryt-typ]').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-typ]'); if (!b) return;
+    S.kryt = defaultKryt(b.dataset.typ, S.kryt.vyrobce);
+    bindFields(); refresh();
+  });
+  $('[data-kryt-barvy]').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-barva]'); if (!b) return;
+    const [key, bt, hex] = KRYTINY[S.kryt.typ].barvy.find((x) => x[0] === b.dataset.barva);
+    Object.assign(S.kryt, { barva: key, barvaTxt: bt, hex });
+    bindFields(); refresh();
+  });
+  $('[data-kryt-barvy]').addEventListener('input', (e) => {
+    if (!e.target.matches('[data-kryt-hex]')) return;
+    S.kryt.hex = e.target.value; S.kryt.barva = '';
+    $('[data-kryt-barvy]').querySelectorAll('.swb').forEach((x) => x.classList.toggle('is-on', x.contains(e.target)));
+    renderPhotos(); refresh();
   });
 
   // přehled nahoře
@@ -313,7 +418,8 @@
   // položky rozpočtu
   function renderItems() {
     const kats = [...new Set(S.items.map((x) => x.kat).filter(Boolean).concat(['Krytina', 'Ostatní materiál', 'Klempířské prvky', 'Střešní okna', 'Doprava a zařízení stavby', 'Odpady', 'Práce']))];
-    $('[data-items]').innerHTML = `<datalist id="kats">${kats.map((k) => `<option value="${esc(k)}">`).join('')}</datalist>` + S.items.map((x, i) => `<div class="it" data-item="${i}">
+    syncLinked(S);
+    $('[data-items]').innerHTML = `<datalist id="kats">${kats.map((k) => `<option value="${esc(k)}">`).join('')}</datalist>` + S.items.map((x, i) => `<div class="it${offItem(S, x) ? ' it--off' : ''}${x.link && !x.manual ? ' it--link' : ''}" data-item="${i}" title="${offItem(S, x) ? 'Není v součtu: ' + (x.link === 'kryt' ? 'krytina' : 'okna') + ' nejsou součástí zakázky' : x.link && !x.manual ? 'Propojeno s volbou ' + (x.link === 'kryt' ? 'krytiny' : 'oken') + ' nahoře' : ''}">
       <input class="it__kat" list="kats" data-if="kat" value="${esc(x.kat)}" placeholder="Skupina" aria-label="Skupina">
       <textarea class="it__popis" rows="1" data-if="popis" placeholder="Popis položky" aria-label="Popis">${esc(x.popis)}</textarea>
       <input class="it__mn" inputmode="decimal" data-if="mn" value="${esc(x.mn)}" placeholder="Množ." aria-label="Množství">
@@ -335,7 +441,9 @@
   itemsBox.addEventListener('input', (e) => {
     const el = e.target, row = el.closest('[data-item]');
     if (!row || !el.dataset.if) return;
-    S.items[row.dataset.item][el.dataset.if] = el.value;
+    const it = S.items[row.dataset.item];
+    it[el.dataset.if] = el.value;
+    if (it.link && (el.dataset.if === 'popis' || el.dataset.if === 'mn')) { it.manual = true; row.classList.remove('it--link'); }
     if (el.tagName === 'TEXTAREA') { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
     refresh();
   });
@@ -382,30 +490,106 @@
     if (el.dataset.upload === 'prod') { const i = +el.closest('[data-prod]').dataset.prod; readImage(el.files[0], 700, (d) => { S.prods[i].img = d; renderProds(); refresh(); }); }
   });
 
-  /* ---------- ukládání ---------- */
+  /* ---------- ukládání, přehled nabídek a šablony ---------- */
+  const TPLKEY = 'prooze-sablony';
+  const STAVY = { rozpracovana: 'Rozpracovaná', odeslana: 'Odeslaná', prijata: 'Přijatá', odmitnuta: 'Odmítnutá' };
   const listAll = () => load(LIST, []);
+  const tplAll = () => load(TPLKEY, []);
+  const copyItems = (k) => TPL[k].map((x) => ({ ...x }));
+  const SHR = {
+    plech: 'Demontáž stávající krytiny, odvoz a likvidace odpadu\nNová skladba střechy: latě, kontralatě, difuzní fólie\nDodávka a montáž plechové krytiny včetně klempířských prvků\nDodávka a montáž střešních oken s lemováním\nDoprava materiálu a stavební výtah',
+    taska: 'Demontáž stávající krytiny, odvoz a likvidace odpadu\nNové latě a pojistná difuzní fólie\nDodávka a montáž tašek včetně hřebenáčů a větracích prvků\nKlempířské prvky a oplechování komínu\nDoprava materiálu a stavební výtah',
+    oprava: 'Nalezení příčiny zatékání\nOprava poškozených míst a výměna tašek\nKontrola oplechování a žlabů',
+    fve: 'Návrh výkonu a baterie podle vaší spotřeby\nDodávka a montáž panelů, střídače a baterie\nElektroinstalace, revize a žádost o připojení k síti\nVyřízení úvěru nebo dotace z Nové zelené úsporám',
+  };
+  const BUILTIN = {
+    plech: { n: 'Rekonstrukce – plech', d: 'Falcovaný plech, střešní okna, celý rozpočet', make: () => ({ nazev: 'Kompletní rekonstrukce střechy', kryt: defaultKryt('falc', 'comax'), okna: defaultOkna(), items: copyItems('plech'), shrnuti: SHR.plech }) },
+    taska: { n: 'Rekonstrukce – taška', d: 'Pálená taška, střešní okna, celý rozpočet', make: () => ({ nazev: 'Kompletní rekonstrukce střechy', kryt: defaultKryt('palena', 'tondach'), okna: defaultOkna(), items: copyItems('taska'), shrnuti: SHR.taska }) },
+    oprava: { n: 'Oprava střechy', d: 'Menší zakázka, kompaktně na 1 stranu', make: () => ({ layout: 'kompakt', nazev: 'Oprava střechy', kryt: defaultKryt('palena', 'tondach'), okna: { ...defaultOkna(), ano: false }, items: copyItems('oprava'), shrnuti: SHR.oprava, fakta: [{ k: 'Termín', v: '' }, { k: 'Doba opravy', v: '' }, { k: '', v: '' }] }) },
+    fve: { n: 'Fotovoltaika', d: 'Elektrárna s baterií, úvěr NZÚ', make: () => ({ nazev: 'Fotovoltaická elektrárna pro váš dům', foto: 'rd-fve-hero', kryt: { ...defaultKryt(), ano: false }, okna: { ...defaultOkna(), ano: false },
+      prods: [{ nadpis: 'Fotovoltaika', nazev: 'Elektrárna s bateriovým úložištěm', vyrobce: '', barva: '', hex: '', body: 'Panely, hybridní střídač a baterie\nMonitoring výroby v mobilu\nŽádost o připojení a revize v ceně', img: '' }],
+      items: copyItems('fve'), shrnuti: SHR.fve, fakta: [{ k: 'Výkon', v: '' }, { k: 'Baterie', v: '' }, { k: 'Doba realizace', v: '' }] }) },
+  };
+
+  function newOffer(partial = {}) {
+    const s = migrate(Object.assign(blank(), JSON.parse(JSON.stringify(partial))));
+    Object.assign(s, { id: uid(), cislo: nextNo(true), datum: today(), stav: 'rozpracovana', zak: { jmeno: '', telefon: '', email: '', adresa: '' }, stavba: '' });
+    return s;
+  }
+  const entry = (s) => ({ id: s.id, cislo: s.cislo, nazev: s.nazev, zak: s.zak.jmeno, celkem: totals(s).celkem, dph: s.dph, stav: s.stav || 'rozpracovana', datum: s.datum, platnost: s.platnost, upraveno: new Date().toISOString(), data: s });
   function saveCurrent(quiet) {
+    if (!S) return;
     const all = listAll().filter((x) => x.id !== S.id);
-    all.unshift({ id: S.id, cislo: S.cislo, nazev: S.nazev, zak: S.zak.jmeno, celkem: totals(S).celkem, upraveno: new Date().toISOString(), data: S });
+    all.unshift(entry(S));
     if (store(LIST, all) && !quiet) toast(`Nabídka ${S.cislo} je uložená.`);
   }
-  function renderSaved() {
+  const expired = (x) => x.datum && num(x.platnost) && addDays(x.datum, num(x.platnost)) < today();
+
+  // přehled
+  let filtr = '', hledat = '';
+  const tplCard = (id, name, desc, img, own) => `<article class="tpl"><button type="button" class="tpl__main" data-new="${id}"><span class="tpl__img"><img src="${img}" alt="" loading="lazy"></span><b>${esc(name)}</b><small>${esc(desc)}</small></button>${own ? `<button type="button" class="tpl__del" data-deltpl="${id.slice(2)}" aria-label="Smazat šablonu ${esc(name)}">×</button>` : ''}</article>`;
+  function renderBoard() {
     const all = listAll();
-    $('[data-saved]').innerHTML = all.length ? all.map((x) => `<li><div><b>${esc(x.cislo)}</b> ${esc(x.nazev || 'Bez názvu')}<br><small>${esc(x.zak || 'bez zákazníka')} · ${kc(x.celkem || 0)} · ${new Date(x.upraveno).toLocaleString('cs-CZ')}</small></div>
-      <span><button type="button" class="b b--line b--s" data-open="${x.id}">Otevřít</button><button type="button" class="b b--ghost b--s" data-copy="${x.id}">Kopie</button><button type="button" class="b b--ghost b--s b--danger" data-del="${x.id}">Smazat</button></span></li>`).join('')
-      : '<li class="saved__empty">Zatím žádné uložené nabídky.</li>';
+    const st = (x) => x.stav || 'rozpracovana';
+    const cnt = (k) => all.filter((x) => st(x) === k).length;
+    const sum = (k) => all.filter((x) => st(x) === k).reduce((a, x) => a + (x.celkem || 0), 0);
+    $('[data-stats]').innerHTML = [['Rozpracované', cnt('rozpracovana'), ''], ['Odeslané, čekají na odpověď', cnt('odeslana'), sum('odeslana') ? kc(sum('odeslana')) + ' ve hře' : ''],
+      ['Přijaté', cnt('prijata'), sum('prijata') ? kc(sum('prijata')) + ' získáno' : ''], ['Odmítnuté', cnt('odmitnuta'), '']]
+      .map(([k, n, v]) => `<div class="st"><span>${k}</span><b>${n}</b><small>${v || '&nbsp;'}</small></div>`).join('');
+    $('[data-tpls]').innerHTML = Object.entries(BUILTIN).map(([k, x]) => tplCard('b:' + k, x.n, x.d, coverSrc({ foto: 'auto', ...x.make() }))).join('')
+      + tplAll().map((x) => tplCard('o:' + x.id, x.nazev, 'Vlastní šablona', coverSrc(x.data), true)).join('');
+    $('[data-filtr]').innerHTML = [['', 'Vše', all.length], ...Object.entries(STAVY).map(([k, n]) => [k, n, cnt(k)])]
+      .map(([k, n, c]) => `<button type="button" class="chip${filtr === k ? ' is-on' : ''}" data-f="${k}">${n} <span>${c}</span></button>`).join('');
+    const q = hledat.trim().toLowerCase();
+    const rows = all.filter((x) => (!filtr || st(x) === filtr) && (!q || [x.cislo, x.nazev, x.zak].join(' ').toLowerCase().includes(q)));
+    $('[data-offers]').innerHTML = rows.length ? rows.map((x) => {
+      const prop = st(x) === 'odeslana' && expired(x);
+      return `<li class="of">
+        <button type="button" class="of__main" data-open="${x.id}"><b class="of__no">${esc(x.cislo)}</b><span class="of__n">${esc(x.nazev || 'Bez názvu')}</span><span class="of__z">${esc(x.zak || 'bez zákazníka')}</span></button>
+        <span class="of__sum">${kc(x.celkem || 0)}</span>
+        <span class="of__d">${czDate(x.datum)}${prop ? '<em>platnost vypršela</em>' : ''}</span>
+        <select class="of__st of__st--${st(x)}" data-stav="${x.id}" aria-label="Stav nabídky ${esc(x.cislo)}">${Object.entries(STAVY).map(([k, n]) => `<option value="${k}"${k === st(x) ? ' selected' : ''}>${n}</option>`).join('')}</select>
+        <span class="of__act"><button type="button" class="b b--ghost b--s" data-copy="${x.id}">Kopie</button><button type="button" class="b b--ghost b--s b--danger" data-del="${x.id}">Smazat</button></span></li>`;
+    }).join('') : `<li class="of of--empty">${all.length ? 'Nic neodpovídá hledání.' : 'Zatím žádné nabídky. Začněte šablonou nahoře.'}</li>`;
   }
-  $('[data-saved]').addEventListener('click', (e) => {
+  const boardEl = $('[data-board]');
+  boardEl.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-new], [data-open], [data-copy], [data-del], [data-deltpl], [data-f]');
+    if (!t) return;
+    const d = t.dataset;
+    if (d.f !== undefined) { filtr = d.f; renderBoard(); return; }
+    if (d.new) {
+      const [kind, key] = d.new.split(':');
+      S = newOffer(kind === 'b' ? BUILTIN[key].make() : kind === 'o' ? (tplAll().find((x) => x.id === key) || {}).data : {});
+      saveCurrent(true); go('edit'); toast(`Nová nabídka ${S.cislo}.`); return;
+    }
     const all = listAll();
-    const id = e.target.dataset.open || e.target.dataset.copy || e.target.dataset.del;
-    if (!id) return;
-    const x = all.find((y) => y.id === id);
-    if (e.target.dataset.del) { if (confirm(`Smazat nabídku ${x.cislo}?`)) store(LIST, all.filter((y) => y.id !== id)); renderSaved(); return; }
-    saveCurrent(true);
-    S = JSON.parse(JSON.stringify(x.data));
-    if (e.target.dataset.copy) { S.id = uid(); S.cislo = nextNo(true); S.datum = today(); S.zak = { jmeno: '', telefon: '', email: '', adresa: '' }; S.stavba = ''; }
-    $('[data-dlg]').close(); bindFields(); refresh();
+    if (d.open) { S = migrate(JSON.parse(JSON.stringify(all.find((x) => x.id === d.open).data))); go('edit'); return; }
+    if (d.copy) { S = newOffer(all.find((x) => x.id === d.copy).data); saveCurrent(true); go('edit'); toast(`Kopie jako nabídka ${S.cislo}. Doplňte zákazníka.`); return; }
+    if (d.del) { const x = all.find((y) => y.id === d.del); if (confirm(`Smazat nabídku ${x.cislo}${x.zak ? ' (' + x.zak + ')' : ''}?`)) { store(LIST, all.filter((y) => y.id !== d.del)); if (S && S.id === d.del) S = null; renderBoard(); } return; }
+    if (d.deltpl) { const ts = tplAll(); const x = ts.find((y) => y.id === d.deltpl); if (confirm(`Smazat šablonu „${x.nazev}“?`)) { store(TPLKEY, ts.filter((y) => y.id !== d.deltpl)); renderBoard(); } }
   });
+  boardEl.addEventListener('change', (e) => {
+    const id = e.target.dataset.stav; if (!id) return;
+    const all = listAll(), x = all.find((y) => y.id === id);
+    x.stav = x.data.stav = e.target.value; store(LIST, all);
+    if (S && S.id === id) S.stav = e.target.value;
+    renderBoard();
+  });
+  $('[data-hledat]').addEventListener('input', (e) => { hledat = e.target.value; renderBoard(); });
+
+  // přepínání přehled ↔ editor (i tlačítkem Zpět v prohlížeči)
+  function go(view) {
+    if (view === 'edit' && !S) view = 'board';
+    if (view === 'board') saveCurrent(true);
+    document.body.dataset.view = view;
+    const hash = view === 'edit' ? '#nabidka' : '#prehled';
+    if (location.hash !== hash) history.pushState(null, '', hash);
+    if (view === 'edit') { bindFields(); refresh(); document.title = `${S.cislo} | Nabídky PROOZE`; }
+    else { renderBoard(); document.title = 'Nabídky | PROOZE'; }
+    scrollTo(0, 0);
+  }
+  addEventListener('popstate', () => go(location.hash === '#nabidka' ? 'edit' : 'board'));
 
   function download(name, text) {
     const a = document.createElement('a');
@@ -416,10 +600,17 @@
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
     const act = b.dataset.act;
-    if (act === 'new') { saveCurrent(true); S = blank(); bindFields(); refresh(); toast(`Nová nabídka ${S.cislo}. Předchozí je v Uložených.`); }
+    if (act === 'board') go('board');
     if (act === 'save') saveCurrent();
-    if (act === 'list') { renderSaved(); $('[data-dlg]').showModal(); }
-    if (act === 'export') download(`prooze-nabidky-${today()}.json`, JSON.stringify(listAll(), null, 1));
+    if (act === 'save-tpl') {
+      const name = prompt('Název šablony (uloží se bez zákazníka, s položkami a texty):', S.nazev || 'Moje šablona');
+      if (!name) return;
+      const data = JSON.parse(JSON.stringify(S));
+      Object.assign(data, { zak: { jmeno: '', telefon: '', email: '', adresa: '' }, stavba: '', cislo: '', stav: 'rozpracovana' });
+      store(TPLKEY, [...tplAll(), { id: uid(), nazev: name, data }]);
+      toast(`Šablona „${name}“ je uložená v přehledu.`);
+    }
+    if (act === 'export') download(`prooze-nabidky-${today()}.json`, JSON.stringify({ nabidky: listAll(), sablony: tplAll() }, null, 1));
     if (act === 'add-item') addItem();
     if (act === 'add-prod') { S.prods.push({ nadpis: '', nazev: '', vyrobce: '', barva: '', hex: '', body: '', img: '' }); renderProds(); refresh(); }
     if (act === 'pdf') {
@@ -435,17 +626,18 @@
     if (!k) return;
     const filled = S.items.some((x) => x.popis || x.cena);
     if (filled && !confirm('Nahradit současné položky rozpočtu šablonou?')) return;
-    S.items = TPL[k].map((x) => ({ ...x }));
+    S.items = copyItems(k);
     renderItems(); refresh();
   });
   $('[data-act="import"]').addEventListener('change', (e) => {
     const f = e.target.files[0]; if (!f) return;
     f.text().then((txt) => {
       const inc = JSON.parse(txt);
-      if (!Array.isArray(inc)) throw new Error();
+      const offers = Array.isArray(inc) ? inc : inc.nabidky || [], tpls = Array.isArray(inc) ? [] : inc.sablony || [];
       const all = listAll(); let n = 0;
-      inc.forEach((x) => { if (x && x.id && x.data) { const i = all.findIndex((y) => y.id === x.id); if (i >= 0) all[i] = x; else all.push(x); n++; } });
-      store(LIST, all); renderSaved(); toast(`Načteno ${n} nabídek.`);
+      offers.forEach((x) => { if (x && x.id && x.data) { const i = all.findIndex((y) => y.id === x.id); if (i >= 0) all[i] = x; else all.push(x); n++; } });
+      const ts = tplAll(); tpls.forEach((x) => { if (x && x.id && !ts.some((y) => y.id === x.id)) ts.push(x); });
+      store(LIST, all); store(TPLKEY, ts); renderBoard(); toast(`Načteno ${n} nabídek a ${tpls.length} šablon.`);
     }).catch(() => toast('Soubor se nepodařilo načíst. Je to export z tohoto nástroje?'));
     e.target.value = '';
   });
@@ -456,7 +648,9 @@
     el.textContent = msg; el.classList.add('is-on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('is-on'), 4200);
   }
 
-  bindFields();
-  refresh();
+  // první spuštění: vzorová nabídka v přehledu, rozpracovaná nabídka se uloží do seznamu
+  if (!listAll().length && !S) { S = demo(); S.cislo = 'VZOR'; }
+  if (S) saveCurrent(true);
+  go(location.hash === '#nabidka' && S ? 'edit' : 'board');
   document.fonts && document.fonts.ready.then(fitDoc);
 })();
