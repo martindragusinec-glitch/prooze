@@ -144,7 +144,8 @@
         <p class="hint">Termín, doba realizace, plocha, záruka… Ikona se vybere podle popisku, prázdný řádek se nezobrazí.</p>
         <div class="facts" data-facts></div>
         <label class="chk"><input type="checkbox" data-k="cenaNahore"> Přidat štítek s cenou díla</label>
-        <label class="f"><span>Úvodní text</span><textarea rows="3" data-k="uvod" placeholder="Děkujeme za zájem…"></textarea></label>
+        <label class="f"><span>Oslovení <em>např. Vážení manželé Novákovi,</em></span><input data-k="osloveni" placeholder="Dobrý den,"></label>
+        <label class="f"><span>Úvodní text <em>prázdný řádek = nový odstavec</em></span><textarea rows="4" data-k="uvod" placeholder="Děkujeme za zájem…"></textarea></label>
         <div class="grp__hrow grp__hrow--sep" id="s-proofs"><h3 class="grp__h3">Proč PROOZE <em class="hint">na 1. straně</em></h3><label class="tgl"><input type="checkbox" data-k="proofsOn"><span>Zobrazit</span></label></div>
         <p class="hint">Ikona se vybere podle nadpisu. Když se 1. strana nevejde, tenhle pás se v PDF vynechá.</p>
         <div class="facts" data-proofs></div>
@@ -174,6 +175,7 @@
           <label class="f"><span>Telefon</span><input data-k="podpis.telefon"></label>
           <label class="f"><span>E-mail</span><input data-k="podpis.email"></label>
         </div>
+        <label class="chk"><input type="checkbox" data-k="podpisFoto"> Fotka u podpisu na 1. straně</label>
         </div>
       </details>
 

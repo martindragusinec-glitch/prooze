@@ -623,3 +623,90 @@ select {
 .d-p1__end { padding-top: 6mm; gap: 5mm; }
 .d-proofs { padding-top: 4mm; }
 .doc--kompakt .d-foot { display: none; }
+
+/* ---------------------------------------------------------------- úvodní strana v2 */
+.d-letter { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 10mm; margin: 9mm 16mm 0; }
+.d-letter__hi { font: 800 13pt/1.2 var(--display); letter-spacing: -.01em; margin-bottom: 2.6mm !important; }
+.d-letter__txt > p:not(.d-letter__hi) { font-size: 9.8pt; line-height: 1.62; text-wrap: pretty; }
+.d-letter__txt > p + p:not(.d-letter__hi) { margin-top: 2mm; }
+.d-letter__sig { display: flex; align-items: center; gap: 3mm; margin-top: 4.5mm; }
+.d-letter__sig img { width: 11mm; height: 11mm; border-radius: 50%; object-fit: cover; flex: none; }
+.d-letter__sig p { font-size: 8.4pt; line-height: 1.45; color: var(--muted); }
+.d-letter__sig b { font: 700 9.6pt/1.3 var(--display); color: var(--pine); }
+.d-letter__side { display: grid; gap: 4.2mm; align-content: start; padding-left: 7mm; border-left: .6pt solid var(--line); }
+.d-letter__side h3 { font: 600 7.4pt/1 var(--text); color: var(--muted); margin-bottom: 1.4mm !important; }
+.d-letter__side p { font-size: 9pt; line-height: 1.5; }
+@media print { .d-letter__side .is-empty { display: none; } }
+
+.d-p1 .d-prods { margin-top: 9mm; }
+.d-prod--img { display: grid; grid-template-columns: 27mm minmax(0, 1fr); gap: 4.4mm; padding: 3.6mm !important; align-items: stretch; }
+.d-crop { display: block; min-height: 27mm; border-radius: 2.6mm; background-repeat: no-repeat; background-color: var(--line); }
+.d-prod__body { display: grid; gap: 2mm; align-content: start; padding: 1.2mm 1.4mm 1.2mm 0; }
+.d-prod--img .d-prod__n { font-size: 11pt; }
+.d-prod--img ul { font-size: 8.4pt; }
+
+.d-proofs { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 0; padding: 0; border: 0; border-radius: 4mm; background: var(--mist); }
+.d-proof { display: grid; grid-template-columns: 8mm minmax(0, 1fr); grid-template-areas: "ic t" "ic s"; column-gap: 2.6mm; row-gap: .6mm; align-content: center; padding: 4mm 4.2mm; }
+.d-proof + .d-proof { border-left: .6pt solid rgba(15, 58, 46, .12); }
+.d-proof__ic { grid-area: ic; align-self: center; display: grid; place-items: center; width: 8mm; height: 8mm; border-radius: 50%; background: #fff; }
+.d-proof__ic svg { width: 4.4mm; height: 4.4mm; fill: none; stroke: var(--pine); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.d-proof b { grid-area: t; font: 700 9pt/1.2 var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.d-proof small { grid-area: s; margin: 0; font-size: 7.2pt; line-height: 1.35; color: var(--muted); }
+
+/* ---------------------------------------------------------------- kompaktní sazba (bez děr) */
+.d-cover { height: 100mm; }
+.d-cover__txt { bottom: 8mm; }
+.d-cover h1 { font-size: 30pt; }
+.d-cover .d-sub { margin-top: 2.6mm; font-size: 10.6pt; }
+.d-cover .d-badges { margin-top: 5mm; }
+.d-letter { margin-top: 7mm; gap: 9mm; }
+.d-letter__hi { font-size: 12pt; margin-bottom: 1.8mm !important; }
+.d-letter__txt > p:not(.d-letter__hi) { font-size: 9.2pt; line-height: 1.52; }
+.d-letter__txt > p + p:not(.d-letter__hi) { margin-top: 1.6mm; }
+.d-letter__sig { margin-top: 3.4mm; }
+.d-letter__sig img { width: 10mm; height: 10mm; }
+.d-letter__side { gap: 3.4mm; }
+.d-letter__side p { font-size: 8.8pt; line-height: 1.45; }
+.d-p1 .d-prods { margin-top: 7mm; gap: 4mm; }
+.d-prod--img { grid-template-columns: 24mm minmax(0, 1fr); gap: 3.8mm; padding: 3.2mm !important; }
+.d-crop { min-height: 24mm; }
+.d-prod__body { gap: 1.4mm; padding: .6mm 1mm .6mm 0; }
+.d-prod--img .d-prod__k { margin-bottom: .4mm !important; }
+.d-prod--img .d-prod__n { font-size: 10.4pt; }
+.d-prod--img .d-prod__color { font-size: 8.4pt; }
+.d-prod--img .sw { width: 3.6mm; height: 3.6mm; }
+.d-prod--img ul { gap: .7mm; font-size: 8pt; line-height: 1.35; }
+.d-prod--img .d-prod__logo { height: 5.4mm; max-width: 22mm; }
+.d-p1__end { padding-top: 5mm; gap: 4mm; }
+.d-proof { padding: 3.4mm 3.8mm; }
+.d-strip > div { padding: 4mm 5.6mm; }
+/* rozpočet hustěji */
+.d-tbl { font-size: 8.5pt; }
+.d-tbl td { padding-block: 1.25mm; }
+.d-cat th, .d-cat td { padding-top: 3.2mm; padding-bottom: 1.1mm; font-size: 8.8pt; }
+.d-h { margin-bottom: 3mm !important; }
+/* volné místo na 1. straně rovnoměrně mezi bloky, ne jako jedna díra */
+.d-p1:not(.is-long) { justify-content: space-between; }
+.d-p1:not(.is-long) > * { margin-top: 0 !important; }
+.d-p1:not(.is-long) > .d-p1__end { margin-top: 0; padding-top: 0; }
+.d-p1:not(.is-long) > .d-letter, .d-p1:not(.is-long) > .d-prods, .d-p1:not(.is-long) > .d-title, .d-p1:not(.is-long) > .d-badges { margin-block: 0 !important; }
+.d-p1:not(.is-long) { padding-bottom: 0; row-gap: 6mm; }
+/* rozpočet ještě hustěji, součty se vejdou pod tabulku */
+.d-tbl { line-height: 1.32; }
+.d-tbl td { padding-block: .95mm; }
+.d-tbl thead th { padding-bottom: 1.6mm; }
+.d-cat th, .d-cat td { padding-top: 2.6mm; padding-bottom: .9mm; }
+.d-tot { margin-top: 4.5mm; gap: 3mm; }
+.d-tot__grid { gap: 10mm; }
+.d-recap__h { margin-bottom: 1mm !important; }
+.d-recap p:not(.d-recap__h), .d-tot__rows p { padding-block: .95mm; font-size: 8.3pt; }
+.d-tot__final { padding: 4.2mm 6mm; }
+.d-tot__final b { font-size: 17pt; }
+.d-close { padding-top: 0; }
+.d-end { margin-top: 9mm; }
+.d-sign { margin-top: 9mm; padding-top: 5mm; }
+.d-foot { margin-top: 8mm; }
+.d-recap p:not(.d-recap__h), .d-tot__rows p { padding-block: .55mm; font-size: 8pt; line-height: 1.35; }
+.d-recap__h { font-size: 8.8pt; }
+.d-tot { margin-top: 4mm; gap: 2.6mm; }
+.d-tot__final { padding: 3.6mm 6mm; }
