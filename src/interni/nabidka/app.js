@@ -47,6 +47,32 @@
   const KRYT_POPIS = { palena: ' (tašky, hřebenáče, koncové a větrací tašky)', betonova: ' (tašky, hřebenáče, koncové a větrací tašky)', 'plech-taskova': ', včetně příslušenství, lišt a zakončení',
     falc: ', včetně příslušenství, lišt a zakončení', prefa: ', včetně příslušenství a lišt', sindel: ' (šindele, hřebenové pásy, podkladní pás)' };
   // je položka vyřazená, protože krytina/okna nejsou součástí zakázky?
+  const FV = window.PROOZE_FVE || null;
+  const KIMG = (it) => (it && it.img ? `${A}${it.img}` : '');
+  // fotovoltaika: položky rozpočtu z konfigurátoru (link 'fve:<klíč>'); ruční ceny se zachovají i po vypnutí a zapnutí položky
+  function syncFve(s) {
+    if (!FV || !s.fve) return;
+    const f = s.fve; f.cache = f.cache || {};
+    const isF = (x) => x.link && x.link.startsWith('fve:');
+    const want = f.on ? FV.lines(f) : [];
+    const keys = new Set(want.map((l) => 'fve:' + l.key));
+    const firstIdx = s.items.findIndex(isF);
+    s.items.filter((x) => isF(x)).forEach((x) => { if (x.cena) f.cache[x.link] = x.cena; });
+    const have = Object.fromEntries(s.items.filter(isF).map((x) => [x.link, x]));
+    // ve společné nabídce se střechou dostanou skupiny FVE vlastní název (Práce → Práce FVE)
+    const otherKats = new Set(s.items.filter((x) => !isF(x) && (x.popis || x.cena)).map((x) => x.kat));
+    const block = want.map((l) => {
+      if (otherKats.has(l.kat)) l.kat = `${l.kat} FVE`;
+      const link = 'fve:' + l.key, x = have[link];
+      if (x) { if (!x.manual) { x.popis = l.popis; x.mn = l.mn; x.jed = l.jed; } if (!x.zarukaManual) x.zaruka = l.zaruka; return x; }
+      return { kat: l.kat, popis: l.popis, jed: l.jed, mn: l.mn, cena: f.cache[link] || '', link, zaruka: l.zaruka };
+    });
+    let rest = s.items.filter((x) => !isF(x));
+    if (f.on) rest = rest.filter((x) => x.popis || x.cena || x.mn !== '');
+    const before = firstIdx >= 0 ? s.items.slice(0, firstIdx).filter((x) => rest.includes(x)).length : rest.length;
+    s.items = [...rest.slice(0, before), ...block, ...rest.slice(before)];
+    if (!s.items.length) s.items.push(I('', '', 'kpl'));
+  }
   const offItem = (s, x) => (x.link === 'kryt' && s.kryt?.ano === false) || (['okno', 'lem', 'okna'].includes(x.link) && !s.okna?.ano);
   function syncLinked(s) {
     s.items.forEach((x) => {
@@ -57,10 +83,17 @@
     });
   }
   function autoSub(s) {
-    const k = s.kryt; if (!k || !k.nazev || k.ano === false) return '';
-    const n = num(s.okna?.pocet) || 0;
-    const okna = s.okna?.ano ? (n === 1 ? ', včetně střešního okna' : `, včetně ${n ? n + ' ' : ''}střešních oken`) : '';
-    return `${k.nazev}${k.barvaTxt ? ', ' + k.barvaTxt : ''}${okna}`;
+    const parts = [], k = s.kryt;
+    if (k && k.nazev && k.ano !== false) {
+      const n = num(s.okna?.pocet) || 0;
+      const okna = s.okna?.ano ? (n === 1 ? ', včetně střešního okna' : `, včetně ${n ? n + ' ' : ''}střešních oken`) : '';
+      parts.push(`${k.nazev}${k.barvaTxt ? ', ' + k.barvaTxt : ''}${okna}`);
+    }
+    if (FV && s.fve?.on) {
+      const c = FV.calc(s.fve);
+      if (c.kwp) parts.push(`${parts.length ? 'fotovoltaika' : 'Fotovoltaická elektrárna'} ${FV.cz(c.kwp)} kWp${c.kwh ? ` s baterií ${FV.cz(c.kwh)} kWh` : ''}`);
+    }
+    return parts.join(' a ');
   }
   const SWATCH = [['', 'Bez vzorku barvy'], ['#141517', 'Černá (RAL 9005)'], ['#383E42', 'Antracit (RAL 7016)'], ['#3A3330', 'Tmavě hnědá (RAL 8019)'],
     ['#5E2028', 'Vínová (RAL 3005)'], ['#A34A2E', 'Cihlová'], ['#6F7377', 'Grafit'], ['custom', 'Vlastní barva…']];
@@ -151,7 +184,7 @@
       v: 2, id: uid(), stav: 'rozpracovana', layout: 'foto', foto: 'auto', fotoData: '', cislo: '', datum: today(), platnost: 30,
       nazev: '', podtitul: '', zak: { jmeno: '', telefon: '', email: '', adresa: '' }, stavba: '',
       fakta: [{ k: 'Zahájení', v: '' }, { k: 'Doba realizace', v: '' }, { k: 'Plocha střechy', v: '' }], cenaNahore: true,
-      uvod: '', kryt: defaultKryt(), okna: defaultOkna(), prods: [],
+      uvod: '', kryt: defaultKryt(), okna: defaultOkna(), fve: FV ? FV.def() : null, prods: [],
       items: [I('', '', 'kpl')], dph: '12', sleva: '', mezisoucty: false, zaokr: true, proofsOn: true, proofs: defaultProofs(), osloveni: 'Dobrý den,', podpisFoto: true,
       shrnuti: '', podminky: 'Záloha 30 % při podpisu smlouvy, doplatek po předání díla. Termín zahájení potvrdíme ve smlouvě.',
       podpis: { jmeno: 'Pavel Kočí', role: 'majitel', telefon: '773 898 698', email: 'info@prooze.cz' },
@@ -174,6 +207,7 @@
     if (s && (!s.proofs || s.proofs[0]?.t === 'Střecha i fotovoltaika')) { s.proofs = defaultProofs(); s.proofsOn = s.proofsOn !== false; }
     if (s && s.osloveni === undefined) s.osloveni = 'Dobrý den,';
     if (s && s.podpisFoto === undefined) s.podpisFoto = true;
+    if (s && !s.fve && FV) s.fve = FV.def();
     if (s && s.v === 1) {
       s.kryt = defaultKryt(); s.okna = defaultOkna(); s.foto = 'auto'; s.podtitul = s.podtitul || '';
       s.prods = (s.prods || []).filter((p) => !/krytina|okna/i.test(p.nadpis || ''));
@@ -207,9 +241,14 @@
     price: '<path d="M3.8 12.6 12.2 4.2h7.6v7.6l-8.4 8.4z"/><circle cx="15.6" cy="8.4" r="1.3"/>',
     house: '<path d="M3.5 11.5 12 4l8.5 7.5M6 10v9.5h12V10"/>',
     check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    bolt: '<path d="M13 3.5 5.5 13.5h5.5l-1 7 7.5-10H12z"/>',
+    battery: '<rect x="3.5" y="7.5" width="15" height="9" rx="2"/><path d="M20.5 10.5v3M7 10.5v3M10 10.5v3"/>',
+    sun: '<circle cx="12" cy="12" r="3.6"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/>',
   };
   const iconFor = (label) => {
     const l = label.toLowerCase();
+    if (/výkon|kwp/.test(l)) return 'bolt';
+    if (/bateri|úložiš/.test(l)) return 'battery';
     if (/zah[aá]j|term[ií]n|datum|nástup/.test(l)) return 'cal';
     if (/doba|trv|dn[ií]|délka/.test(l)) return 'clock';
     if (/plocha|rozm|výměr|m²/.test(l)) return 'area';
@@ -227,7 +266,9 @@
     const tt = totals(s);
     const L = s.layout;
     const meta = `<p class="d-meta"><b>Cenová nabídka č.&nbsp;${esc(s.cislo)}</b><br>${czDate(s.datum)}</p>`;
-    const badges = s.fakta.filter((f) => f.k && f.v).map((f) => badge(f.k, f.v));
+    const fvc = FV && s.fve?.on ? FV.calc(s.fve) : null;
+    const autoFact = (k) => (!fvc ? '' : /výkon/i.test(k) && fvc.kwp ? `${FV.cz(fvc.kwp)} kWp` : /bateri|úložiš/i.test(k) && fvc.kwh ? `${FV.cz(fvc.kwh)} kWh` : '');
+    const badges = s.fakta.map((f) => ({ k: f.k, v: f.v || autoFact(f.k || '') })).filter((f) => f.k && f.v).map((f) => badge(f.k, f.v));
     if (s.cenaNahore && tt.sum > 0) badges.push(badge(`Cena díla${priceLabel(s, tt) ? ' ' + priceLabel(s, tt) : ''}`, kc(tt.celkem), true));
     const badgeRow = badges.length ? `<div class="d-badges" data-goto="#s-texty">${badges.join('')}</div>` : '';
     const sub = s.podtitul || autoSub(s);
@@ -246,9 +287,12 @@
     const prods = [
       k && k.ano !== false && k.nazev ? { nadpis: 'Střešní krytina', nazev: k.nazev, vyrobce: k.vyrobce, barva: k.barvaTxt, hex: k.hex, body: k.body } : null,
       o && o.ano && o.model ? { nadpis: 'Střešní okna', nazev: `${num(o.pocet) ? fmt(num(o.pocet)) + '× ' : ''}${o.model}`, vyrobce: '', barva: '', hex: '', body: [o.lemovani ? `Lemování ${o.lemovani}` : '', o.body].filter(Boolean).join('\n') } : null,
+      fvc && fvc.kwp ? { nadpis: 'Fotovoltaika', nazev: `${FV.cz(fvc.kwp)} kWp${fvc.kwh ? ` + baterie ${FV.cz(fvc.kwh)} kWh` : ''}`, vyrobce: '', barva: '', hex: '', img: KIMG(fvc.P),
+        body: [`${fvc.n}× ${fvc.P.kratce}`, fvc.I ? `${fvc.invKs > 1 ? fvc.invKs + '× ' : ''}${fvc.I.p.bez_fv_vstupu ? 'Měnič' : 'Střídač'} ${fvc.I.kratce}` : '', fvc.B ? `Baterie ${fvc.B.kratce}` : '',
+          s.fve.program === 'nzu' && fvc.uver ? `Bezúročný úvěr NZÚ až ${kc(fvc.uver)}` : ''].filter(Boolean).join('\n') } : null,
       ...s.prods.filter((p) => p.nazev || p.img),
     ].filter(Boolean);
-    const prodHtml = prods.length ? `<section class="d-sec d-prods d-prods--${Math.min(prods.length, 3)}" data-goto="#s-kryt">${prods.map((p) => {
+    const prodHtml = prods.length ? `<section class="d-sec d-prods d-prods--${Math.min(prods.length, 3)}" data-goto="${k && k.ano !== false ? '#s-kryt' : '#s-fve'}">${prods.map((p) => {
       const m = MAKERS[p.vyrobce];
       const logo = p.img ? `<img class="d-prod__img" src="${p.img}" alt="">` : m && m[1] ? `<img class="d-prod__logo" src="${A}brands/${m[1]}" alt="${m[0]}">` : '';
       const color = p.barva || p.hex ? `<p class="d-prod__color">${p.hex ? `<i class="sw" style="background:${esc(p.hex)}"></i>` : ''}${t(p.barva)}</p>` : '';
@@ -266,7 +310,8 @@
       if (!g) groups.push(g = { k, rows: [], sum: 0 });
       g.rows.push([x, tt.rows[i]]); g.sum += tt.rows[i];
     });
-    const tbody = groups.map((g) => `<tbody><tr class="d-cat"><th colspan="4" scope="colgroup">${t(g.k)}</th><td class="r">${s.mezisoucty ? kc(g.sum) : ''}</td></tr>${g.rows.map(([x, total]) => `<tr data-goto='[data-item="${S.items.indexOf(x)}"] [data-if="popis"]'><td>${t(x.popis).replace(/\n/g, '<br>')}</td><td class="r">${x.mn !== '' ? fmt(num(x.mn)) : ''}</td><td>${esc(x.jed)}</td><td class="r">${num(x.cena) ? kc(num(x.cena)) : '—'}</td><td class="r"><b>${total ? kc(total) : '—'}</b></td></tr>`).join('')}</tbody>`).join('');
+    const hasZ = groups.some((g) => g.rows.some(([x]) => x.zaruka));
+    const tbody = groups.map((g) => `<tbody><tr class="d-cat"><th colspan="${hasZ ? 5 : 4}" scope="colgroup">${t(g.k)}</th><td class="r">${s.mezisoucty ? kc(g.sum) : ''}</td></tr>${g.rows.map(([x, total]) => `<tr data-goto='[data-item="${S.items.indexOf(x)}"] [data-if="popis"]'><td>${t(x.popis).replace(/\n/g, '<br>')}</td>${hasZ ? `<td class="z">${t(x.zaruka || '')}</td>` : ''}<td class="r">${x.mn !== '' ? fmt(num(x.mn)) : ''}</td><td>${esc(x.jed)}</td><td class="r">${num(x.cena) ? kc(num(x.cena)) : '—'}</td><td class="r"><b>${total ? kc(total) : '—'}</b></td></tr>`).join('')}</tbody>`).join('');
     const totRows = [];
     if (tt.sleva) totRows.push(['Součet položek', kc(tt.sum)], [`Sleva ${fmt(tt.sleva)} %`, '− ' + kc(tt.slevaKc)]);
     if (tt.rate) totRows.push(['Základ DPH', kc(tt.zaklad)], [`DPH ${tt.rate} %`, kc(tt.dphKc)]);
@@ -275,8 +320,8 @@
     const recap = groups.length >= 3 && s.layout !== 'kompakt' ? `<div class="d-recap"><p class="d-recap__h">Rekapitulace</p>${groups.map((g) => `<p><span>${t(g.k)}</span><b>${kc(g.sum)}</b></p>`).join('')}</div>` : '';
     const finalLabel = tt.rate ? 'Cena díla celkem s DPH' : s.dph === '0' ? 'Cena díla celkem bez DPH' : 'Cena díla celkem';
     const budget = groups.length ? `<section class="d-sec d-budget"><h2 class="d-h">Položkový rozpočet</h2>
-      <table class="d-tbl"><colgroup><col><col style="width:15mm"><col style="width:11mm"><col style="width:25mm"><col style="width:28mm"></colgroup>
-      <thead><tr><th scope="col">Položka</th><th class="r" scope="col">Množství</th><th scope="col">Jedn.</th><th class="r" scope="col">Cena za jedn.</th><th class="r" scope="col">Celkem</th></tr></thead>${tbody}</table>
+      <table class="d-tbl"><colgroup><col>${hasZ ? '<col style="width:27mm">' : ''}<col style="width:15mm"><col style="width:11mm"><col style="width:25mm"><col style="width:28mm"></colgroup>
+      <thead><tr><th scope="col">Položka</th>${hasZ ? '<th scope="col">Záruka</th>' : ''}<th class="r" scope="col">Množství</th><th scope="col">Jedn.</th><th class="r" scope="col">Cena za jedn.</th><th class="r" scope="col">Celkem</th></tr></thead>${tbody}</table>
       <div class="d-tot" data-goto='[data-k="dph"]'><div class="d-tot__grid${recap ? '' : ' d-tot__grid--solo'}">${recap}${totRows.length ? `<div class="d-tot__rows">${totRows.map(([a, b]) => `<p><span>${a}</span><b>${b}</b></p>`).join('')}</div>` : ''}</div>
       <div class="d-tot__final"><span>${finalLabel}</span><b>${kc(tt.celkem)}</b></div>
       ${s.dph === 'neplatce' ? '<p class="d-tot__note">Nejsme plátci DPH.</p>' : ''}</div></section>` : '';
@@ -304,14 +349,32 @@
       <p><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6.5h17v11h-17z"/><path d="m4 7 8 6.5L20 7"/></svg>info@prooze.cz</p>
       <p><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5S9.7 5.9 12 3.5Z"/></svg>prooze.cz</p></div></footer>`;
     const close = `<div class="d-close">${end}${sign}${foot}</div>`; // závěr, podpis a patička se nerozdělí
-    if (L === 'kompakt') return `${head}<section class="d-title">${title}</section>${badgeRow}${parties}${intro}${prodHtml}${budget}${close}`;
+    let sys = '';
+    if (fvc && fvc.kwp) {
+      const f = s.fve, tech = [];
+      const card = (k, it, extra) => it && tech.push(`<article class="d-tech__c">${it.img ? `<div class="d-tech__img"><img src="${KIMG(it)}" alt=""></div>` : '<div class="d-tech__img d-tech__img--none"></div>'}<div class="d-tech__t"><p class="d-tech__k">${k}${extra ? ` · ${extra}` : ''}</p><h3>${t(it.kratce)}</h3>${(it.radky || []).length ? `<p>${it.radky.map(t).join('<br>')}</p>` : ''}${it.zaruka ? `<span class="d-tech__z">Záruka ${t(it.zaruka)}</span>` : ''}</div></article>`);
+      card('Panely', fvc.P, `${fvc.n} ks`);
+      card(fvc.I && fvc.I.p.bez_fv_vstupu ? 'Měnič' : 'Střídač', fvc.I, fvc.invKs > 1 ? `${fvc.invKs} ks` : '');
+      card('Baterie', fvc.B, fvc.B ? `${FV.cz(fvc.kwh)} kWh` : '');
+      if (f.wallbox) card('Wallbox', FV.byId[f.wallbox]);
+      if (f.tigo !== 'none') card(f.tigo === 'O' ? 'Optimizéry' : 'Požární odpojovače', FV.byId[{ F: 'tigo-ts4-a-f', '2F': 'tigo-ts4-a-2f', O: 'tigo-ts4-a-o' }[f.tigo]]);
+      const nums = [['Výkon FVE', `${FV.cz(fvc.kwp)} kWp`], fvc.kwh ? ['Bateriové úložiště', `${FV.cz(fvc.kwh)} kWh`] : null, ['Panely', `${fvc.n} × ${fvc.P.p.vykon_wp} Wp`],
+        f.program === 'nzu' && fvc.uver ? ['Bezúročný úvěr NZÚ až', kc(fvc.uver)] : f.program === 'light' ? ['Dotace', 'NZÚ Light'] : null].filter(Boolean);
+      const infigy = f.infigy ? `<div class="d-infigy"><h3>Inteligentní řízení Infigy</h3><div><p><b>Propojení energií</b>Spojuje různé druhy energií do jednoho celku a&nbsp;nakládá s&nbsp;nimi nejefektivnějším způsobem.</p>
+        <p><b>Šetření nákladů</b>Automatické řízení spravuje energii tak, abyste co nejvíce ušetřili. Vše můžete sledovat online v&nbsp;aplikaci.</p>
+        <p><b>Regulace spotřeby</b>Energie se využije v&nbsp;největších domácích spotřebičích, tepelném čerpadle nebo bojleru, případně se uloží do baterie.</p></div></div>` : '';
+      sys = `<section class="d-sec d-sys" data-goto="#s-fve"><h2 class="d-h">Navržený systém</h2><div class="d-sys__nums">${nums.map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join('')}</div>
+        <div class="d-tech d-tech--${Math.min(tech.length, 3)}">${tech.join('')}</div>${infigy}</section>`;
+    }
+    if (L === 'kompakt') return `${head}<section class="d-title">${title}</section>${badgeRow}${parties}${intro}${prodHtml}${sys}${budget}${close}`;
     // úvodní strana: obsah nahoře, souhrn cena + platnost dole; rozpočet vždy od nové strany
     const plat = s.datum && num(s.platnost) ? czDate(addDays(s.datum, num(s.platnost))) : '';
-    const proofs = s.proofsOn !== false ? (s.proofs || []).filter((x) => x.t) : [];
+    const onlyFve = s.kryt?.ano === false && s.fve?.on;
+    const proofs = s.proofsOn !== false ? (s.proofs || []).filter((x) => x.t).map((x) => (onlyFve && x.s === 'Na práci ve smlouvě, na krytinu od výrobce' ? { ...x, s: 'Na práci ve smlouvě, na komponenty od výrobce' } : x)) : [];
     const proofRow = proofs.length ? `<div class="d-proofs d-proofs--${proofs.length}" data-goto="#s-proofs">${proofs.map((x) => `<div class="d-proof"><span class="d-proof__ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[iconFor(x.t)]}</svg></span><b>${t(x.t)}</b>${x.s ? `<small>${t(x.s)}</small>` : ''}</div>`).join('')}</div>` : '';
     const strip = tt.sum > 0 ? `<div class="d-strip" data-goto='[data-k="dph"]'><div class="d-strip__price"><span>${finalLabel}</span><b>${kc(tt.celkem)}</b></div>
       ${plat ? `<div><span>Nabídka platí do</span><b>${plat}</b></div>` : ''}<div><span>Dotazy: ${t(s.podpis.jmeno)}</span><b>${t(s.podpis.telefon)}</b></div></div>` : '';
-    return `<div class="d-p1">${p1}<div class="d-p1__end">${proofRow}${strip}</div></div>${budget}${close}`;
+    return `<div class="d-p1">${p1}<div class="d-p1__end">${proofRow}${strip}</div></div>${sys}${budget}${close}`;
   }
 
   /* ---------- editor ---------- */
@@ -358,6 +421,7 @@
     if (noPrice.length) c.push([`${noPrice.length} ${plural(noPrice.length, 'položka', 'položky', 'položek')} bez ceny`, `[data-item="${noPrice[0][1]}"] [data-if="cena"]`]);
     if (noQty.length) c.push([`${noQty.length} ${plural(noQty.length, 'položka', 'položky', 'položek')} bez množství`, `[data-item="${noQty[0][1]}"] [data-if="mn"]`]);
     if (s.okna?.ano && !s.okna.model) c.push(['Typ střešních oken', '[data-k="okna.model"]']);
+    if (FV && s.fve?.on) FV.checks(s.fve).filter((x) => x.lvl === 'err').forEach((x) => c.push([`FVE: ${x.msg}`, `[data-fv="${x.f}"]`]));
     return c;
   }
   function renderChecks() {
@@ -402,11 +466,12 @@
       rozp: `${live.length} ${plural(live.length, 'položka', 'položky', 'položek')}${tt.sum ? ' · ' + kc(tt.celkem) + (priceLabel(S, tt) ? ' ' + priceLabel(S, tt) : '') : ''}`,
       texty: [((n) => (n ? `${n} ${plural(n, 'štítek', 'štítky', 'štítků')}` : 'bez štítků'))(S.fakta.filter((f) => f.k && f.v).length), S.uvod ? 'úvod' : '',
         ((n) => (n ? `${n} ${plural(n, 'bod', 'body', 'bodů')} v ceně` : ''))(lines(S.shrnuti).length)].filter(Boolean).join(' · '),
+      fve: !S.fve?.on ? 'Bez fotovoltaiky' : ((c) => [`${FV.cz(c.kwp)} kWp`, c.kwh ? `${FV.cz(c.kwh)} kWh` : 'bez baterie', c.I ? c.I.kratce : ''].filter(Boolean).join(' · '))(FV.calc(S.fve)),
       vzhled: `${{ foto: 'S fotkou', cista: 'Čistá', kompakt: 'Kompaktní' }[S.layout]}${S.layout === 'foto' ? (S.fotoData || (S.foto && S.foto !== 'auto') ? ' · vlastní fotka' : ' · fotka podle krytiny') : ''}`,
       podpis: [S.podpis.jmeno, S.podpis.role].filter(Boolean).join(', '),
     };
     const c = checks(S).map((x) => x[1]);
-    const miss = { zak: c.some((x) => /zak\.|nazev/.test(x)), kryt: c.some((x) => /okna\./.test(x)), rozp: c.some((x) => /data-item/.test(x)) };
+    const miss = { zak: c.some((x) => /zak\.|nazev/.test(x)), kryt: c.some((x) => /okna\./.test(x)), rozp: c.some((x) => /data-item/.test(x)), fve: c.some((x) => /data-fv/.test(x)) };
     Object.entries(sum).forEach(([key, v]) => { const el = document.querySelector(`[data-acc="${key}"]`); if (el) el.textContent = v; });
     document.querySelectorAll('[data-accdot]').forEach((el) => { el.hidden = !miss[el.dataset.accdot]; });
   }
@@ -429,7 +494,7 @@
     // Rozpočet u S fotkou/Čisté začíná vždy na 2. straně (v náhledu odsazení místo okraje);
     // u Kompaktní se přesune na novou stranu, jen když by začínal v posledních 65 mm.
     const px = (el) => (el.getBoundingClientRect().top - docEl.getBoundingClientRect().top) / z / 3.7795;
-    const bud = docEl.querySelector('.d-budget'), p1 = docEl.querySelector('.d-p1');
+    const bud = docEl.querySelector('.d-sys') || docEl.querySelector('.d-budget'), p1 = docEl.querySelector('.d-p1');
     // úvodní strana se nevejde (dlouhý úvod, víc karet) → bez souhrnného pruhu a bez vynuceného zlomu
     if (p1) {
       // skutečná výška úvodní strany (min. 281 mm); přeteče-li, nejdřív pryč pás argumentů, pak souhrn
@@ -461,7 +526,7 @@
       if (el.type === 'checkbox') el.checked = !!v; else el.value = v ?? '';
     });
     document.querySelectorAll('input[name="layout"]').forEach((r) => { r.checked = r.value === S.layout; });
-    renderKryt(); renderPhotos(); renderFacts(); renderProofs(); renderProds(); renderItems();
+    syncFve(S); renderKryt(); renderFve(); renderPhotos(); renderFacts(); renderProofs(); renderProds(); renderItems();
     $('[data-k="podtitul"]').placeholder = autoSub(S) || 'Krátce, co nabízíte';
   }
   document.addEventListener('input', (e) => {
@@ -502,6 +567,62 @@
     const b = e.target.closest('[data-photo]');
     if (!b) return;
     S.foto = b.dataset.photo; S.fotoData = ''; renderPhotos(); refresh();
+  });
+
+  // fotovoltaika: výběr z katalogu, souhrn a kontroly
+  const optList = (kat, sel, empty) => {
+    const it = FV.ofKat(kat), own = it.filter((x) => !x.alt), alt = it.filter((x) => x.alt);
+    const o = (x) => `<option value="${x.id}"${x.id === sel ? ' selected' : ''}>${esc(x.kratce)}</option>`;
+    return (empty ? `<option value=""${!sel ? ' selected' : ''}>${empty}</option>` : '') + (alt.length ? `<optgroup label="Z našich nabídek">${own.map(o).join('')}</optgroup><optgroup label="Další v katalogu">${alt.map(o).join('')}</optgroup>` : own.map(o).join(''));
+  };
+  function renderFve() {
+    if (!FV) { $('#s-fve').hidden = true; return; }
+    const f = S.fve, box = $('[data-fve-fields]');
+    $('[data-fv="on"]').checked = !!f.on; box.hidden = !f.on;
+    $('[data-fv="panel"]').innerHTML = optList('panel', f.panel);
+    $('[data-fv="stridac"]').innerHTML = optList('stridac', f.stridac);
+    const I = FV.byId[f.stridac];
+    $('[data-fv="baterie"]').innerHTML = `<option value=""${!f.baterie ? ' selected' : ''}>Bez baterie</option>` + FV.ofKat('baterie').map((x) => `<option value="${x.id}"${x.id === f.baterie ? ' selected' : ''}>${esc(x.kratce)}${I && !I.kompat.includes(x.id) ? ' (nepasuje ke střídači)' : ''}</option>`).join('');
+    $('[data-fv="wallbox"]').innerHTML = optList('wallbox', f.wallbox, 'Bez wallboxu');
+    $('[data-fv="tigo"]').innerHTML = Object.entries(FV.TIGO).map(([k, n]) => `<option value="${k}"${k === f.tigo ? ' selected' : ''}>${n}</option>`).join('');
+    $('[data-fv="strecha"]').innerHTML = Object.entries(FV.STRECHY).map(([k, n]) => `<option value="${k}"${k === f.strecha ? ' selected' : ''}>${n.replace(/^Konstrukce na /, '')}</option>`).join('');
+    $('[data-fv="program"]').innerHTML = Object.entries(FV.PROGRAM).map(([k, n]) => `<option value="${k}"${k === f.program ? ' selected' : ''}>${n}</option>`).join('');
+    ['pocet', 'moduly'].forEach((k) => { const el = $(`[data-fv="${k}"]`); if (document.activeElement !== el) el.value = f[k] ?? ''; });
+    $('[data-fv="moduly"]').disabled = !f.baterie;
+    ['infigy', 'hromosvod', 'faze3', 'rd'].forEach((k) => { $(`[data-fv="${k}"]`).checked = !!f[k]; });
+    renderFveInfo();
+  }
+  function renderFveInfo() {
+    if (!FV || !S.fve.on) return;
+    const c = FV.calc(S.fve), list = FV.checks(S.fve);
+    const B = c.B;
+    $('[data-fve-sum]').innerHTML = [['Výkon', `${FV.cz(c.kwp)} kWp`], ['Baterie', c.kwh ? `${FV.cz(c.kwh)} kWh` : '–'], ['DC/AC', c.dcac ? FV.cz(c.dcac) : '–'],
+      [S.fve.program === 'nzu' ? 'Max. úvěr NZÚ' : 'Instalovaný výkon', S.fve.program === 'nzu' ? kc(c.uver) : `${FV.cz(c.pi)} kW`]].map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join('');
+    const hint = $('[data-fv-moduly-hint]');
+    hint.textContent = B ? `${B.p.moduly_min}–${B.p.moduly_max} modulů po ${FV.cz(B.p.kwh_modul)} kWh` : '';
+    const rank = { err: 0, warn: 1, info: 2, ok: 3 };
+    $('[data-fve-checks]').innerHTML = list.sort((a, b) => rank[a.lvl] - rank[b.lvl]).map((x) => `<button type="button" class="fvc fvc--${x.lvl}" data-goto='[data-fv="${x.f}"]'><i></i><span>${esc(x.msg)}</span></button>`).join('');
+  }
+  document.addEventListener('input', (e) => {
+    const el = e.target, k = el.dataset.fv; if (!k || !S) return;
+    const f = S.fve;
+    if (el.type === 'checkbox') f[k] = el.checked;
+    else if (k === 'pocet' || k === 'moduly') f[k] = el.value === '' ? '' : Math.max(0, parseInt(el.value, 10) || 0);
+    else f[k] = el.value;
+    if (k === 'baterie' && f.baterie) { const B = FV.byId[f.baterie]; const I = FV.byId[f.stridac]; f.moduly = B.id === 'baterie-solax-t-bat-t58' && I && /solax/.test(I.id) ? Math.max(2, B.p.moduly_min) : Math.max(B.p.moduly_min || 1, Math.min(B.p.moduly_max || 99, Number(f.moduly) || B.p.moduly_min || 1)); }
+    if (k === 'on' && f.on) $('[data-k="podtitul"]').placeholder = autoSub(S) || '';
+    syncFve(S);
+    if (k === 'on' || el.tagName === 'SELECT' || el.type === 'checkbox') renderFve(); else renderFveInfo();
+    if (k === 'baterie') $('[data-fv="moduly"]').value = f.moduly;
+    $('[data-k="podtitul"]').placeholder = autoSub(S) || 'Krátce, co nabízíte';
+    renderItems(); renderPhotos(); refresh();
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fv-step]'); if (!b) return;
+    const k = b.dataset.fvStep.split(':'), f = S.fve;
+    f[k[0]] = Math.max(0, (Number(f[k[0]]) || 0) + Number(k[1]));
+    $(`[data-fv="${k[0]}"]`).value = f[k[0]];
+    syncFve(S); renderFveInfo(); renderItems(); refresh();
   });
 
   // krytina: typ, barva, výrobce
@@ -583,7 +704,7 @@
     items.forEach((x, i) => { const k = x.kat || ''; let G = g.find((y) => y.k === k); if (!G) g.push(G = { k, idx: [] }); G.idx.push(i); });
     return g;
   }
-  const rowTitle = (x) => (offItem(S, x) ? `Není v součtu: ${x.link === 'kryt' ? 'krytina' : 'okna'} nejsou součástí zakázky` : x.link && !x.manual ? `Propojeno s volbou ${x.link === 'kryt' ? 'krytiny' : 'oken'} nahoře` : '');
+  const rowTitle = (x) => (offItem(S, x) ? `Není v součtu: ${x.link === 'kryt' ? 'krytina' : 'okna'} nejsou součástí zakázky` : x.link && !x.manual ? `Propojeno s volbou ${x.link === 'kryt' ? 'krytiny' : x.link.startsWith('fve:') ? 'fotovoltaiky' : 'oken'} nahoře` : '');
   const IACT = [['up', 'Posunout nahoru', '<path d="M12 18V6M6.5 11.5 12 6l5.5 5.5"/>'], ['down', 'Posunout dolů', '<path d="M12 6v12M6.5 12.5 12 18l5.5-5.5"/>'],
     ['dup', 'Duplikovat', '<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>'],
     ['del', 'Smazat', '<path d="M5 7h14M10 7V5h4v2M7 7l.8 12h8.4L17 7"/>']];
@@ -594,6 +715,7 @@
       <input class="it__mn" inputmode="decimal" data-if="mn" value="${esc(x.mn)}" placeholder="Množ." aria-label="Množství">
       <select class="it__jed" data-if="jed" aria-label="Jednotka">${UNITS.map((u) => `<option${u === x.jed ? ' selected' : ''}>${u}</option>`).join('')}</select>
       <input class="it__cena${x.popis && !num(x.cena) && !offItem(S, x) ? ' is-empty' : ''}" inputmode="decimal" data-if="cena" value="${esc(x.cena)}" placeholder="Kč za jedn." aria-label="Cena za jednotku">
+      <input class="it__zar" data-if="zaruka" value="${esc(x.zaruka || '')}" placeholder="Záruka" aria-label="Záruka" title="Záruka (zobrazí se v PDF jako sloupec)">
       <output class="it__sum${v ? '' : ' is-zero'}" data-isum>${v ? kc(v) : '–'}</output>
       <span class="it__act">${IACT.map(([a, label, path]) => `<button type="button" data-iact="${a}" title="${label}" aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg></button>`).join('')}</span></div>`;
   }
@@ -629,6 +751,7 @@
     const it = S.items[row.dataset.item];
     it[el.dataset.if] = el.value;
     if (it.link && (el.dataset.if === 'popis' || el.dataset.if === 'mn')) { it.manual = true; row.classList.remove('it--link'); row.title = ''; }
+    if (el.dataset.if === 'zaruka') it.zarukaManual = true;
     if (el.tagName === 'TEXTAREA') { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
     refresh();
   });
@@ -712,13 +835,17 @@
     plech: { n: 'Rekonstrukce – plech', d: 'Falcovaný plech, střešní okna, celý rozpočet', make: () => ({ nazev: 'Kompletní rekonstrukce střechy', kryt: defaultKryt('falc', 'comax'), okna: defaultOkna(), items: copyItems('plech'), shrnuti: SHR.plech }) },
     taska: { n: 'Rekonstrukce – taška', d: 'Pálená taška, střešní okna, celý rozpočet', make: () => ({ nazev: 'Kompletní rekonstrukce střechy', kryt: defaultKryt('palena', 'tondach'), okna: defaultOkna(), items: copyItems('taska'), shrnuti: SHR.taska }) },
     oprava: { n: 'Oprava střechy', d: 'Menší zakázka, kompaktně na 1 stranu', make: () => ({ layout: 'kompakt', nazev: 'Oprava střechy', kryt: defaultKryt('palena', 'tondach'), okna: { ...defaultOkna(), ano: false }, items: copyItems('oprava'), shrnuti: SHR.oprava, fakta: [{ k: 'Termín', v: '' }, { k: 'Doba opravy', v: '' }, { k: '', v: '' }] }) },
-    fve: { n: 'Fotovoltaika', d: 'Elektrárna s baterií, úvěr NZÚ', make: () => ({ nazev: 'Fotovoltaická elektrárna pro váš dům', foto: 'rd-fve-hero', kryt: { ...defaultKryt(), ano: false }, okna: { ...defaultOkna(), ano: false },
-      prods: [{ nadpis: 'Fotovoltaika', nazev: 'Elektrárna s bateriovým úložištěm', vyrobce: '', barva: '', hex: '', body: 'Panely, hybridní střídač a baterie\nMonitoring výroby v mobilu\nŽádost o připojení a revize v ceně', img: '' }],
-      items: copyItems('fve'), shrnuti: SHR.fve, fakta: [{ k: 'Výkon', v: '' }, { k: 'Baterie', v: '' }, { k: 'Doba realizace', v: '' }] }) },
+    fve: { n: 'Fotovoltaika', d: 'Sestava z katalogu, úvěr NZÚ', make: () => ({ nazev: 'Fotovoltaická elektrárna pro váš dům', foto: 'rd-fve-hero', kryt: { ...defaultKryt(), ano: false }, okna: { ...defaultOkna(), ano: false }, fve: { ...FV.def(), on: true },
+      items: [], shrnuti: SHR.fve, fakta: [{ k: 'Výkon', v: '' }, { k: 'Baterie', v: '' }, { k: 'Doba realizace', v: '' }] }) },
+    'strecha-fve': { n: 'Střecha + fotovoltaika', d: 'Nová střecha a rovnou panely, jedno lešení', make: () => ({ nazev: 'Nová střecha a fotovoltaika', kryt: defaultKryt('falc', 'comax'), okna: { ...defaultOkna(), ano: false },
+      fve: { ...FV.def(), on: true, strecha: 'falc' }, items: copyItems('plech').filter((x) => !['okno', 'lem', 'okna'].includes(x.link)),
+      shrnuti: `${SHR.plech.split('\n').filter((x) => !/oken/.test(x)).join('\n')}\n${SHR.fve.split('\n').slice(1, 3).join('\n')}`,
+      fakta: [{ k: 'Výkon', v: '' }, { k: 'Baterie', v: '' }, { k: 'Doba realizace', v: '' }] }) },
   };
 
   function newOffer(partial = {}) {
     const s = migrate(Object.assign(blank(), JSON.parse(JSON.stringify(partial))));
+    syncFve(s);
     Object.assign(s, { id: uid(), cislo: nextNo(true), datum: today(), stav: 'rozpracovana', zak: { jmeno: '', telefon: '', email: '', adresa: '' }, stavba: '' });
     return s;
   }

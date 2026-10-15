@@ -19,3 +19,6 @@ assets/old/hero-*
 assets/old/karta-*
 assets/old/solarni-technologie-panely.png
 assets/video/src/
+# katalog komponent s prodejními cenami (repo je veřejné; do aplikace jde výtah bez cen přes tools/katalog_app.py)
+research/katalog-komponenty.json
+research/katalog-komponenty.md

@@ -1,0 +1,893 @@
+{
+ "verze": "2026-10-15",
+ "polozky": [
+  {
+   "id": "panel-aiko-a450-neostar-2s",
+   "kat": "panel",
+   "vyrobce": "AIKO",
+   "model": "AIKO-A450-MAH54Mb (Neostar 2S54 Mono-Glass)",
+   "nazev": "FV panel AIKO Neostar 2S 450 Wp, celočerný",
+   "kratce": "Aiko Neostar 2S 450 Wp",
+   "img": "img/komponenty/panel-aiko-a450-neostar-2s.webp",
+   "zaruka": "25 let produkt, 30 let výkon",
+   "radky": [
+    "450 Wp · účinnost 22,6 %",
+    "N-type ABC (All Back Contact)"
+   ],
+   "kompat": [],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://aikosolar.com/wp-content/uploads/2025/10/Neostar-2S_188-AIKO-A-MAH54Mb_440-470W-1757x1134x30mm_V4.1_202510_DsDr_EN.pdf",
+   "p": {
+    "vykon_wp": 450,
+    "voc_v": 40.94,
+    "vmp_v": 34.5,
+    "isc_a": 14.12,
+    "imp_a": 13.05,
+    "ucinnost_pct": 22.6,
+    "teplotni_koef_pmax_pct_c": -0.26,
+    "beta_voc": -0.22
+   }
+  },
+  {
+   "id": "panel-aiko-a460-neostar-2s",
+   "kat": "panel",
+   "vyrobce": "AIKO",
+   "model": "AIKO-A460-MAH54Mb (Neostar 2S54 Mono-Glass)",
+   "nazev": "FV panel AIKO Neostar 2S 460 Wp, celočerný",
+   "kratce": "Aiko Neostar 2S 460 Wp",
+   "img": "img/komponenty/panel-aiko-a460-neostar-2s.webp",
+   "zaruka": "25 let produkt, 30 let výkon",
+   "radky": [
+    "460 Wp · účinnost 23,1 %",
+    "N-type ABC (All Back Contact)"
+   ],
+   "kompat": [],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://aikosolar.com/wp-content/uploads/2025/10/Neostar-2S_188-AIKO-A-MAH54Mb_440-470W-1757x1134x30mm_V4.1_202510_DsDr_EN.pdf",
+   "p": {
+    "vykon_wp": 460,
+    "voc_v": 41.06,
+    "vmp_v": 34.62,
+    "isc_a": 14.25,
+    "imp_a": 13.29,
+    "ucinnost_pct": 23.1,
+    "teplotni_koef_pmax_pct_c": -0.26,
+    "beta_voc": -0.22
+   }
+  },
+  {
+   "id": "panel-longi-470",
+   "kat": "panel",
+   "vyrobce": "LONGi",
+   "model": "LR7-54HVBB-470M (LONGi EcoLife X10 Double Glass Premium Black) – ODHAD, viz poznámka",
+   "nazev": "FV panel LONGi EcoLife X10 470 Wp, celočerný, dvojité sklo",
+   "kratce": "LONGi EcoLife X10 470 Wp",
+   "img": null,
+   "zaruka": "30 let",
+   "radky": [
+    "470 Wp · účinnost 23 %",
+    "N-type HPBC 2.0 (back-contact"
+   ],
+   "kompat": [],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://static.longi.com/LR_7_54_HVBB_470_485_M_30_30_and_15_Frame_BGV_03_20260508_EN_5f4ba92b96.pdf",
+   "p": {
+    "vykon_wp": 470,
+    "voc_v": 40.31,
+    "vmp_v": 33.29,
+    "isc_a": 14.78,
+    "imp_a": 14.13,
+    "ucinnost_pct": 23.0,
+    "teplotni_koef_pmax_pct_c": -0.26,
+    "beta_voc": -0.2
+   }
+  },
+  {
+   "id": "panel-ja-solar-jam54d40-lr-470",
+   "kat": "panel",
+   "vyrobce": "JA Solar",
+   "model": "JAM54D40-470/LR (DeepBlue 4.0 Pro, Black Frame, n-type Double Glass Monofacial)",
+   "nazev": "FV panel JA Solar DeepBlue 4.0 Pro 470 Wp, sklo-sklo, černý rám",
+   "kratce": "JA Solar DeepBlue 4.0 Pro 470 Wp",
+   "img": null,
+   "zaruka": "25 let produkt, 30 let výkon",
+   "radky": [
+    "470 Wp · účinnost 23,5 %",
+    "N-type (n-Bycium+)"
+   ],
+   "kompat": [],
+   "alt": true,
+   "overeno": false,
+   "datasheet": "https://shop.krannich-solar.com/en-cz/product-downloads/1763194/JAM54D40-470-LR/Datasheet-EN.pdf",
+   "p": {
+    "vykon_wp": 470,
+    "voc_v": 40.4,
+    "vmp_v": 33.84,
+    "isc_a": 14.66,
+    "imp_a": 13.89,
+    "ucinnost_pct": 23.5,
+    "teplotni_koef_pmax_pct_c": -0.29,
+    "beta_voc": -0.25
+   }
+  },
+  {
+   "id": "panel-jinko-tiger-neo-3-48ql6-db-470",
+   "kat": "panel",
+   "vyrobce": "JinkoSolar",
+   "model": "JKM470N-48QL6-DB (Tiger Neo 3.0 / Tiger Neo III, All Black Dual Glass)",
+   "nazev": "FV panel Jinko Tiger Neo 3.0 470 Wp, celočerný, sklo-sklo",
+   "kratce": "Jinko Tiger Neo 3.0 470 Wp",
+   "img": null,
+   "zaruka": "25 let produkt, 30 let výkon",
+   "radky": [
+    "470 Wp · účinnost 23,5 %",
+    "N-type TOPCon"
+   ],
+   "kompat": [],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://jinkosolar.eu/wp-content/uploads/2025/09/JKM460-485N-48QL6-DB-F4-EU.pdf",
+   "p": {
+    "vykon_wp": 470,
+    "voc_v": 36.19,
+    "vmp_v": 30.97,
+    "isc_a": 15.8,
+    "imp_a": 15.18,
+    "ucinnost_pct": 23.52,
+    "teplotni_koef_pmax_pct_c": -0.26,
+    "beta_voc": null
+   }
+  },
+  {
+   "id": "panel-trina-vertex-s-plus-neg9r28-470",
+   "kat": "panel",
+   "vyrobce": "Trina Solar",
+   "model": "TSM-470NEG9R.28 (Vertex S+)",
+   "nazev": "FV panel Trina Vertex S+ 470 Wp, sklo-sklo, černý rám",
+   "kratce": "Trina Vertex S+ 470 Wp",
+   "img": "img/komponenty/panel-trina-vertex-s-plus-neg9r28-470.webp",
+   "zaruka": "25 let produkt, 30 let výkon",
+   "radky": [
+    "470 Wp · účinnost 23,5 %",
+    "N-type i-TOPCon"
+   ],
+   "kompat": [],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://www-cdn.trinasolar.com/wwwstorage/sites/7/eu-260224-datasheet-vertex-s-neg9r.28-en-2026-a-web-260224-datasheet-vertex-s-neg9r.28-en-2026-a-web.pdf",
+   "p": {
+    "vykon_wp": 470,
+    "voc_v": 54.6,
+    "vmp_v": 46.1,
+    "isc_a": 10.89,
+    "imp_a": 10.2,
+    "ucinnost_pct": 23.5,
+    "teplotni_koef_pmax_pct_c": -0.29,
+    "beta_voc": -0.24
+   }
+  },
+  {
+   "id": "stridac-goodwe-gw10k-et-20",
+   "kat": "stridac",
+   "vyrobce": "GoodWe",
+   "model": "GW10K-ET-20 (řada ET G2, 6–15 kW)",
+   "nazev": "Hybridní střídač GoodWe GW10K-ET-20 (ET G2), 10 kW, 3f",
+   "kratce": "GoodWe GW10K-ET-20",
+   "img": "img/komponenty/stridac-goodwe-gw10k-et-20.webp",
+   "zaruka": "10 let",
+   "radky": [
+    "10 kW, třífázový hybrid",
+    "3 MPPT · záložní výstup"
+   ],
+   "kompat": [
+    "baterie-goodwe-lynx-home-f",
+    "baterie-pylontech-force-h3",
+    "wallbox-goodwe-hca-g2-11k",
+    "baterie-goodwe-lynx-home-f-g2",
+    "sada-tigo-ts4-a-o-cca-tap",
+    "tigo-ts4-a-o",
+    "rizeni-infigy"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://en.goodwe.com/Ftp/EN/Downloads/Datasheet/GW_ET-G2_Datasheet-EN.pdf",
+   "p": {
+    "ac_vykon_w": 10000,
+    "max_ac_zdanlivy_va": 10000,
+    "max_dc_vstup_wp": 16000,
+    "faze": 3,
+    "udc_max": 975,
+    "mppt_min": 120,
+    "mppt_max": 850,
+    "mppt": 3,
+    "stringy": 3,
+    "imax": 16,
+    "iscmax": 24,
+    "pozn": "ET G2: 975–1 000 V → standby, proto limit 975 V"
+   }
+  },
+  {
+   "id": "stridac-solax-x3-hybrid-10-0-d",
+   "kat": "stridac",
+   "vyrobce": "SolaX Power",
+   "model": "X3-HYBRID-10.0-D (řada X3-Hybrid G4)",
+   "nazev": "Hybridní střídač SolaX X3-Hybrid-10.0-D G4, 10 kW, 3f",
+   "kratce": "SolaX X3-Hybrid-10.0-D",
+   "img": "img/komponenty/stridac-solax-x3-hybrid-10-0-d.webp",
+   "zaruka": "5 let",
+   "radky": [
+    "10 kW, třífázový hybrid",
+    "2 MPPT · záložní výstup"
+   ],
+   "kompat": [
+    "baterie-solax-t-bat-t58",
+    "wallbox-solax-x3-hac-g2-11k",
+    "tigo-ts4-a-o",
+    "rizeni-infigy",
+    "sada-solax-x3-hybrid-10-0-d-t58"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://www.solaxpower.com/uploads/file/x3-hybrid-g4-datasheet-en.pdf",
+   "p": {
+    "ac_vykon_w": 10000,
+    "max_ac_zdanlivy_va": 11000,
+    "max_dc_vstup_wp": 20000,
+    "faze": 3,
+    "udc_max": 1000,
+    "mppt_min": 180,
+    "mppt_max": 950,
+    "mppt": 2,
+    "stringy": 3,
+    "imax": 16,
+    "iscmax": 20,
+    "pozn": "MPPT1 až 2 stringy (28 A), MPPT2 1 string (16 A); kontrola počítá s 16 A na string"
+   }
+  },
+  {
+   "id": "stridac-victron-multiplus-ii-48-8000",
+   "kat": "stridac",
+   "vyrobce": "Victron Energy",
+   "model": "MultiPlus-II 48/8000/110-100 230V (PMP482805000)",
+   "nazev": "Měnič/nabíječ Victron MultiPlus-II 48/8000/110-100 230V (1 ks = 1 fáze)",
+   "kratce": "Victron MultiPlus-II 48/8000",
+   "img": "img/komponenty/stridac-victron-multiplus-ii-48-8000.webp",
+   "zaruka": "5 let",
+   "radky": [
+    "6,4 kW, jednofázový měnič"
+   ],
+   "kompat": [
+    "baterie-pylontech-us5000",
+    "prislusenstvi-victron-cerbo-gx",
+    "prislusenstvi-victron-energy-meter",
+    "wallbox-victron-ev-charging-station-ns",
+    "rizeni-infigy",
+    "sada-pylontech-us5000-6ks"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://www.victronenergy.com/upload/documents/Datasheet-MultiPlus-II-inverter-charger-EN.pdf",
+   "p": {
+    "ac_vykon_w": 6400,
+    "max_ac_zdanlivy_va": 8000,
+    "max_dc_vstup_wp": null,
+    "faze": 1,
+    "bez_fv_vstupu": true,
+    "ks_3f": 3
+   }
+  },
+  {
+   "id": "stridac-fronius-symo-gen24-10-0-plus",
+   "kat": "stridac",
+   "vyrobce": "Fronius",
+   "model": "Symo GEN24 10.0 Plus",
+   "nazev": "Hybridní střídač Fronius Symo GEN24 10.0 Plus, 10 kW, 3f",
+   "kratce": "Fronius Symo GEN24 10.0 Plus",
+   "img": null,
+   "zaruka": "2 roky",
+   "radky": [
+    "10 kW, třífázový hybrid",
+    "2 MPPT · záložní výstup"
+   ],
+   "kompat": [
+    "baterie-byd-battery-box-premium-hvs",
+    "wallbox-fronius-wattpilot-flex-home-11",
+    "rizeni-infigy"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://www.memodo.cz/mwdownloads/be2300b10eee507ba78464ea3f2c4485",
+   "p": {
+    "ac_vykon_w": 10000,
+    "max_ac_zdanlivy_va": 10000,
+    "max_dc_vstup_wp": 15000,
+    "faze": 3,
+    "udc_max": 1000,
+    "mppt": 2,
+    "stringy": 3
+   }
+  },
+  {
+   "id": "stridac-huawei-sun2000-10k-map0",
+   "kat": "stridac",
+   "vyrobce": "Huawei",
+   "model": "SUN2000-10K-MAP0",
+   "nazev": "Hybridní střídač Huawei SUN2000-10K-MAP0, 10 kW, 3f",
+   "kratce": "Huawei SUN2000-10K-MAP0",
+   "img": "img/komponenty/stridac-huawei-sun2000-10k-map0.webp",
+   "zaruka": null,
+   "radky": [
+    "10 kW, třífázový hybrid",
+    "2 MPPT · záložní výstup"
+   ],
+   "kompat": [
+    "baterie-huawei-luna2000-s1"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://solar.huawei.com/en/products/SUN2000-5-12K-MAP0/specs/",
+   "p": {
+    "ac_vykon_w": 10000,
+    "max_ac_zdanlivy_va": 11000,
+    "max_dc_vstup_wp": 18000,
+    "faze": 3,
+    "udc_max": 1000,
+    "mppt": 2,
+    "stringy": 2
+   }
+  },
+  {
+   "id": "stridac-sungrow-sh10t",
+   "kat": "stridac",
+   "vyrobce": "Sungrow",
+   "model": "SH10T (řada SH5T–SH25T, nástupce SH-RT)",
+   "nazev": "Hybridní střídač Sungrow SH10T, 10 kW, 3f",
+   "kratce": "Sungrow SH10T",
+   "img": "img/komponenty/stridac-sungrow-sh10t.webp",
+   "zaruka": null,
+   "radky": [
+    "10 kW, třífázový hybrid",
+    "2 MPPT · záložní výstup"
+   ],
+   "kompat": [],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://info-support.sungrowpower.com/product-materials/4b5bcbec-60ba-4253-ac75-f49aa9208878.pdf",
+   "p": {
+    "ac_vykon_w": 10000,
+    "max_ac_zdanlivy_va": 10000,
+    "max_dc_vstup_wp": 20000,
+    "faze": 3,
+    "udc_max": 1000,
+    "mppt": 2,
+    "stringy": 3
+   }
+  },
+  {
+   "id": "baterie-pylontech-force-h3",
+   "kat": "baterie",
+   "vyrobce": "Pylontech",
+   "model": "Force-H3 (BMS FC1000 + moduly FH10050)",
+   "nazev": "Baterie Pylontech Force H3 15,36 kWh (HV, LFP)",
+   "kratce": "Pylontech Force H3",
+   "img": "img/komponenty/baterie-pylontech-force-h3.webp",
+   "zaruka": "10 let",
+   "radky": [
+    "5,12 kWh na modul · LFP",
+    "2–7 modulů, HV"
+   ],
+   "kompat": [
+    "stridac-goodwe-gw10k-et-20"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://global-site.oss-eu-central-1.aliyuncs.com/upload/2026/06/23/EN-SD-250519-Force%20H3-Spec-Pylontech_1782186356423.pdf",
+   "p": {
+    "kwh_modul": 5.12,
+    "moduly_min": 2,
+    "moduly_max": 7,
+    "napeti": "HV",
+    "chemie": "LFP"
+   }
+  },
+  {
+   "id": "baterie-pylontech-us5000",
+   "kat": "baterie",
+   "vyrobce": "Pylontech",
+   "model": "US5000",
+   "nazev": "Baterie Pylontech US5000 4,8 kWh (48 V LV, LFP) – modul",
+   "kratce": "Pylontech US5000",
+   "img": "img/komponenty/baterie-pylontech-us5000.webp",
+   "zaruka": "7 let",
+   "radky": [
+    "4,8 kWh na modul · LFP",
+    "1–16 modulů, LV"
+   ],
+   "kompat": [
+    "stridac-victron-multiplus-ii-48-8000",
+    "prislusenstvi-victron-cerbo-gx"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://global-site.oss-eu-central-1.aliyuncs.com/upload/2026/06/23/US%205000%20Spec_1782186290116.pdf",
+   "p": {
+    "kwh_modul": 4.8,
+    "moduly_min": 1,
+    "moduly_max": 16,
+    "napeti": "LV",
+    "chemie": "LFP"
+   }
+  },
+  {
+   "id": "baterie-solax-t-bat-t58",
+   "kat": "baterie",
+   "vyrobce": "SolaX Power",
+   "model": "T-BAT-SYS-HV-5.8 (T58): T-BAT H 5.8 V2 (master s BMS) + HV11550 V2 (slave)",
+   "nazev": "Baterie SolaX T-BAT T58 11,5 kWh (2× 5,8 kWh, HV, LFP)",
+   "kratce": "SolaX T-BAT T58",
+   "img": "img/komponenty/baterie-solax-t-bat-t58.webp",
+   "zaruka": "10 let",
+   "radky": [
+    "5,8 kWh na modul · LFP",
+    "1–4 modulů, HV"
+   ],
+   "kompat": [
+    "stridac-solax-x3-hybrid-10-0-d"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://www.solaxpower.com/uploads/file/t-bat-sys-hv-5-8-de.pdf",
+   "p": {
+    "kwh_modul": 5.75,
+    "moduly_min": 1,
+    "moduly_max": 4,
+    "napeti": "HV",
+    "chemie": "LFP"
+   }
+  },
+  {
+   "id": "baterie-byd-battery-box-premium-hvs",
+   "kat": "baterie",
+   "vyrobce": "BYD",
+   "model": "Battery-Box Premium HVS (HVS 5.1 / 7.7 / 10.2 / 12.8)",
+   "nazev": "Baterie BYD Battery-Box Premium HVS 5,1–12,8 kWh (HV, LFP)",
+   "kratce": "BYD Battery-Box Premium HVS",
+   "img": null,
+   "zaruka": "10 let",
+   "radky": [
+    "2,56 kWh na modul · LFP",
+    "2–5 modulů, HV"
+   ],
+   "kompat": [
+    "stridac-fronius-symo-gen24-10-0-plus"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://www.bydbatterybox.com/uploads/downloads/BCU2.0_BBOX_HVS_Datasheet_EN_V1.0_250328-67ee42d4ced21.pdf",
+   "p": {
+    "kwh_modul": 2.56,
+    "moduly_min": 2,
+    "moduly_max": 5,
+    "napeti": "HV",
+    "chemie": "LFP"
+   }
+  },
+  {
+   "id": "baterie-goodwe-lynx-home-f",
+   "kat": "baterie",
+   "vyrobce": "GoodWe",
+   "model": "Lynx Home F (LX F6.6-H / LX F9.8-H / LX F13.1-H / LX F16.4-H, modul LX F3.3-H)",
+   "nazev": "Baterie GoodWe Lynx Home F 6,6–16,4 kWh (HV, LFP)",
+   "kratce": "GoodWe Lynx Home F",
+   "img": null,
+   "zaruka": "10 let",
+   "radky": [
+    "3,27 kWh na modul · LFP",
+    "2–5 modulů, HV"
+   ],
+   "kompat": [
+    "stridac-goodwe-gw10k-et-20"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://admin.goodwe.com/En/Api/downloadFile?id=848&mid=60&type=2",
+   "p": {
+    "kwh_modul": 3.276,
+    "moduly_min": 2,
+    "moduly_max": 5,
+    "napeti": "HV",
+    "chemie": "LFP"
+   }
+  },
+  {
+   "id": "baterie-goodwe-lynx-home-f-g2",
+   "kat": "baterie",
+   "vyrobce": "GoodWe",
+   "model": "Lynx Home F G2 / Lynx F G2 (LX F6.4-H-20 … LX F28.8-H-20, modul LX F3.2-20)",
+   "nazev": "Baterie GoodWe Lynx Home F G2 9,6–28,8 kWh (HV, LFP)",
+   "kratce": "GoodWe Lynx Home F G2",
+   "img": "img/komponenty/baterie-goodwe-lynx-home-f-g2.webp",
+   "zaruka": "5 let produkt, 10 let výkon",
+   "radky": [
+    "3,2 kWh na modul · LFP",
+    "2–9 modulů, HV"
+   ],
+   "kompat": [
+    "stridac-goodwe-gw10k-et-20"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://admin.goodwe.com/En/Api/downloadFile?id=2030&mid=60&type=2",
+   "p": {
+    "kwh_modul": 3.2,
+    "moduly_min": 2,
+    "moduly_max": 9,
+    "napeti": "HV",
+    "chemie": "LFP"
+   }
+  },
+  {
+   "id": "baterie-huawei-luna2000-s1",
+   "kat": "baterie",
+   "vyrobce": "Huawei",
+   "model": "LUNA2000-5/7/10/12/14/15/17/19/21-S1 (power modul LUNA2000-10KW-C1 + moduly LUNA2000-5-E1 / LUNA2000-7-E1)",
+   "nazev": "Baterie Huawei LUNA2000-S1 5–20,7 kWh (HV, LFP)",
+   "kratce": "Huawei LUNA2000-S1",
+   "img": "img/komponenty/baterie-huawei-luna2000-s1.webp",
+   "zaruka": "15 let",
+   "radky": [
+    "6,9 kWh na modul · LFP",
+    "1–3 modulů, HV"
+   ],
+   "kompat": [
+    "stridac-huawei-sun2000-10k-map0"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://solar.huawei.com/admin/asset/v1/pro/view/36414e3c762a4e508d6fde579866c4c0.pdf",
+   "p": {
+    "kwh_modul": 6.9,
+    "moduly_min": 1,
+    "moduly_max": 3,
+    "napeti": "HV",
+    "chemie": "LFP"
+   }
+  },
+  {
+   "id": "tigo-cca",
+   "kat": "tigo",
+   "vyrobce": "Tigo Energy",
+   "model": "Cloud Connect Advanced (CCA) – samostatně 346-00000-00, kit s TAP 344-00000-52 / 348-00000-52",
+   "nazev": "Tigo CCA – datalogger a brána pro monitoring a rapid shutdown",
+   "kratce": "Tigo CCA",
+   "img": "img/komponenty/tigo-cca.webp",
+   "zaruka": "5 let",
+   "radky": [],
+   "kompat": [
+    "tigo-tap",
+    "tigo-ts4-a-o"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://cdn.prod.website-files.com/5fad551d7419c7a0e9e4aba4/66a17b6baf41d4b66e8f3209_002-00141-00%201.5%20Datasheet%20CCA%2020240625%20-%20EN.pdf",
+   "p": {
+    "panelu": null
+   }
+  },
+  {
+   "id": "tigo-rss-transmitter",
+   "kat": "tigo",
+   "vyrobce": "Tigo Energy",
+   "model": "RSS Transmitter s Pure Signal (single core / dual core)",
+   "nazev": "Vysílač Tigo RSS Transmitter pro požární odpojení",
+   "kratce": "Tigo RSS Transmitter",
+   "img": "img/komponenty/tigo-rss-transmitter.webp",
+   "zaruka": "10 let",
+   "radky": [],
+   "kompat": [
+    "tigo-ts4-a-f",
+    "tigo-ts4-a-2f"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://cdn.prod.website-files.com/5fad551d7419c7a0e9e4aba4/680fae5df8b93aad651a7e39_002-00146-00%201.4%20Datasheet%20RSS%20w%20PCBA%2020250411%20-%20EN.pdf",
+   "p": {
+    "panelu": null
+   }
+  },
+  {
+   "id": "tigo-tap",
+   "kat": "tigo",
+   "vyrobce": "Tigo Energy",
+   "model": "Tigo Access Point (TAP), 158-00000-02",
+   "nazev": "Tigo TAP – bezdrátový přístupový bod pro optimizéry",
+   "kratce": "Tigo TAP",
+   "img": "img/komponenty/tigo-tap.webp",
+   "zaruka": "5 let",
+   "radky": [],
+   "kompat": [
+    "tigo-cca",
+    "tigo-ts4-a-o"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://cdn.prod.website-files.com/5fad551d7419c7a0e9e4aba4/6a395a7de23884171b26d2c6_002-00050-00%201.4%20Datasheet%20TAP%2020260603%20-%20EN-compressed.pdf",
+   "p": {
+    "panelu": null
+   }
+  },
+  {
+   "id": "tigo-ts4-a-2f",
+   "kat": "tigo",
+   "vyrobce": "Tigo Energy",
+   "model": "TS4-A-2F",
+   "nazev": "Požární odpojovač Tigo TS4-A-2F pro dva panely",
+   "kratce": "Tigo TS4-A-2F",
+   "img": "img/komponenty/tigo-ts4-a-2f.webp",
+   "zaruka": "25 let",
+   "radky": [],
+   "kompat": [
+    "tigo-rss-transmitter"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://cdn.prod.website-files.com/5fad551d7419c7a0e9e4aba4/69d7e7bd08dece46389c4cd5_002-00092-00%202.9%20Datasheet%20TS4-A-2F%2020260320%20-%20EN.pdf",
+   "p": {
+    "panelu": 2
+   }
+  },
+  {
+   "id": "tigo-ts4-a-f",
+   "kat": "tigo",
+   "vyrobce": "Tigo Energy",
+   "model": "TS4-A-F (725 W)",
+   "nazev": "Požární odpojovač Tigo TS4-A-F (1 panel)",
+   "kratce": "Tigo TS4-A-F",
+   "img": "img/komponenty/tigo-ts4-a-f.webp",
+   "zaruka": "25 let",
+   "radky": [],
+   "kompat": [
+    "tigo-rss-transmitter"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://cdn.prod.website-files.com/5fad551d7419c7a0e9e4aba4/688276b9f911953631c3be72_002-00222-00%201.1%20Datasheet%20TS4-A-F%20(725W)%2020250710%20-%20EN.pdf",
+   "p": {
+    "panelu": 1
+   }
+  },
+  {
+   "id": "tigo-ts4-a-o",
+   "kat": "tigo",
+   "vyrobce": "Tigo Energy",
+   "model": "TS4-A-O (725 W)",
+   "nazev": "Optimizér Tigo TS4-A-O (optimalizace, monitoring a rychlé odpojení panelu)",
+   "kratce": "Tigo TS4-A-O",
+   "img": "img/komponenty/tigo-ts4-a-o.webp",
+   "zaruka": "25 let",
+   "radky": [],
+   "kompat": [
+    "tigo-tap",
+    "tigo-cca",
+    "stridac-goodwe-gw10k-et-20",
+    "stridac-solax-x3-hybrid-10-0-d"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://cdn.prod.website-files.com/5fad551d7419c7a0e9e4aba4/6aa1951138adf7e073cb2792_002-00216-00%201.2%20Datasheet%20TS4-A-O%20(725W)%2020260824%20-%20EN.pdf",
+   "p": {
+    "panelu": 1
+   }
+  },
+  {
+   "id": "wallbox-goodwe-hca-g2-11k",
+   "kat": "wallbox",
+   "vyrobce": "GoodWe",
+   "model": "GW11K-HCA-20 (HCA G2)",
+   "nazev": "Wallbox GoodWe HCA G2 11 kW",
+   "kratce": "GoodWe HCA G2 11 kW",
+   "img": "img/komponenty/wallbox-goodwe-hca-g2-11k.webp",
+   "zaruka": "2 roky",
+   "radky": [
+    "nabíjecí výkon 11 kW"
+   ],
+   "kompat": [
+    "stridac-goodwe-gw10k-et-20",
+    "rizeni-infigy"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://emea.goodwe.com/Ftp/Downloads/Datasheet/EMEA/GW_HCA-G2_Datasheet_EMEA-EN.pdf",
+   "p": {
+    "vykon_kw": 11
+   }
+  },
+  {
+   "id": "wallbox-solax-x3-hac-g2-11k",
+   "kat": "wallbox",
+   "vyrobce": "SolaX Power",
+   "model": "X3-HAC-11P (Smart EV Charger G2, 11 kW)",
+   "nazev": "Wallbox SolaX Smart EV Charger G2 11 kW",
+   "kratce": "SolaX Smart EV Charger G2 11 kW",
+   "img": "img/komponenty/wallbox-solax-x3-hac-g2-11k.webp",
+   "zaruka": "3 roky",
+   "radky": [
+    "nabíjecí výkon 11 kW"
+   ],
+   "kompat": [
+    "stridac-solax-x3-hybrid-10-0-d",
+    "rizeni-infigy"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://www.solaxpower.com/uploads/file/solax-ev-charger-g2-datasheet-en.pdf",
+   "p": {
+    "vykon_kw": 11
+   }
+  },
+  {
+   "id": "wallbox-easee-charge-up",
+   "kat": "wallbox",
+   "vyrobce": "Easee",
+   "model": "Charge Up (Easee Up), obj. č. 10141",
+   "nazev": "Wallbox Easee Charge Up",
+   "kratce": "Easee Charge Up",
+   "img": null,
+   "zaruka": "5 let",
+   "radky": [
+    "nabíjecí výkon 22 kW"
+   ],
+   "kompat": [],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://download.easee.com/m/2dcca57491b3a0a2/original/-EN-Charge-Up-Productsheet.pdf",
+   "p": {
+    "vykon_kw": 22
+   }
+  },
+  {
+   "id": "wallbox-fronius-wattpilot-flex-home-11",
+   "kat": "wallbox",
+   "vyrobce": "Fronius",
+   "model": "Wattpilot Flex Home 11 C6",
+   "nazev": "Wallbox Fronius Wattpilot Flex Home 11 kW",
+   "kratce": "Fronius Wattpilot Flex Home 11",
+   "img": null,
+   "zaruka": null,
+   "radky": [
+    "nabíjecí výkon 11 kW"
+   ],
+   "kompat": [
+    "stridac-fronius-symo-gen24-10-0-plus"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://www.fronius.com/en/~/downloads/Solar%20Energy/Operating%20Instructions/42,0426,0546,EA.pdf",
+   "p": {
+    "vykon_kw": 11
+   }
+  },
+  {
+   "id": "wallbox-victron-ev-charging-station-ns",
+   "kat": "wallbox",
+   "vyrobce": "Victron Energy",
+   "model": "EV Charging Station NS (EVC200300200)",
+   "nazev": "Nabíjecí stanice Victron EV Charging Station NS",
+   "kratce": "Victron EV Charging Station NS",
+   "img": "img/komponenty/wallbox-victron-ev-charging-station-ns.webp",
+   "zaruka": "5 let",
+   "radky": [
+    "nabíjecí výkon 22 kW"
+   ],
+   "kompat": [
+    "stridac-victron-multiplus-ii-48-8000",
+    "prislusenstvi-victron-cerbo-gx"
+   ],
+   "alt": true,
+   "overeno": true,
+   "datasheet": "https://www.victronenergy.com/upload/documents/Datasheet-EV-Charging-Station-NS-EN-.pdf",
+   "p": {
+    "vykon_kw": 22
+   }
+  },
+  {
+   "id": "rizeni-infigy",
+   "kat": "rizeni",
+   "vyrobce": "Středník s.r.o. (značka Infigy), IČO 19579365, Kyselka 78, 362 72 Kyselka",
+   "model": "Infigy (řídicí jednotka Infigy 2.0 + mobilní/webová aplikace; volitelně předplatné Infigy Plus)",
+   "nazev": "Chytré řízení energie Infigy (přebytky FVE, spotové ceny, wallbox, ohřev vody, TČ)",
+   "kratce": "Infigy",
+   "img": null,
+   "zaruka": null,
+   "radky": [],
+   "kompat": [
+    "stridac-goodwe-gw10k-et-20",
+    "stridac-solax-x3-hybrid-10-0-d",
+    "stridac-victron-multiplus-ii-48-8000",
+    "prislusenstvi-victron-cerbo-gx",
+    "wallbox-goodwe-hca-g2-11k",
+    "wallbox-solax-x3-hac-g2-11k",
+    "stridac-fronius-symo-gen24-10-0-plus",
+    "wallbox-victron-ev-charging-station-ns"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": null
+  },
+  {
+   "id": "bezpecnost-stop-tlacitko",
+   "kat": "bezpecnost",
+   "vyrobce": null,
+   "model": null,
+   "nazev": "Bezpečnostní tlačítko STOP pro rychlé vypnutí FVE (TOTAL STOP), včetně kabeláže a označení",
+   "kratce": "Bezpečnostní tlačítko STOP",
+   "img": null,
+   "zaruka": null,
+   "radky": [],
+   "kompat": [
+    "tigo-rss-transmitter",
+    "tigo-ts4-a-f",
+    "tigo-ts4-a-2f",
+    "tigo-ts4-a-o"
+   ],
+   "alt": false,
+   "overeno": false,
+   "datasheet": null
+  },
+  {
+   "id": "prislusenstvi-uf-guard",
+   "kat": "prislusenstvi",
+   "vyrobce": null,
+   "model": "„UF Guard“ – konkrétní produkt neidentifikován",
+   "nazev": "Externí ochrana sítě U/f (ochrana rozhraní / anti-islanding)",
+   "kratce": "Ochrana rozhraní U/f",
+   "img": null,
+   "zaruka": null,
+   "radky": [],
+   "kompat": [],
+   "alt": false,
+   "overeno": false,
+   "datasheet": null
+  },
+  {
+   "id": "prislusenstvi-victron-cerbo-gx",
+   "kat": "prislusenstvi",
+   "vyrobce": "Victron Energy",
+   "model": "Cerbo GX (BPP900450100; nová verze Cerbo GX MK2 = BPP900450110 + BPP900451100)",
+   "nazev": "Řídicí a komunikační jednotka Victron Cerbo GX",
+   "kratce": "Victron Cerbo GX",
+   "img": "img/komponenty/prislusenstvi-victron-cerbo-gx.webp",
+   "zaruka": "5 let",
+   "radky": [],
+   "kompat": [
+    "stridac-victron-multiplus-ii-48-8000",
+    "baterie-pylontech-us5000",
+    "prislusenstvi-victron-energy-meter"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://www.victronenergy.com/upload/documents/Datasheet-Cerbo-GX-GX-Touch-EN.pdf"
+  },
+  {
+   "id": "prislusenstvi-victron-energy-meter",
+   "kat": "prislusenstvi",
+   "vyrobce": "Victron Energy",
+   "model": "Energy Meter VM-3P75CT (REL200300100)",
+   "nazev": "Třífázový elektroměr Victron VM-3P75CT pro ESS (s proudovými transformátory)",
+   "kratce": "Victron Energy Meter VM-3P75CT",
+   "img": "img/komponenty/prislusenstvi-victron-energy-meter.webp",
+   "zaruka": "5 let",
+   "radky": [],
+   "kompat": [
+    "prislusenstvi-victron-cerbo-gx",
+    "stridac-victron-multiplus-ii-48-8000"
+   ],
+   "alt": false,
+   "overeno": true,
+   "datasheet": "https://www.victronenergy.com/upload/documents/Datasheet-Energy-Meter-VM-3P5A-+-VM-3P75CT-EN.pdf"
+  }
+ ]
+}

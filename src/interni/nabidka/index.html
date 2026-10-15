@@ -106,6 +106,39 @@
         </div>
       </details>
 
+      <details class="acc" id="s-fve">
+        <summary class="acc__h"><span class="acc__t">Fotovoltaika</span><span class="acc__s" data-acc="fve"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="fve" hidden></i></summary>
+        <div class="acc__b">
+          <div class="grp__hrow"><h3 class="grp__h3">Sestava z katalogu</h3><label class="tgl"><input type="checkbox" data-fv="on"><span>V zakázce</span></label></div>
+          <div class="grp__sub" data-fve-fields>
+            <div class="fvsum" data-fve-sum></div>
+            <label class="f"><span>Panel</span><select data-fv="panel"></select></label>
+            <div class="row2">
+              <label class="f"><span>Počet panelů</span><span class="step"><button type="button" data-fv-step="pocet:-1" aria-label="Ubrat panel">−</button><input type="number" min="1" data-fv="pocet"><button type="button" data-fv-step="pocet:1" aria-label="Přidat panel">+</button></span></label>
+              <label class="f"><span>Konstrukce</span><select data-fv="strecha"></select></label>
+            </div>
+            <label class="f"><span>Střídač</span><select data-fv="stridac"></select></label>
+            <div class="row2">
+              <label class="f"><span>Baterie</span><select data-fv="baterie"></select></label>
+              <label class="f"><span>Počet modulů</span><span class="step"><button type="button" data-fv-step="moduly:-1" aria-label="Ubrat modul">−</button><input type="number" min="0" data-fv="moduly"><button type="button" data-fv-step="moduly:1" aria-label="Přidat modul">+</button></span><small class="f__sub" data-fv-moduly-hint></small></label>
+            </div>
+            <label class="f"><span>Tigo (rychlé odpojení / optimalizace)</span><select data-fv="tigo"></select></label>
+            <div class="row2">
+              <label class="f"><span>Wallbox</span><select data-fv="wallbox"></select></label>
+              <label class="f"><span>Program</span><select data-fv="program"></select></label>
+            </div>
+            <div class="fvopts">
+              <label class="chk"><input type="checkbox" data-fv="infigy"> Řízení Infigy</label>
+              <label class="chk"><input type="checkbox" data-fv="hromosvod"> Dům má hromosvod</label>
+              <label class="chk"><input type="checkbox" data-fv="faze3"> Třífázové připojení</label>
+              <label class="chk"><input type="checkbox" data-fv="rd"> Rodinný dům</label>
+            </div>
+            <p class="hint">Položky a množství se doplní do rozpočtu samy (žlutý proužek), ceny píšete ručně. Kontroly vycházejí z datasheetů, NZÚ 2026, vyhlášky 114/2023 Sb. a pravidel ČEZ Distribuce.</p>
+            <div class="fvchecks" data-fve-checks></div>
+          </div>
+        </div>
+      </details>
+
       <details class="acc" id="s-rozp">
         <summary class="acc__h"><span class="acc__t">Rozpočet</span><span class="acc__s" data-acc="rozp"></span><span class="acc__tg" aria-hidden="true"></span><i class="acc__dot" data-accdot="rozp" hidden></i></summary>
         <div class="acc__b">
@@ -115,7 +148,6 @@
             <option value="plech">Rekonstrukce – plech</option>
             <option value="taska">Rekonstrukce – taška</option>
             <option value="oprava">Oprava střechy</option>
-            <option value="fve">Fotovoltaika</option>
           </select>
         </div>
         <p class="hint">Položky jsou ve skupinách jako v PDF. Enter v ceně přidá další položku. Žlutý proužek = propojeno s krytinou nebo okny.</p>
@@ -197,6 +229,8 @@
   </main>
 </div>
 
+<script src="katalog.js"></script>
+<script src="fve.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

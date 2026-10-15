@@ -31,7 +31,7 @@ elif os.environ.get("VERCEL_ENV") == "preview" and os.environ.get("VERCEL_URL"):
     SITE["domain"] = "https://" + os.environ["VERCEL_URL"].rstrip("/")
 PAGES = ["index", "strechy", "fotovoltaika", "fotovoltaika-rodinne-domy", "fotovoltaika-firmy", "dotace", "o-nas", "kontakt", "blog", "ochrana-osobnich-udaju", "dekujeme", "404"]
 SLUG = {"uvod": "index"}
-ASSETS = ["site.css", "site.js", "motion.js", "lp-consent.js", "fonts", "brand", "brands", "img/web", "img/swatch", "img/og.png", "img/og.jpg", "img/og-prooze-2026.jpg", "video/frames", "img/og", "img/krytiny",
+ASSETS = ["site.css", "site.js", "motion.js", "lp-consent.js", "fonts", "brand", "brands", "img/web", "img/swatch", "img/og.png", "img/og.jpg", "img/og-prooze-2026.jpg", "video/frames", "img/og", "img/krytiny", "img/komponenty",
           "old/partner-aiko.png", "old/partner-goodwe.png", "old/partner-longi.svg", "old/partner-solaredge.svg", "old/partner-solax.png",
           "old/partner-trina.svg", "old/pavel-koci-ceo.jpg"]
 PRELOAD = ('<link rel="preload" as="image" type="image/webp" imagesrcset="{{root}}assets/img/web/hero-back-1280.webp 1280w, '
