@@ -78,6 +78,12 @@ OG obrázek: `assets/img/og-prooze-2026.jpg` (1200×630). Po změně ověřit v 
 - Mapa všech míst je i na `/kontakt/#kde-jezdime`, odkazy v patičce. Nové místo = přidat záznam do `mesta.json` (trasu a PVGIS stáhnout stejně jako u ostatních).
 - Výběr měst podle hledanosti (Seznam): „střechy kladno“, „pokrývači mělník/kladno/beroun“, „klempíři praha západ“ apod.
 
+## Realizace (pás pod hero na úvodní stránce)
+
+- Data a popisy: `src/realizace.json` (zakázky → titulní fotka, malá fotka „Před“, posuvník před/po, fotky do galerie s fází Před / Během prací / Po). Generuje `realizace_section()` v build.py do `{{realizace}}` v `src/pages/index.html`; galerie a posuvník jsou v `assets/site.js`.
+- Fotky: `python3 tools/realizace.py --import "<složka od Pavla>"` vybere a ořízne fotky podle tabulky `VYBER` (číslo = pořadí souboru ve složce), rozmaže SPZ, uloží bez EXIF do `assets/photos/realizace/` (mimo git); `python3 tools/realizace.py` udělá webové velikosti `assets/img/real/<název>-{800,1600}.webp` + `sizes.json`. Pár před/po (okna) se dorovná automaticky (OpenCV, jen při importu).
+- Ze 49 fotek (15. a 18. 10. 2026) použito 33: vynechané duplicity, rozmazané, s prstem v záběru, s čitelnými SPZ a bednění z OSB.
+
 ## Generátor nabídek (interní)
 
 - Adresa: `/interni/nabidka/` (noindex, `Disallow: /interni/` v robots.txt, nikde neodkazováno). Zdroj: `src/interni/nabidka/` (index.html, app.js, app.css), build ho jen zkopíruje.
@@ -107,6 +113,7 @@ Sliby a fakta, která jsem napsal a musí potvrdit PROOZE:
 - [x] Články Poradny necitují konkurenci (pokyn klienta 8. 10. 2026): ceny jsou „podle veřejných ceníků firem v oboru“, původní zdroje v `research/zdroje-ceniky-firem.md`
 - [ ] Záruka na práci (střechy), délka výměny krytiny
 - [ ] Zda děláte zateplení střech (vazba na NZÚ 3 500 Kč/m² úvěr a NZÚ Light 2 000 Kč/m²)
+- [ ] Popisy realizací v `src/realizace.json` jsou podle fotek (místa ani detaily nemáme): ověřit hlavně „taška Bramac“ u střešních oken, krytiny a zateplení u mansardy
 - [ ] Výrobci panelů/střídačů (Longi, Trina, Aiko, GoodWe, SolarEdge, Solax převzato ze starého webu)
 - [ ] Záruky 25/20/10 let (převzato ze starého webu)
 - [ ] „Podnikáme od roku 2011“ (datum vzniku IČO v ARES)

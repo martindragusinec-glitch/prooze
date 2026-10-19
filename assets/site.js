@@ -532,4 +532,167 @@
   }
 
   show('sluzba', false);
+
+  /* Realizace pod hero: pás karet (šipky, tažení myší, ukazatel), posuvník před/po, galerie zakázky */
+  const real = document.querySelector('[data-real]');
+  if (real) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const track = real.querySelector('[data-real-track]');
+    const bar = real.querySelector('.real__bar');
+    const [prevB, nextB] = real.querySelectorAll('[data-real-step]');
+    const syncBand = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      bar.style.setProperty('--vis', Math.min(1, track.clientWidth / track.scrollWidth).toFixed(4));
+      bar.style.setProperty('--p', (max > 0 ? track.scrollLeft / max : 0).toFixed(4));
+      prevB.disabled = track.scrollLeft < 4;
+      nextB.disabled = track.scrollLeft > max - 4;
+    };
+    track.addEventListener('scroll', syncBand, { passive: true });
+    addEventListener('resize', syncBand);
+    syncBand();
+    // šipky: na další / předchozí kartu
+    [prevB, nextB].forEach((b) => b.addEventListener('click', () => {
+      const dir = +b.dataset.realStep, pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+      const x = track.scrollLeft + pad, cards = [...track.children];
+      const t = dir > 0 ? cards.find((c) => c.offsetLeft > x + 8) : cards.reverse().find((c) => c.offsetLeft < x - 8);
+      if (t) track.scrollTo({ left: t.offsetLeft - pad, behavior: reduce ? 'auto' : 'smooth' });
+    }));
+    // tažení myší (na dotyku posouvá prohlížeč sám)
+    let drag = null;
+    track.addEventListener('dragstart', (e) => e.preventDefault());
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || e.target.closest('[data-ba], a, input')) return;
+      drag = { x: e.clientX, left: track.scrollLeft, moved: false };
+    });
+    addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) > 6) { drag.moved = true; track.classList.add('is-drag'); }
+      if (drag.moved) track.scrollLeft = drag.left - dx;
+    });
+    addEventListener('pointerup', () => {
+      if (!drag) return;
+      if (drag.moved) {
+        const block = (ev) => { ev.preventDefault(); ev.stopPropagation(); };
+        track.addEventListener('click', block, true);
+        setTimeout(() => track.removeEventListener('click', block, true), 0);
+        track.classList.remove('is-drag'); // vrátí se přichycení ke kartě
+      }
+      drag = null;
+    });
+
+    // před/po: táhne se kdekoli na fotce, klávesnicí přes skrytý jezdec
+    real.querySelectorAll('[data-ba]').forEach((ba) => {
+      const range = ba.querySelector('.ba__range');
+      let on = false, touched = false;
+      const set = (v) => {
+        v = Math.max(0, Math.min(100, v));
+        ba.style.setProperty('--x', `${v}%`);
+        range.value = Math.round(v);
+        ba.classList.toggle('is-a-hidden', v < 22);
+        ba.classList.toggle('is-b-hidden', v > 78);
+      };
+      const at = (e) => { const r = ba.getBoundingClientRect(); set(((e.clientX - r.left) / r.width) * 100); };
+      ba.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('button') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        on = touched = true; ba.classList.add('is-on'); ba.setPointerCapture(e.pointerId); at(e);
+        dl('realizace_porovnani');
+      });
+      ba.addEventListener('pointermove', (e) => { if (on) at(e); });
+      const end = () => { on = false; ba.classList.remove('is-on'); };
+      ba.addEventListener('pointerup', end);
+      ba.addEventListener('pointercancel', end);
+      range.addEventListener('input', () => { touched = true; set(+range.value); });
+      // jednou naznačit, že se dá posouvat (jen když si toho člověk ještě nevšiml)
+      if (reduce || !('IntersectionObserver' in window)) return;
+      const io = new IntersectionObserver(([en]) => {
+        if (!en.isIntersecting) return;
+        io.disconnect();
+        setTimeout(() => {
+          if (touched) return;
+          const keys = [[0, 50], [650, 70], [1450, 32], [2100, 50]], t0 = performance.now();
+          const ease = (t) => (t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+          const tick = (now) => {
+            if (touched) return;
+            const t = now - t0, k = keys.findIndex((x) => x[0] > t);
+            if (k < 0) { set(50); return; }
+            const [ta, va] = keys[k - 1], [tb, vb] = keys[k];
+            set(va + (vb - va) * ease((t - ta) / (tb - ta)));
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }, 500);
+      }, { threshold: 0.6 });
+      io.observe(ba);
+    });
+
+    // galerie zakázky (dialog přes celou obrazovku, swipe = nativní posun se snapem)
+    const data = JSON.parse(real.querySelector('[data-real-json]').textContent);
+    const base = real.dataset.src;
+    const escH = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    let lb = null, lbTrack, lbThumbs, lbN, lbPrev, lbNext, cur = null, idx = 0, opener = null;
+    const go = (i, smooth = !reduce) => {
+      if (!cur) return;
+      idx = Math.max(0, Math.min(cur.fotky.length - 1, i));
+      lbTrack.scrollTo({ left: idx * lbTrack.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+      syncLb();
+    };
+    const syncLb = () => {
+      lbN.textContent = `${idx + 1} / ${cur.fotky.length}`;
+      lbPrev.disabled = idx === 0;
+      lbNext.disabled = idx === cur.fotky.length - 1;
+      [...lbThumbs.children].forEach((b, i) => {
+        b.setAttribute('aria-current', String(i === idx));
+        if (i === idx) b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      });
+    };
+    const buildLb = () => {
+      lb = document.createElement('dialog');
+      lb.className = 'lb';
+      lb.setAttribute('aria-labelledby', 'lb-t');
+      lb.innerHTML = '<div class="lb__top"><p class="lb__t" id="lb-t"></p><p class="lb__n" aria-live="polite"></p>'
+        + '<button type="button" class="lb__x" aria-label="Zavřít fotky"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>'
+        + '<div class="lb__track" tabindex="-1"></div>'
+        + '<button type="button" class="lb__arr lb__arr--prev" aria-label="Předchozí fotka"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>'
+        + '<button type="button" class="lb__arr lb__arr--next" aria-label="Další fotka"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>'
+        + '<div class="lb__thumbs" role="group" aria-label="Všechny fotky zakázky"></div>';
+      document.body.append(lb);
+      lbTrack = lb.querySelector('.lb__track'); lbThumbs = lb.querySelector('.lb__thumbs'); lbN = lb.querySelector('.lb__n');
+      lbPrev = lb.querySelector('.lb__arr--prev'); lbNext = lb.querySelector('.lb__arr--next');
+      lb.querySelector('.lb__x').addEventListener('click', () => lb.close());
+      lbPrev.addEventListener('click', () => go(idx - 1));
+      lbNext.addEventListener('click', () => go(idx + 1));
+      lbThumbs.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) go([...lbThumbs.children].indexOf(b)); });
+      lb.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1); }
+      });
+      let st = 0;
+      lbTrack.addEventListener('scroll', () => {
+        clearTimeout(st);
+        st = setTimeout(() => { const i = Math.round(lbTrack.scrollLeft / lbTrack.clientWidth); if (i !== idx) { idx = i; syncLb(); } }, 60);
+      }, { passive: true });
+      lb.addEventListener('close', () => { document.documentElement.classList.remove('lb-open'); if (opener) opener.focus({ preventScroll: true }); });
+      addEventListener('resize', () => { if (lb.open) go(idx, false); });
+    };
+    const openLb = (id, btn) => {
+      cur = data.find((z) => z.id === id);
+      if (!cur) return;
+      if (!lb) buildLb();
+      opener = btn;
+      lb.querySelector('.lb__t').textContent = cur.nazev;
+      const one = cur.fotky.length < 2;
+      lbThumbs.hidden = lbPrev.hidden = lbNext.hidden = one;
+      lbTrack.innerHTML = cur.fotky.map((f, i) => `<figure class="lb__s"><img src="${base}${f.f}-1600.webp" srcset="${base}${f.f}-800.webp 800w, ${base}${f.f}-1600.webp 1600w" sizes="100vw" width="${f.w}" height="${f.h}" alt="${escH(f.t)}"${i > 1 ? ' loading="lazy"' : ''} decoding="async"><figcaption class="lb__cap"><b>${f.faze}</b>${escH(f.t)}</figcaption></figure>`).join('');
+      lbThumbs.innerHTML = one ? '' : cur.fotky.map((f, i) => `<button type="button" aria-label="Fotka ${i + 1}: ${escH(f.t)}"><img src="${base}${f.f}-800.webp" alt="" loading="lazy" decoding="async"></button>`).join('');
+      document.documentElement.classList.add('lb-open');
+      lb.showModal();
+      go(0, false);
+      dl('realizace_galerie', { zakazka: id });
+    };
+    real.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-real-open]');
+      if (b) openLb(b.dataset.realOpen, b);
+    });
+  }
 })();

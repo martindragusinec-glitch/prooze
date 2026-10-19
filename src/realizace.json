@@ -1,0 +1,81 @@
+{
+  "_pozn": "Pás realizací na úvodní stránce (build.py → {{realizace}}). Fotky: tools/realizace.py → assets/img/real/<název>-{800,1600}.webp. Popisy jsou podle fotek, místa ani detaily zakázek nemáme (ověřit s Pavlem). fotky: [název, fáze, popisek].",
+  "zakazky": [
+    {
+      "id": "vila", "nazev": "Vila s členitou střechou", "titulni": "vila-1", "pred": "vila-pred",
+      "popis": "Valby, úžlabí, vikýře a věžička. Původní tmavou krytinu nahradila nová taška v cihlové barvě.",
+      "fotky": [
+        ["vila-pred", "Před", "Původní krytina z dronu."],
+        ["vila-1", "Po", "Nová krytina v cihlové barvě."],
+        ["vila-2", "Po", "Shora je vidět, kolik valeb, úžlabí a hřebenů střecha má."],
+        ["vila-5", "Po", "Věžička a valby z ptačí perspektivy."],
+        ["vila-3", "Po", "Štít s mansardovou střechou."],
+        ["vila-4", "Detail", "Hřebeny a větrací tašky u vikýře."]
+      ]
+    },
+    {
+      "id": "okna", "nazev": "Tři nová střešní okna", "titulni": "okna-1",
+      "porovnani": ["okna-pred", "okna-po", "Fólie a latě", "Hotovo"],
+      "popis": "Nová pojistná fólie a latě, tři střešní okna a taška Bramac. Posuňte jezdcem a porovnejte.",
+      "fotky": [
+        ["okna-pred", "Během prací", "Nová pojistná fólie, kontralatě a latě."],
+        ["okna-2", "Během prací", "Osazená tři střešní okna."],
+        ["okna-3", "Během prací", "Pokládka tašek na zadní straně."],
+        ["okna-po", "Po", "Hotová střecha z ulice."],
+        ["okna-1", "Po", "Zadní strana s pootevřenými okny."]
+      ]
+    },
+    {
+      "id": "stit", "nazev": "Starší dům se štítem", "titulni": "stit-1", "pred": "stit-pred",
+      "popis": "Dosloužilou krytinu jsme vyměnili za novou tašku. Fotky ze zimy před začátkem a po předání.",
+      "fotky": [
+        ["stit-pred", "Před", "Dosloužilá krytina, fotka ze zimy před začátkem prací."],
+        ["stit-pred2", "Před", "Starý štít a nízký přístavek."],
+        ["stit-1", "Po", "Nová taška na všech částech střechy."],
+        ["stit-2", "Po", "Hlavní štít od dvora."],
+        ["stit-3", "Po", "Napojení na zděný štít."],
+        ["stit-4", "Po", "Shora: hlavní střecha a obě křídla."],
+        ["stit-5", "Po", "Štít a hlavní střecha z dronu."]
+      ]
+    },
+    {
+      "id": "mansarda", "nazev": "Mansarda s výhledem", "titulni": "mansarda-1", "pred": "mansarda-pred",
+      "popis": "Zateplení minerální vatou, plochá část z asfaltových pásů s posypem, strmá z tašek.",
+      "fotky": [
+        ["mansarda-pred", "Před", "Strmá stěna mansardy po sundání staré krytiny."],
+        ["mansarda-2", "Během prací", "Zateplení minerální vatou mezi krokve."],
+        ["mansarda-3", "Během prací", "Pojistná fólie, kontralatě a latě."],
+        ["mansarda-4", "Po", "Plochá část z asfaltových pásů s posypem."],
+        ["mansarda-5", "Po", "Strmá část z tašek a oplechované komíny."],
+        ["mansarda-1", "Po", "Hotovo, s výhledem do údolí."]
+      ]
+    },
+    {
+      "id": "lodzie", "nazev": "Dům s lodžií a pavlačí", "titulni": "lodzie-1",
+      "popis": "Nová fólie, latě a vínová taška. Napojení na lodžii ve střeše i na dřevěnou pavlač do dvora.",
+      "fotky": [
+        ["lodzie-behem", "Během prací", "Nová pojistná fólie a laťování kolem lodžie."],
+        ["lodzie-2", "Po", "Z ulice: vínová taška a lodžie ve střeše."],
+        ["lodzie-1", "Po", "Dvorní strana s dřevěnou pavlačí."],
+        ["lodzie-3", "Po", "Obě křídla domu od dvora."],
+        ["lodzie-4", "Po", "Úžlabí mezi křídly shora."]
+      ]
+    },
+    {
+      "id": "plech", "nazev": "Dlouhý dům s plechovou krytinou", "titulni": "plech-1",
+      "popis": "Plechová krytina s profilem tašky v červené barvě, komín oplechovaný v barvě střechy.",
+      "fotky": [
+        ["plech-1", "Po", "Plechová krytina s profilem tašky."],
+        ["plech-2", "Po", "Z ulice: hřeben, komín a žlab."],
+        ["plech-3", "Po", "Oplechovaný komín a celá délka střechy."]
+      ]
+    },
+    {
+      "id": "roubenka", "nazev": "Chalupa s vikýři", "titulni": "roubenka-1",
+      "popis": "Antracitová taška na roubence se dvěma vikýři.",
+      "fotky": [
+        ["roubenka-1", "Po", "Antracitová taška a dva vikýře."]
+      ]
+    }
+  ]
+}
