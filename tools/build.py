@@ -299,7 +299,7 @@ def realizace_section():
         c = f' class="{cls}"' if cls else ""
         return (f'<img{c} src="assets/img/real/{name}-1600.webp" srcset="assets/img/real/{name}-800.webp 800w, '
                 f'assets/img/real/{name}-1600.webp 1600w" sizes="{sz}" width="{w}" height="{h}" alt="{esc(alt)}" loading="lazy" decoding="async">')
-    SZ = "(max-width: 760px) 86vw, 640px"
+    SZ = "(max-width: 760px) 76vw, 480px"
     cards = []
     for z in data:
         n = len(z["fotky"])
@@ -315,11 +315,11 @@ def realizace_section():
                   f'<span class="ba__line" aria-hidden="true"><span class="ba__knob"><svg viewBox="0 0 24 24"><path d="M9 6 3 12l6 6M15 6l6 6-6 6"/></svg></span></span>'
                   f'<input class="ba__range" type="range" min="0" max="100" value="50" aria-label="Porovnat: {la.lower()}, nebo {lb.lower()}">'
                   f'<button type="button" class="rcard__n" data-real-open="{z["id"]}" aria-label="Otevřít {pocet}"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="12" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V9"/></svg>{pocet}</button></div>')
-            cards.append(f'<article class="rcard rcard--ba" style="--ar:{w / h:.3f}">{ph}{head}</article>')
+            cards.append(f'<article class="rcard rcard--ba" style="--ar:{min(w / h, 1.7):.3f}">{ph}{head}</article>')
             continue
         w, h = sizes[z["titulni"]]
         pred = (f'<span class="rcard__pred" aria-hidden="true">{img(z["pred"], "140px")}<span>Před</span></span>' if z.get("pred") else "")
-        cards.append(f'<article class="rcard" style="--ar:{min(w / h, 1.78):.3f}"><div class="rcard__ph">{img(z["titulni"], SZ, alt=titul)}{pred}'
+        cards.append(f'<article class="rcard" style="--ar:{min(w / h, 1.5):.3f}"><div class="rcard__ph">{img(z["titulni"], SZ, alt=titul)}{pred}'
                      f'<span class="rcard__n" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="12" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V9"/></svg>{pocet}</span></div>{head}</article>')
     cards.append('<article class="rcard rcard--cta"><div class="rcard__cta"><p class="rcard__cta-h">Chcete podobnou střechu?</p>'
                  '<p>Přijedeme na prohlídku a&nbsp;připravíme nabídku s&nbsp;pevnou cenou. Obojí zdarma.</p>'
@@ -327,8 +327,8 @@ def realizace_section():
     js = json.dumps([{"id": z["id"], "nazev": z["nazev"], "fotky": [{"f": f[0], "faze": f[1], "t": f[2], "w": sizes[f[0]][0], "h": sizes[f[0]][1]} for f in z["fotky"]]}
                      for z in data], ensure_ascii=False).replace("</", "<\\/")
     return (f'<section class="real" id="realizace" aria-labelledby="real-h" data-real data-src="assets/img/real/">'
-            f'<div class="wrap real__head"><div><h2 id="real-h" class="h2">Realizace</h2>'
-            f'<p class="real__sub">{nbsp("Fotky z dronu i přímo ze střechy. U většiny zakázek uvidíte i stav, v jakém jsme střechu převzali.")}</p></div>'
+            f'<div class="wrap real__head"><div><h2 id="real-h" class="real__h">Realizace</h2>'
+            f'<p class="real__sub">{nbsp("Fotky z dronu i přímo ze střechy. U většiny zakázek i stav, v jakém jsme střechu převzali.")}</p></div>'
             f'<div class="real__nav"><button type="button" class="real__arr" data-real-step="-1" aria-label="Předchozí realizace" disabled><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>'
             f'<button type="button" class="real__arr" data-real-step="1" aria-label="Další realizace"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div></div>'
             f'<div class="real__track" data-real-track tabindex="0" role="region" aria-label="Realizace, posouvejte do strany">{"".join(cards)}</div>'
