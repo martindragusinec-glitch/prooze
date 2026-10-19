@@ -1643,7 +1643,8 @@ html.menu-open .dock { transform: translateY(110%) !important; }
 .real { padding-block: clamp(36px, 4vw, 64px) clamp(28px, 3vw, 44px); overflow: hidden; }
 .real__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(18px, 2vw, 28px); }
 .real__h { font: 800 clamp(28px, 2.6vw, 38px)/1.05 var(--display); letter-spacing: -.02em; }
-.real__sub { margin-top: 8px; max-width: 60ch; font-size: 16px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
+.real__sub { margin-top: 8px; max-width: 60ch; font-size: 16px; line-height: 1.45; color: var(--muted); text-wrap: balance; }
+.real__sub span { display: block; text-wrap: balance; }
 .real__nav { display: flex; gap: 10px; flex: none; }
 .real__arr { width: 46px; height: 46px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1.5px solid var(--line); background: #fff; color: var(--pine); cursor: pointer; transition: background .2s, border-color .2s, color .2s, opacity .2s; }
 .real__arr svg, .lb__arr svg, .lb__x svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }

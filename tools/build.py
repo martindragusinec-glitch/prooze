@@ -328,7 +328,7 @@ def realizace_section():
                      for z in data], ensure_ascii=False).replace("</", "<\\/")
     return (f'<section class="real" id="realizace" aria-labelledby="real-h" data-real data-src="assets/img/real/">'
             f'<div class="wrap real__head"><div><h2 id="real-h" class="real__h">Realizace</h2>'
-            f'<p class="real__sub">{nbsp("Fotky z dronu i přímo ze střechy. U většiny zakázek i stav, v jakém jsme střechu převzali.")}</p></div>'
+            f'<p class="real__sub"><span>{nbsp("Fotky z dronu i přímo ze střechy.")}</span> <span>{nbsp("U většiny zakázek i stav, v jakém jsme střechu převzali.")}</span></p></div>'
             f'<div class="real__nav"><button type="button" class="real__arr" data-real-step="-1" aria-label="Předchozí realizace" disabled><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>'
             f'<button type="button" class="real__arr" data-real-step="1" aria-label="Další realizace"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div></div>'
             f'<div class="real__track" data-real-track tabindex="0" role="region" aria-label="Realizace, posouvejte do strany">{"".join(cards)}</div>'
