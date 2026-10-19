@@ -93,7 +93,8 @@ OG obrázek: `assets/img/og-prooze-2026.jpg` (1200×630). Po změně ověřit v 
 - Štítky v hlavičce (termín, doba realizace, plocha, záruka… ikona podle popisku) + volitelný štítek s cenou díla.
 - Materiály s logem výrobce (Tondach, Bramac, KM Beta, Comax, Prefa, Satjam) nebo vlastním obrázkem, vzorek barvy.
 - Rozpočet: položky ručně (skupina, popis, množství, jednotka, cena), šablony Rekonstrukce plech/taška, Oprava (FVE přes roletku Fotovoltaika); skupiny podle kategorií, volitelné mezisoučty, sleva %, DPH 12 % / 21 % / bez DPH / neplátce.
-- PDF: tlačítko Stáhnout PDF → tisk prohlížeče → Uložit jako PDF (vektorové písmo, patička s IČO a číslováním stran přes `@page`, nejlépe v Chrome).
+- PDF: tlačítko Stáhnout PDF → tisk prohlížeče → Uložit jako PDF (vektorové písmo, nejlépe v Chrome).
+- **Stránkování** (`layoutDoc` v app.js): dokument se skládá do skutečných listů A4 s vlastními okraji (14 / 16 mm) a patičkou (IČO, strana X z Y), `@page` má okraje 0 → náhled = PDF a nezáleží na okrajích v dialogu tisku (Výchozí i Žádné dají totéž; vlastní/minimální okraje ne). Obsah se změří v neviditelném sloupci a rozdělí po blocích: úvodní strana zvlášť, karty technologií po řádcích, rozpočet po řádcích (na další straně znovu hlavička tabulky a „Skupina – pokračování“), nadpis rozpočtu drží aspoň se 3 položkami, poslední řádek se součtem, podpis s patičkou. Když by poslední strana zůstala skoro prázdná, zkusí se 2 stupně stažených mezer (`doc--tight`, `doc--tight2`) a použijí se jen, když ušetří stranu. Tmavá patička s kontakty je vždy dole na poslední straně (u Kompaktní jen při víc stranách).
 - Ukládání jen v prohlížeči (localStorage), číslování 2026-001…, Uložené → Otevřít / Kopie / Smazat, Export a Import .json pro přenos mezi počítači. Nic se neodesílá na server.
 
 ## DOPLNIT / OVĚŘIT před spuštěním

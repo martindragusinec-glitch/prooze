@@ -364,7 +364,7 @@
         <p><b>Šetření nákladů</b>Automatické řízení spravuje energii tak, abyste co nejvíce ušetřili. Vše můžete sledovat online v&nbsp;aplikaci.</p>
         <p><b>Regulace spotřeby</b>Energie se využije v&nbsp;největších domácích spotřebičích, tepelném čerpadle nebo bojleru, případně se uloží do baterie.</p></div></div>` : '';
       sys = `<section class="d-sec d-sys" data-goto="#s-fve"><h2 class="d-h">Navržený systém</h2><div class="d-sys__nums">${nums.map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join('')}</div>
-        <div class="d-tech d-tech--${Math.min(tech.length, 3)}">${tech.join('')}</div>${infigy}</section>`;
+        ${Array.from({ length: Math.ceil(tech.length / 3) }, (_, r) => `<div class="d-tech d-tech--${Math.min(tech.length, 3)}">${tech.slice(r * 3, r * 3 + 3).join('')}</div>`).join('')}${infigy}</section>`;
     }
     if (L === 'kompakt') return `${head}<section class="d-title">${title}</section>${badgeRow}${parties}${intro}${prodHtml}${sys}${budget}${close}`;
     // úvodní strana: obsah nahoře, souhrn cena + platnost dole; rozpočet vždy od nové strany
@@ -384,8 +384,7 @@
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(() => {
       syncLinked(S);
-      docEl.className = `doc doc--${S.layout}`;
-      docEl.innerHTML = renderDoc(S);
+      layoutDoc(renderDoc(S));
       const tt = totals(S);
       $('[data-sum]').textContent = tt.sum ? `${kc(tt.celkem)}${priceLabel(S, tt) ? ' ' + priceLabel(S, tt) : ''}` : '';
       updateTotalsInEditor(tt);
@@ -488,35 +487,153 @@
   function fitDoc() {
     if (document.body.dataset.view !== 'edit') return;
     const w = scroller.clientWidth - 48;
-    const z = Math.min(1, w / 793.7); // A4 = 210 mm
-    fit.style.zoom = z;
-    // stránky jako v PDF: 1. strana 281 mm obsahu (bez horního okraje), další 268 mm + 14 mm horní okraj.
-    // Rozpočet u S fotkou/Čisté začíná vždy na 2. straně (v náhledu odsazení místo okraje);
-    // u Kompaktní se přesune na novou stranu, jen když by začínal v posledních 65 mm.
-    const px = (el) => (el.getBoundingClientRect().top - docEl.getBoundingClientRect().top) / z / 3.7795;
-    const bud = docEl.querySelector('.d-sys') || docEl.querySelector('.d-budget'), p1 = docEl.querySelector('.d-p1');
-    // úvodní strana se nevejde (dlouhý úvod, víc karet) → bez souhrnného pruhu a bez vynuceného zlomu
-    if (p1) {
-      // skutečná výška úvodní strany (min. 281 mm); přeteče-li, nejdřív pryč pás argumentů, pak souhrn
-      p1.classList.remove('is-long', 'no-proofs');
-      const h = () => p1.getBoundingClientRect().height / z / 3.7795;
-      if (h() > 281.5) p1.classList.add('no-proofs');
-      if (h() > 281.5) p1.classList.add('is-long');
+    fit.style.zoom = Math.min(1, w / 793.7); // A4 = 210 mm
+  }
+
+  /* ---------- stránkování ----------
+     Dokument se skládá do skutečných listů A4 (210 × 297 mm) s vlastními okraji a patičkou, @page má okraje 0.
+     Náhled je tak 1:1 s PDF a výsledek nezávisí na okrajích zvolených v dialogu tisku (Výchozí i Žádné dají totéž).
+     Obsah se vykreslí v neviditelném sloupci 210 mm, změří se bloky („atomy“: sekce, karty, řádky tabulky)
+     a rozdělí se na listy. Tabulka na dalším listu dostane znovu hlavičku a název rozdělené skupiny,
+     nadpis nezůstane sám na konci strany, podpis drží s patičkou, poslední řádek rozpočtu se součtem. */
+  const MMPX = 96 / 25.4, PG_H = 297, PG_TOP = 14, PG_BOT = 16; // mm, 1. strana bez horního okraje
+  const FOOT_L = 'PROOZE · Pavel Kočí · Tomanova 1630, 274 01 Slaný · IČO 88327078';
+  const FOOT_R = '773 898 698 · info@prooze.cz · prooze.cz';
+  const SPLIT = '.d-p1.is-long, .d-sys, .d-budget, .d-close, .d-intro, table.d-tbl, tbody';
+  const KEEP = '.d-sec > .d-h, .d-sys__nums, .d-cat, .d-sign';
+  const stage = document.createElement('div');
+  stage.className = 'stage'; stage.setAttribute('aria-hidden', 'true');
+  document.body.append(stage);
+
+  function atomsOf(root) {
+    const out = [];
+    const walk = (el) => { for (const ch of el.children) {
+      if (ch.matches('thead, colgroup') || !ch.getClientRects().length) continue;
+      if (ch.matches(SPLIT)) walk(ch); else out.push(ch);
+    } };
+    walk(root);
+    const y0 = root.getBoundingClientRect().top, hOf = (el) => (el ? el.getBoundingClientRect().height : 0);
+    const A = out.map((el) => {
+      const r = el.getBoundingClientRect(), table = el.closest('table'), tb = el.closest('tbody');
+      const cat = tb && !el.matches('.d-cat') ? tb.querySelector('.d-cat') : null;
+      return { el, table, top: r.top - y0, bottom: r.bottom - y0, keep: el.matches(KEEP), brk: el.matches('.d-p1'),
+        extra: table ? hOf(table.tHead) + hOf(cat) : 0, cat };
+    });
+    A.forEach((a, i) => {
+      const prev = A[i - 1], next = A[i + 1];
+      // první řádek skupiny drží s druhým (žádná skupina s jedním řádkem na konci strany)
+      if (a.table && prev && prev.el.matches('.d-cat') && a.el.parentElement.rows.length > 2) a.keep = true;
+      // poslední řádek tabulky drží se součtem
+      if (a.table && (!next || next.table !== a.table)) a.keep = true;
+    });
+    // rozpočet nezačne na konci strany nadpisem a jedním řádkem: nadpis drží aspoň se 3 položkami
+    A.forEach((a, i) => {
+      if (!a.el.matches('.d-budget > .d-h')) return;
+      for (let k = i, rows = 0; k < A.length - 1 && A[k + 1].table; k++) { A[k].keep = true; if (!A[k + 1].el.matches('.d-cat') && ++rows >= 3) break; }
+    });
+    return A;
+  }
+  function paginate(A, adj) {
+    const pages = []; let cur = null, i = 0;
+    const cap = (k) => ((k === 0 ? PG_H - PG_BOT : PG_H - PG_TOP - PG_BOT) * MMPX) - (adj[k] || 0);
+    while (i < A.length) {
+      let j = i; while (j < A.length - 1 && A[j].keep) j++;
+      if (!cur) pages.push(cur = { items: [] });
+      const s = cur.items.length ? A[cur.items[0]] : A[i];
+      const used = A[j].bottom - s.top + (s.table ? s.extra : 0); // strana uprostřed tabulky: + hlavička (a název skupiny)
+      if (used <= cap(pages.length - 1) + 0.5) {
+        for (let k = i; k <= j; k++) cur.items.push(k);
+        const hasBrk = A.slice(i, j + 1).some((a) => a.brk);
+        i = j + 1; if (hasBrk) cur = null;
+      } else if (cur.items.length) cur = null; // na novou stranu
+      else { cur.items.push(i); if (A[i].brk) cur = null; i++; } // nevejde se ani na prázdnou stranu
     }
-    const forced = !!bud && !!p1 && !p1.classList.contains('is-long');
-    if (bud && !forced) {
-      bud.classList.remove('is-break'); bud.style.marginTop = '';
-      const top = px(bud), bounds = [281]; while (bounds.at(-1) < top + 300) bounds.push(bounds.at(-1) + 268);
-      const next = bounds.find((b) => b > top);
-      if (next - top < 65) { bud.classList.add('is-break'); bud.style.marginTop = `${next - top + 14}mm`; }
+    return pages;
+  }
+  function buildSheets(A, pages, root, host) {
+    host.textContent = '';
+    pages.forEach((pg, k) => {
+      const sheet = document.createElement('div'); sheet.className = `sheet${k === 0 ? ' sheet--1' : ''}`;
+      const body = document.createElement('div'); body.className = 'sheet__body'; sheet.append(body);
+      let open = [];
+      pg.items.forEach((idx, n) => {
+        const a = A[idx], chain = [];
+        for (let el = a.el.parentElement; el && el !== root; el = el.parentElement) chain.unshift(el);
+        let d = 0; while (d < chain.length && open[d] && open[d][0] === chain[d]) d++;
+        open = open.slice(0, d);
+        let parent = d ? open[d - 1][1] : body;
+        for (; d < chain.length; d++) {
+          const c = chain[d].cloneNode(false);
+          if (c.tagName === 'TABLE') ['colgroup', 'thead'].forEach((t) => { const x = chain[d].querySelector(`:scope > ${t}`); if (x) c.append(x.cloneNode(true)); });
+          if (c.tagName === 'TBODY' && a.cat) { // skupina pokračuje z minulé strany
+            const ct = a.cat.cloneNode(true); ct.removeAttribute('data-goto');
+            ct.querySelector('th').insertAdjacentHTML('beforeend', ' <span class="d-cat__cont">pokračování</span>');
+            const td = ct.querySelector('td'); if (td) td.textContent = '';
+            c.append(ct);
+          }
+          if (n === 0) c.classList.add('pg-first');
+          parent.append(c); open.push([chain[d], c]); parent = c;
+        }
+        const el = a.el.cloneNode(true); if (n === 0) el.classList.add('pg-first');
+        parent.append(el);
+      });
+      const f = document.createElement('footer'); f.className = 'sheet__foot';
+      f.innerHTML = `<span>${FOOT_L}</span><span>${FOOT_R}<b>strana ${k + 1} z ${pages.length}</b></span>`;
+      sheet.append(f);
+      host.append(sheet);
+    });
+  }
+  // přetečení listu (px) a zaplnění (0–1)
+  function sheetFill(sheet) {
+    const body = sheet.firstChild, bt = body.getBoundingClientRect().top;
+    const top = sheet.classList.contains('sheet--1') ? 0 : PG_TOP * MMPX, lim = body.clientHeight - PG_BOT * MMPX;
+    const y = Math.max(top, ...[...body.children].map((c) => c.getBoundingClientRect().bottom - bt));
+    return { over: y - lim, fill: (y - top) / (lim - top), free: lim - y };
+  }
+  let imgWait = false;
+  function layoutDoc(html, withFoot = false) {
+    const cls = `doc doc--${S.layout}${withFoot ? ' doc--foot' : ''}`;
+    let best = null;
+    for (const tight of ['', ' doc--tight', ' doc--tight doc--tight2']) {
+      stage.innerHTML = `<article class="${cls} doc--flow${tight}">${html}</article><article class="${cls}${tight}"></article>`;
+      const [root, host] = stage.children;
+      // úvodní strana se nevejde → nejdřív bez pásu argumentů, pak se rozdělí do toku
+      const p1 = root.querySelector('.d-p1'), cap1 = (PG_H - PG_BOT) * MMPX + 2;
+      if (p1 && p1.offsetHeight > cap1) p1.classList.add('no-proofs');
+      if (p1 && p1.offsetHeight > cap1) p1.classList.add('is-long');
+      const A = atomsOf(root), adj = {};
+      let pages;
+      for (let round = 0; round < 6; round++) { // změřené výšky se můžou o kousek lišit → doladit podle skutečných listů
+        pages = paginate(A, adj); buildSheets(A, pages, root, host);
+        let ok = true;
+        [...host.children].forEach((sh, k) => { const o = sheetFill(sh).over; if (o > 0.5) { adj[k] = (adj[k] || 0) + o + 1; ok = false; } });
+        if (ok) break;
+      }
+      // stažené mezery (2 stupně) jen když ušetří stranu – jinak by poslední strana zůstala skoro prázdná
+      const res = { pages: pages.length, tight, nodes: [...host.children] };
+      if (!best) { best = res; if (pages.length < 2 || sheetFill(host.lastElementChild).fill > 0.4) break; continue; }
+      if (res.pages < best.pages) { best = res; break; }
     }
-    const mm = docEl.getBoundingClientRect().height / z / 3.7795;
-    const bounds = [281]; let y = 281 + (forced ? 282 : 268);
-    while (y < mm - 2) { bounds.push(y); y += 268; }
-    const pages = mm <= 283 ? 1 : bounds.length + (mm > bounds.at(-1) ? 1 : 0) - (mm <= 281 ? 1 : 0);
-    docEl.querySelectorAll('.pg').forEach((x) => x.remove());
-    bounds.forEach((b, i) => { if (b < mm - 2) docEl.insertAdjacentHTML('beforeend', `<i class="pg" style="top:${b}mm"><span>strana ${i + 2}</span></i>`); });
-    $('[data-pages]').textContent = `Náhled A4 · cca ${pages} ${pages === 1 ? 'strana' : pages < 5 ? 'strany' : 'stran'}`;
+    // tmavá patička s kontakty na spodek poslední strany
+    const lastSheet = best.nodes.at(-1), cls2 = `${cls}${best.tight}`;
+    const host = stage.lastElementChild; host.className = cls2; host.replaceChildren(...best.nodes); // měří se v neviditelném sloupci (náhled může být schovaný)
+    // Kompaktní na víc stran: na konec i tmavá patička, ať poslední strana nepůsobí nedodělaně
+    if (!withFoot && S.layout === 'kompakt' && best.pages > 1 && sheetFill(lastSheet).free > 48 * MMPX) return layoutDoc(html, true);
+    const foot = lastSheet.querySelector('.d-foot');
+    if (foot && foot.getClientRects().length) {
+      const free = sheetFill(lastSheet).free;
+      if (free > 2) foot.style.marginTop = `${parseFloat(getComputedStyle(foot).marginTop) + free - 1}px`;
+    }
+    docEl.className = cls2;
+    docEl.replaceChildren(...best.nodes);
+    stage.innerHTML = '';
+    const n = best.pages;
+    $('[data-pages]').textContent = `Náhled A4 · ${n} ${n === 1 ? 'strana' : n < 5 ? 'strany' : 'stran'}`;
+    // obrázky bez rozměrů by mohly posunout obsah → po načtení přepočítat (jen jednou)
+    if (!imgWait) {
+      const pending = [...docEl.querySelectorAll('img')].filter((im) => !im.complete);
+      if (pending.length) { imgWait = true; Promise.all(pending.map((im) => new Promise((r) => { im.onload = im.onerror = r; }))).then(() => { imgWait = false; refresh(); }); }
+    }
   }
   addEventListener('resize', fitDoc);
 
@@ -953,7 +1070,7 @@
       saveCurrent(true);
       const old = document.title;
       document.title = `Nabídka ${S.cislo}${S.zak.jmeno ? ' ' + S.zak.jmeno : ''}`.replace(/[\\/:*?"<>|]/g, '');
-      toast('V okně tisku zvolte „Uložit jako PDF“ a nechte okraje výchozí.');
+      toast('V okně tisku zvolte „Uložit jako PDF“ a měřítko 100 %. Okraje Výchozí i Žádné vyjdou stejně.');
       setTimeout(() => { window.print(); document.title = old; }, 60);
     }
   });
@@ -991,5 +1108,5 @@
   if (!listAll().length && !S) { S = demo(); S.cislo = 'VZOR'; }
   if (S) saveCurrent(true);
   go(location.hash === '#nabidka' && S ? 'edit' : 'board');
-  document.fonts && document.fonts.ready.then(fitDoc);
+  document.fonts && document.fonts.ready.then(() => S && refresh());
 })();
